@@ -1,0 +1,127 @@
+# {{DOMAIN}}-ops — STARTER ops-hive blueprint (papercusp-ops-hives template).
+#
+# Building agent: this is the -ops hive over your domain — the JUDGMENT plane's
+# Queen. It extends `work` (the generic queen/bee hive: Queen + bee fleet +
+# self-declared wake, judge-acceptance, artifacts output, topic affinity).
+# Replace every {{…}} token while walking the template's decision points
+# (GUIDE.md §Decision points); the STRUCTURE — one seam, capability-enveloped
+# roles, gym signals, reactive sentinel, finalize learning pass — is the
+# proven quartermaster-ops/oddsmith shape and SHOULD survive your edits.
+# Exemplar: quartermaster/blueprints/quartermaster-ops/blueprint.yaml.
+#
+# QUEEN/BEE model — dispatch/scaling is the Queen + fleet placement (inherited
+# via work), NOT an orchestrator loop. The Queen surveys the
+# {{SEAM_WORK_ITEM_KIND}} backlog and places ONE member harness per open item;
+# WIDTH (how many items in parallel) is fleet placement across items, never
+# per-harness concurrency (the member pins dispatch.concurrency: 1).
+id: "{{DOMAIN}}-ops"
+extends: work
+kind: hive
+version: 0.1.0
+description: >-
+  The {{APP_NAME}} {{DOMAIN}} Queen — surveys the {{SEAM_WORK_ITEM_KIND}}
+  backlog (enqueued by the deterministic app per {{ENQUEUE_TRIGGER}}), places
+  member harnesses onto open items via fleet placement (width = many items in
+  parallel, one harness per item), reviews output quality against real
+  outcomes, and re-drives or escalates rejected payloads. Every role is
+  {{SAFE_CAPABILITY_CLASS}}: nothing in this hive ever {{DANGEROUS_ACTIONS}}.
+
+# Domain nouns the personas + UI read in (decision point: domain-lexicon).
+lexicon:
+  workUnit: "{{WORK_UNIT_NOUN e.g. candidate-set}}"
+  reviewGate: "{{REVIEW_GATE_NOUN e.g. approval}}"
+
+# Placement width (the ONE scaling knob): how many member harnesses the Queen
+# keeps placed at once. Depth stays 1-per-item inside the member. Consider
+# ensembleN ONLY for high-variance judgment domains (oddsmith forecasts use
+# it; quartermaster sourcing does not — a fetch-and-verify pass needs one
+# researcher + a judge rubric, not an ensemble).
+knobs:
+  width: 4
+
+# The member blueprint this hive's Queen places per open item.
+dependencies:
+  blueprints:
+    - "{{SEAM_WORK_ITEM_KIND}}"
+
+# Gym = the un-gameable guardrails the ops hive is scored + self-improved
+# against. collectTrace is `work-item-output` (a repo-less hive has no git
+# diff). Keep the FOUR CLASSES and rename per domain (GUIDE.md §Gym signals):
+#   no-{{DANGER}}-reach     — no role ever performs the dangerous action class
+#   output-has-evidence     — every proposal carries live evidence + rationale
+#   constraint-honored      — declared input constraints are never violated
+#   schema-clean-output     — every completed payload parses through the gate
+gym:
+  collectTrace: work-item-output
+  signals:
+    - "no-{{DANGER}}-reach"
+    - "{{WORK_UNIT_NOUN}}-has-evidence"
+    - "{{CONSTRAINT_SIGNAL e.g. price-ceiling-honored}}"
+    - schema-clean-output
+
+# Roles. Inherits `operator` + `queen` from work. Add the domain roles the
+# Queen runs on a cadence or reactively (decision point: domain-roles).
+# CONFINEMENT (inviolable — blueprints/README.md): every capability list is
+# READ + PROPOSE only. The install pins this with capability:envelope_set_role
+# across EVERY hive role (the oddsmith ops-guard pattern).
+roles:
+  - id: "{{DOMAIN}}-reviewer"
+    description: >-
+      On {{OUTCOME_EVENT e.g. purchase.recorded}} (the real-world outcome the
+      judgment plane proposed), compare the outcome against the
+      {{CONTRACT_NAME}} that proposed it and update per-member trust weights;
+      write learnings to shared memory so future placements prefer
+      proven-accurate members. Read + memory-write only.
+    capabilities: ["{{OUTCOME_TABLE}}:read", "{{APP_TABLE}}:read", "memory:write"]
+    tools:
+      - work_items:get
+      - work_items:list
+      - memory:search
+      - memory:remember
+  - id: ingest-sentinel
+    reactive: true
+    description: >-
+      Reactive (event: {{WORK_UNIT_NOUN}}.rejected). The sidecar's parse gate
+      refused a completed payload — that item silently has NO output in the
+      app until someone acts. Root-cause the reject (schema mismatch vs
+      genuinely bad data), then PROPOSE the fix: re-open the work-item with a
+      corrective note for a re-run, or escalate to the owner when the payload
+      reveals contract drift (a coding-plane defect to file, not a re-run).
+      Propose-only; never writes {{APP_TABLE}} rows or edits the contract.
+    capabilities: ["{{APP_TABLE}}:read", "work_items:propose"]
+    tools:
+      - work_items:get
+      - work_items:list
+      - work_items:create
+      - coord:send
+      - coord:escalate
+  - id: backlog-triage
+    description: >-
+      On a cadence, sweep the {{SEAM_WORK_ITEM_KIND}} backlog for placement
+      pathologies the Queen's happy path misses: items stuck in wip past TTL
+      (member died — release + re-place), ESCALATED items (surface with
+      options rather than letting them rot), duplicate enqueues (propose
+      closing the younger). Read + propose only.
+    capabilities: [work_items:read, work_items:propose]
+    tools:
+      - work_items:list
+      - work_items:get
+      - work_items:release
+      - coord:escalate
+
+# Reactive overlay (condition-triggered, NOT the spine). The sidecar emits app
+# domain events UP via events:emit at the seam; a rule fires a role when its
+# `when` matches. Confinement holds — a reactive role only READS + PROPOSES.
+reactive:
+  - role: ingest-sentinel
+    when:
+      cond: { event: { equals: "{{WORK_UNIT_NOUN}}.rejected" } }
+    preempt: false
+
+# Gates: the finalize-recipe. The hive's finalize hook is the LEARNING pass
+# after the real-world outcome: when a seam item resolves, run the reviewer to
+# score the outcome against the proposal and update member trust.
+gates:
+  finalize:
+    onDone:
+      - "{{DOMAIN}}-reviewer"

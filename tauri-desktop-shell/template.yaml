@@ -1,0 +1,46 @@
+# tauri-desktop-shell — aspect: the deterministic app chassis. Machine twin:
+# @papercusp/template-kit src/reference-templates.ts
+# TAURI_DESKTOP_SHELL_TEMPLATE — the kit's suite pins this file to it.
+id: tauri-desktop-shell
+version: "0.1.0"
+scope: aspect
+category: shell
+summary: >-
+  The deterministic app chassis: a thin Tauri 2 shell (a HOST, not the app)
+  spawning a Node/Hono sidecar that serves the SPA + /api on a free localhost
+  port, embedded Postgres with migrations on boot and discovery-file
+  connection resolution, operator.json for shell/CLI discovery, graceful
+  SIGTERM shutdown, and the tauri-release-kit build/release pipeline. Plain
+  TypeScript packages — Tier A throughout: compose and modify freely.
+components:
+  - id: tauri-shell
+    version: "0.0.1"
+  - id: hono-host
+    version: "0.0.1"
+  - id: embedded-postgres-server
+    version: "0.0.1"
+  - id: tauri-release-kit
+    version: "0.1.0"
+contracts: []
+decisionPoints:
+  - id: ui-shape
+    prompt: >-
+      What SPA surface does the deterministic plane need (grids, approvals
+      view, streams)? FREE tier — compose as judged best.
+  - id: app-identity
+    prompt: >-
+      App name, bundle identifier, app-home directory, and release channels
+      (feeds tauri.conf + tauri-release-kit config).
+composesWith:
+  - papercusp-ops-hives
+  - agentic-desktop-app
+docs:
+  - agent-insights/templates-system-design
+  - agent-insights/templates-template-yaml
+  - agent-insights/templates-component-catalog
+checks:
+  - id: boot-e2e
+    run: checks/boot-e2e.test.ts
+    summary: >-
+      composed app builds, sidecar spawns, discovery file written, health
+      returns 200

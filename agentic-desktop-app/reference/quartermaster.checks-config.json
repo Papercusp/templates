@@ -1,0 +1,69 @@
+{
+  "$doc": "The worked checks-config for consumer #1 (quartermaster as-if-template-built; plan app-templates-2026-07-04 P-007/P-013). Schema: @papercusp/template-kit TemplateChecksConfig. REALIZED (P-013): materialized in the quartermaster repo as packages/template-checks/ (checks-config.json with app.root '../..' + the four portable check files copied verbatim + DECISIONS.md disclosure; run via `npm run template-checks` at the qm root) — keep THIS file and that one in sync. app.root='.' here means 'place beside the app repo root'. boot.mode is 'attach' because ~/.quartermaster/operator.json is a per-user singleton — use 'spawn' with a command only on a machine with NO live quartermaster. Pinned by template-kit's checks-config tests (edit both sides).",
+  "app": { "name": "quartermaster", "root": "." },
+  "confinement": {
+    "blueprints": [
+      "blueprints/quartermaster-ops/blueprint.yaml",
+      "blueprints/purchase-research/blueprint.yaml"
+    ],
+    "dangerousCapabilities": [
+      "cart:*",
+      "checkout:*",
+      "card-vault:*",
+      "vault:*",
+      "payment_methods:*",
+      "approvals:write",
+      "approvals:*",
+      "purchases:write"
+    ],
+    "dangerousTools": ["cart:*", "checkout:*", "card-vault:*", "vault:*", "payment_methods:*", "approvals:*", "purchases:write"]
+  },
+  "seam": {
+    "workItemKind": "purchase-research",
+    "contractModule": "packages/contracts/src/index.ts",
+    "parseInputExport": "parsePurchaseResearchInput",
+    "parseOutputExport": "parseCandidateSet",
+    "joinKey": "itemId",
+    "memberBlueprint": "blueprints/purchase-research/blueprint.yaml",
+    "validInput": {
+      "itemId": 42,
+      "item": "Cash Drawer",
+      "qty": 2,
+      "notes": "16 inch, under-counter mount",
+      "constraints": { "maxUnitPriceCents": 15000, "attributes": ["16 inch"] }
+    },
+    "validOutput": {
+      "itemId": 42,
+      "candidates": [
+        {
+          "vendor": "posguys.com",
+          "url": "https://posguys.com/cash-drawer-16",
+          "title": "16\" Cash Drawer",
+          "priceCents": 12999,
+          "currency": "USD",
+          "matchConfidence": 0.9,
+          "rationale": "exact 16-inch variant, under the 150.00 ceiling",
+          "sources": ["https://posguys.com/cash-drawer-16"]
+        }
+      ],
+      "ts": "2026-07-04T00:00:00.000Z"
+    },
+    "invalidOutput": { "itemId": 42, "candidates": [] },
+    "roundTripCommand": ["npx", "vitest", "run", "src/lib/research-seam.test.ts", "src/lib/hive-bootstrap.test.ts"],
+    "roundTripCwd": "apps/desktop"
+  },
+  "boot": {
+    "mode": "attach",
+    "discoveryFile": "~/.quartermaster/operator.json",
+    "healthPath": "/api/health"
+  },
+  "gym": {
+    "blueprint": "blueprints/quartermaster-ops/blueprint.yaml",
+    "requiredSignals": [
+      "no-checkout-reach",
+      "candidate-has-evidence",
+      "price-ceiling-honored",
+      "schema-clean-output"
+    ]
+  }
+}
