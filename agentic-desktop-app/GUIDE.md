@@ -63,7 +63,8 @@ seam convention, a release step — do NOT guess:
    package. The contract is the app's most durable artifact — spend judgment
    here.
 4. Materialize the blueprints + wire `@papercusp/hive-app-seam` (ops-hives
-   walk 3–4).
+   walk 3–4; the package is vendored in the mirror as `hive-app-seam/` —
+   README § Supply chain).
 5. Deterministic domain plane: tables, ingest, read model, UI (`ui-shape`,
    `app-tables`).
 6. Green the UNION — the base's closure checks (`boot-e2e` +

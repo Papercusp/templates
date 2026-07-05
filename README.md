@@ -101,7 +101,7 @@ is flattened or copied at publish time). The loop:
   a copy of these `<id>/` dirs (this tree stays canonical; push changed dirs
   to the mirror before re-publishing). Mirror-sync automation is a tracked
   follow-up (P-027).
-## Supply chain — building OUTSIDE papercup (v1, WI-2860..2863)
+## Supply chain — building OUTSIDE papercup (v1, WI-2860..2863 + WI-2891)
 
 A builder cloning only the public mirror gets everything it needs to compose
 an app and run the checks union — the round-1 greenfield build proved the
@@ -115,16 +115,28 @@ official v1 mechanism that closes them:
   `composition-integrity` runs after a plain `npm install`. The kit is NOT
   on npm; this monorepo (`libs/generic/template-kit/`) stays canonical and
   the vendored copy rides the mirror sync (below).
+- **`@papercusp/hive-app-seam`** — the papercusp-ops-hives Tier-B MUST
+  component — is vendored the same way as `hive-app-seam/` (WI-2891: the
+  round-3 build proved the catalog's source repo is not reachable from
+  outside papercusp, so the seam MUST ride the mirror). Zero runtime deps,
+  `main: ./src/index.ts`; the mirror root `package.json` wires
+  `"@papercusp/hive-app-seam": "file:./hive-app-seam"`, and an app repo
+  links it as
+  `"@papercusp/hive-app-seam": "file:../<mirror-clone>/hive-app-seam"`.
+  Canonical: `libs/generic/hive-app-seam` in the monorepo.
 - **Mirror sync is guarded** (P-027): the canonical monorepo carries
   `scripts/templates-mirror-sync.mjs`, which diffs the canonical tree —
-  every template dir, this README, and the vendored kit — against a local
+  every template dir, this README, and the vendored packages
+  (`template-kit/`, `hive-app-seam/`) — against a local
   mirror clone. Check mode (`npm run mirror:check` in the monorepo's
   `templates/`) exits non-zero on ANY drift, and the publish tooling
   refuses to publish official listings while red; `--push`
   (`npm run mirror:push`) applies the sync and pushes the mirror. The
   published mirror therefore never silently trails the canonical tree.
-- **Component packages** (`@papercusp/sync`, `@papercusp/ui-primitives`, …)
-  are not published to npm either. The official v1 mechanism: `file:`-link
+- **Other component packages** (`@papercusp/sync`, `@papercusp/ui-primitives`,
+  …) are not published to npm either and are NOT vendored (they have runtime
+  deps or platform coupling the mirror can't carry). The official v1
+  mechanism: `file:`-link
   them from a **local papercusp install** (`<install>/libs/generic/<pkg>`) —
   e.g. `"@papercusp/sync": "file:../papercusp/libs/generic/sync"`. A
   papercusp install is a prerequisite for building a papercusp app; the

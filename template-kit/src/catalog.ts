@@ -35,7 +35,9 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
       "idempotent fingerprint marker + ensure-hive), the generic domain work-items transport over " +
       "/api/harness/:slug/work-items (UP: enqueue kind:'task' items carrying the payload.domainKind envelope; " +
       "DOWN: fetchCompleted() returns untrusted payload.out for the app-owned contract gate), and the best-effort " +
-      "poll ingest loop. Contract gates, storage, and app defaults stay app-side by design.",
+      "poll ingest loop. Contract gates, storage, and app defaults stay app-side by design. The source repo is " +
+      "papercusp-internal; consume the copy VENDORED in the public templates mirror as hive-app-seam/ (file:-link " +
+      "it — see the templates README, Supply chain).",
     guide: "agent-insights/templates-system-design",
   },
   {

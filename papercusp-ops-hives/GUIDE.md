@@ -41,7 +41,10 @@ typed contract comes DOWN through a single parse gate into an app table.
    (`buildDomainWorkItemsSeam`), the ingest loop (`startIngestLoop`). Do not
    hand-roll fetch calls against `/api/harness/*` — the seam component IS the
    blessed primitive (that's what buys observability, Queen dispatch, and
-   confinement).
+   confinement). Supply chain: the package is vendored in the public
+   templates mirror as `hive-app-seam/` — `file:`-link it like the kit
+   (`"@papercusp/hive-app-seam": "file:../<mirror-clone>/hive-app-seam"`;
+   templates README § Supply chain).
 2. **Own contracts package, ONE parse gate** — specialize
    `contracts/candidate-set.ts` into e.g. `@yourapp/contracts`: `.strict()`
    zod schemas both directions; the join key round-trips unchanged; an empty

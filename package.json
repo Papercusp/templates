@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Public mirror of the papercusp official templates (canonical: the papercup monorepo templates/ dir) as a RUNNABLE harness (WI-2862): `npm install && npm test` runs every <id>/checks/*.test.ts — composition-integrity executes UNCONFIGURED against the sibling template.yamls here; the app-parameterized checks (boot-e2e, components-integrated, ...) SKIP unless TEMPLATE_CHECKS_CONFIG names a checks-config JSON. @papercusp/template-kit resolves from the vendored ./template-kit dir (WI-2860). See README.md § Supply chain.",
+  "description": "Public mirror of the papercusp official templates (canonical: the papercup monorepo templates/ dir) as a RUNNABLE harness (WI-2862): `npm install && npm test` runs every <id>/checks/*.test.ts — composition-integrity executes UNCONFIGURED against the sibling template.yamls here; the app-parameterized checks (boot-e2e, components-integrated, ...) SKIP unless TEMPLATE_CHECKS_CONFIG names a checks-config JSON. @papercusp/template-kit resolves from the vendored ./template-kit dir (WI-2860); @papercusp/hive-app-seam from the vendored ./hive-app-seam dir (WI-2891). See README.md § Supply chain.",
   "scripts": {
     "test": "vitest run"
   },
   "dependencies": {
+    "@papercusp/hive-app-seam": "file:./hive-app-seam",
     "@papercusp/template-kit": "file:./template-kit"
   },
   "devDependencies": {
