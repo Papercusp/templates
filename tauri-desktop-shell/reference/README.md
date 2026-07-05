@@ -2,6 +2,11 @@
 
 What every builder can rely on, wherever this template was cloned from:
 
+- **[`main.rs`](main.rs)** — the thin-shell shape the GUIDE's composition walk
+  scaffolds from (spawn sidecar → poll discovery → open webview → SIGTERM on
+  close). Extracted from a greenfield validation build that passed the full
+  checks union; rename the `MyApp`/`MYAPP_*` identifiers per your
+  `app-identity` answer.
 - **Worked checks-config**:
   [`../../agentic-desktop-app/reference/worked-example.checks-config.json`](../../agentic-desktop-app/reference/worked-example.checks-config.json)
   — its `boot` section configures this template's `boot-e2e` check (attach
