@@ -101,6 +101,39 @@ is flattened or copied at publish time). The loop:
   a copy of these `<id>/` dirs (this tree stays canonical; push changed dirs
   to the mirror before re-publishing). Mirror-sync automation is a tracked
   follow-up (P-027).
+## Supply chain — building OUTSIDE papercup (v1, WI-2860..2863)
+
+A builder cloning only the public mirror gets everything it needs to compose
+an app and run the checks union — the round-1 greenfield build proved the
+template DESIGN holds but surfaced four distribution gaps; this is the
+official v1 mechanism that closes them:
+
+- **`@papercusp/template-kit`** is VENDORED in the mirror as `template-kit/`
+  (source-shippable: zero runtime deps, `main: ./src/index.ts`). Consume it
+  with a `file:` dependency — the mirror's root `package.json` already wires
+  `"@papercusp/template-kit": "file:./template-kit"`, so
+  `composition-integrity` runs after a plain `npm install`. The kit is NOT
+  on npm; this monorepo (`libs/generic/template-kit/`) stays canonical and
+  the vendored copy is synced with the mirror push (P-027 automates).
+- **Component packages** (`@papercusp/sync`, `@papercusp/ui-primitives`, …)
+  are not published to npm either. The official v1 mechanism: `file:`-link
+  them from a **local papercusp install** (`<install>/libs/generic/<pkg>`) —
+  e.g. `"@papercusp/sync": "file:../papercusp/libs/generic/sync"`. A
+  papercusp install is a prerequisite for building a papercusp app; the
+  templates assume its `libs/generic/*` tree is reachable.
+- **Runnable checks harness**: the mirror root carries `package.json` +
+  `vitest.config.ts`, so `npm install && npm test` runs every
+  `<id>/checks/*.test.ts` — `composition-integrity` green against the
+  mirror's template set, the app-parameterized checks SKIP until your app
+  sets `TEMPLATE_CHECKS_CONFIG`.
+- **Reference repos are PRIVATE** (`quartermaster`, `aviynw/Restart`) —
+  external `git clone` 404s are expected. The reference pointers are
+  optional color; the PORTABLE truth every builder can rely on is each
+  template's `GUIDE.md` + `checks/` + the checked-in worked configs (e.g.
+  `agentic-desktop-app/reference/quartermaster.checks-config.json`).
+
+## Cupboard install
+
 - **Install**: the Cupboard **Templates** tab (`?kind=template`) →
   `POST /api/cupboard/install-template` → shallow-clone + kit validation
   (schema + component-catalog pin check — a stale pin fails the install, same

@@ -20,7 +20,10 @@ Web-host specifics for the config:
   into the standalone tree.
 - `command` — the standalone start (e.g.
   `["node", ".next/standalone/apps/web/server.js"]`) with `env.PORT` set,
-  NOT `next dev` — the check must prove the SHIPPED artifact boots.
+  NOT `next dev` — the check must prove the SHIPPED artifact boots. And
+  never via an `npx` wrapper: `npx` does not forward SIGTERM to the child,
+  so the graceful-shutdown assertion fails even when the app's shutdown
+  code is correct (WI-2867).
 - `healthPath` — a route the app serves unauthenticated (default
   `/api/health`); keep it outside the middleware auth gate's matcher.
 

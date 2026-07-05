@@ -41,6 +41,11 @@ Postgres, and writing a discovery file so the shell/CLI can find it.
 3. **Graceful shutdown ordering** on SIGTERM: host close → sync stop → PG stop
    → discovery-file removal — and a force-exit timer so a wedged component
    can't hang the process (the quartermaster SIGTERM-wedge lesson, WI-2667).
+   The FINAL step must be **synchronous** (`unlinkSync`, not `await rm`) —
+   when the sidecar runs under a dev runtime like `tsx`, the runtime's own
+   signal cleanup races your handler and can kill the process (raw exit 143)
+   inside a trailing `await`, leaving the discovery file behind (the
+   greenfield-snippets lesson, WI-2866).
 4. **Embedded PG lifecycle**: boot/stop bound to the sidecar; migrations on
    boot; connection resolution via `@papercusp/embedded-pg-discovery`
    (env → discovery JSON → fallback). Use **portable initdb flags**

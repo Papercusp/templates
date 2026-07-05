@@ -39,6 +39,10 @@ seam convention, a deploy step — do NOT guess:
 3. **Discovery**: on boot, write the `operator.json` analog (port + pid,
    removed on shutdown) to the app home — same convention as the desktop
    sidecar, so CLI/tooling and the `boot-e2e` check work identically.
+   Make the removal the LAST shutdown step and **synchronous**
+   (`unlinkSync`, not `await rm`) — under a dev runtime like `tsx` the
+   runtime's own signal cleanup can kill the process inside a trailing
+   `await`, leaving the file behind (WI-2866).
 4. **Auth seam** — two PLACEHOLDERS, by design:
    - `middleware.ts`: a gate stub (401 unless an env bypass) over protected
      matchers — replace with real auth before exposing anything.

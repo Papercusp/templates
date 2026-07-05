@@ -18,6 +18,13 @@ the env var it SKIPS.
   and asserts the FULL lifecycle including shutdown cleanup. Use in CI, the
   template gym, a fresh checkout. Never on a machine where the app is live —
   a second instance clobbers the live discovery file.
+
+  `command` must invoke the REAL process — `node dist/…` or the direct
+  binary `node_modules/.bin/tsx src/…` — **never `npx tsx …`**: the `npx`
+  wrapper does not forward SIGTERM to the child, so the check's
+  graceful-shutdown assertion fails even when the app's shutdown code is
+  correct, and the orphaned sidecar (and its embedded PG) blocks the next
+  run (WI-2867).
 - **`attach`** — asserts against an ALREADY-RUNNING instance: discovery file
   readable, pid alive, health 200. Use on a dev machine with the app live.
 

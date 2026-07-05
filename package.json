@@ -1,0 +1,18 @@
+{
+  "name": "papercusp-templates",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Public mirror of the papercusp official templates (canonical: the papercup monorepo templates/ dir) as a RUNNABLE harness (WI-2862): `npm install && npm test` runs every <id>/checks/*.test.ts — composition-integrity executes UNCONFIGURED against the sibling template.yamls here; the app-parameterized checks (boot-e2e, components-integrated, ...) SKIP unless TEMPLATE_CHECKS_CONFIG names a checks-config JSON. @papercusp/template-kit resolves from the vendored ./template-kit dir (WI-2860). See README.md § Supply chain.",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@papercusp/template-kit": "file:./template-kit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "vitest": "^4.1.4",
+    "yaml": "^2.6.0"
+  }
+}
