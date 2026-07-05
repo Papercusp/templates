@@ -114,7 +114,15 @@ official v1 mechanism that closes them:
   `"@papercusp/template-kit": "file:./template-kit"`, so
   `composition-integrity` runs after a plain `npm install`. The kit is NOT
   on npm; this monorepo (`libs/generic/template-kit/`) stays canonical and
-  the vendored copy is synced with the mirror push (P-027 automates).
+  the vendored copy rides the mirror sync (below).
+- **Mirror sync is guarded** (P-027): the canonical monorepo carries
+  `scripts/templates-mirror-sync.mjs`, which diffs the canonical tree —
+  every template dir, this README, and the vendored kit — against a local
+  mirror clone. Check mode (`npm run mirror:check` in the monorepo's
+  `templates/`) exits non-zero on ANY drift, and the publish tooling
+  refuses to publish official listings while red; `--push`
+  (`npm run mirror:push`) applies the sync and pushes the mirror. The
+  published mirror therefore never silently trails the canonical tree.
 - **Component packages** (`@papercusp/sync`, `@papercusp/ui-primitives`, …)
   are not published to npm either. The official v1 mechanism: `file:`-link
   them from a **local papercusp install** (`<install>/libs/generic/<pkg>`) —
