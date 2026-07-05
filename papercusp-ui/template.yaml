@@ -43,10 +43,14 @@ decisionPoints:
       persistence live (the app's data layer vs localStorage)?
   - id: branding-lexicon
     prompt: >-
-      Which brand pack names the app's nouns? Register the domain's term keys
-      with @papercusp/lexicon, wire the configure*() host seam to the app's
-      pack selection, and route EVERY user-facing noun through it — never
-      hardcode a display label a rebrand would have to grep for.
+      How are user-facing nouns kept rebrandable? @papercusp/lexicon's
+      TermKey is a CLOSED papercusp-internal vocabulary (fleet, harness,
+      operator, ...) resolved through the active brand pack — route THOSE
+      terms through it (wire the configure*() host seam to the app's pack
+      selection) wherever your chrome surfaces them. The app's OWN domain
+      nouns are NOT lexicon terms: keep them in one app-local terms module
+      so a rebrand is still one edit — never hardcode a display label a
+      rebrand would have to grep for.
 composesWith:
   - tauri-desktop-shell
   - papercusp-data-sync

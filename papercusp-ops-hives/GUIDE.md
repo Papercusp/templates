@@ -2,16 +2,16 @@
 
 **You are the building agent.** This aspect composes the **judgment plane**
 into an app: a domain hive + an `-ops` hive over it, joined to the
-deterministic app at **exactly one seam**. It was reverse-engineered from the
-oddsmith→quartermaster mirror — two real apps built this way. Read
+deterministic app at **exactly one seam**. It was reverse-engineered from two
+real apps built this way — the proven two-plane ops shape. Read
 `template.yaml` for what exists; this file is how to think about composing it.
 You compose **freely and non-deterministically**; "done" is defined by
 `checks/` going green (union rule: your app must pass EVERY composed
 template's checks).
 
-Worked examples to keep open while you build:
-`quartermaster/blueprints/` + `quartermaster/packages/contracts` (primary),
-`oddsmith/blueprints/` + `@oddsmith/contracts` (the origin of the pattern).
+Worked examples to keep open while you build: the starter blueprints +
+contract template in THIS template (`blueprints/`, `contracts/`) and the
+worked checks-config `reference/README.md` points at.
 
 ## MUST — consult the live papercusp docs when this GUIDE is not enough
 
@@ -50,7 +50,7 @@ typed contract comes DOWN through a single parse gate into an app table.
    `<workUnit>.rejected` UP as an event — never a silent drop.
 3. **Confinement is inviolable and enforced at install** — every hive role is
    read + propose-only against the app's dangerous surface; pinned via role
-   capability envelopes (the oddsmith `ops-guard` pattern) across EVERY role.
+   capability envelopes (the proven `ops-guard` pattern) across EVERY role.
    Your app's **`blueprints/README.md` is the canonical statement of the
    rule** (materialize it from `blueprints/README.md` here) — every doc points
    at it, nothing restates it.
@@ -62,8 +62,8 @@ typed contract comes DOWN through a single parse gate into an app table.
 - **Queen/bee dispatch, not an orchestrator loop**: the `-ops` hive extends
   `work`; the Queen places ONE member harness per open item; `knobs.width` is
   the ONE scaling knob. `dispatch.concurrency: 1` in the member — depth over
-  fan-out. Consider `ensembleN` only for high-variance judgment (oddsmith
-  forecasts: yes; quartermaster sourcing: no).
+  fan-out. Consider `ensembleN` only for high-variance judgment (forecasting:
+  yes; fetch-and-verify sourcing: no).
 - **Judge acceptance** for repo-less members: a rubric with ~3 weighted
   dimensions scoring match fidelity, evidence liveness, and value accuracy
   against declared constraints (see both starter blueprints).
@@ -73,8 +73,8 @@ typed contract comes DOWN through a single parse gate into an app table.
 - **A reactive ingest-sentinel** on `<workUnit>.rejected` — a refused payload
   means an item silently has no output until someone acts.
 - **A finalize learning pass**: when the real-world outcome lands, score it
-  against the proposal and update member trust weights (quartermaster's
-  `sourcing-reviewer`).
+  against the proposal and update member trust weights (the worked shape's
+  `sourcing-reviewer` role).
 - **Backlog triage on a cadence**: stuck-wip release, escalation surfacing,
   duplicate closing.
 
@@ -82,7 +82,7 @@ typed contract comes DOWN through a single parse gate into an app table.
 
 | id | The question |
 |---|---|
-| `seam-work-item-kind` | What work_item kind crosses the seam? (quartermaster: `purchase-research`; oddsmith: `bet-analysis`) |
+| `seam-work-item-kind` | What work_item kind crosses the seam? (worked instances: `purchase-research`, `bet-analysis`) |
 | `contract-shape` | What does the down-leg contract carry? Specialize the starter, keep its invariants. |
 | `domain-lexicon` | Domain nouns/verbs for hives, roles, work (replaces every `{{…}}` in the starters). |
 | `domain-roles` | Which roles beyond the proven trio (reviewer / sentinel / triage), with what envelopes? |
@@ -100,7 +100,7 @@ you choose, your decision-point answers make it reviewable.
 1. Walk the decision points; write the answers down (they go in your ship
    disclosure).
 2. Specialize `contracts/candidate-set.ts` → your contracts package + its
-   tests (exemplar: `quartermaster/packages/contracts/src/index.test.ts`).
+   tests (round-trip every schema; reject fixtures for each MUST invariant).
 3. Materialize `blueprints/` (README + ops-hive + member), replacing every
    `{{…}}` token — grep for `{{` to prove none survive.
 4. Wire the app side with `@papercusp/hive-app-seam` (bootstrap at sidecar

@@ -4,8 +4,8 @@
  * (plan app-templates-2026-07-04 P-005 + P-014).
  *
  * P-014's recommended realization (owner directive: one app = a composition
- * of MANY templates) splits template #1 three ways, extracted from what
- * quartermaster actually is (oddsmith is the second reference instance):
+ * of MANY templates) splits template #1 three ways, extracted from what the
+ * two internal reference apps actually are:
  *
  *   - PAPERCUSP_OPS_HIVES_TEMPLATE   (aspect) — the 2-hive ops construction:
  *     the judgment plane + the ONE seam. Carries both Tier B components.
@@ -19,7 +19,7 @@
  *
  * These are DRAFTS of the shippable templates: P-006 writes the GUIDE.md +
  * starter blueprints + contract templates around them, P-007 makes checks/
- * real, and P-013 (consumer #1) re-materializes quartermaster's agentic plane
+ * real, and P-013 (consumer #1) re-materializes its agentic plane
  * from them. The suite validates each standalone, as a set
  * (validateTemplateSet), composed (composeTemplates — the union-of-checks),
  * and against COMPONENT_CATALOG, so catalog drift breaks this file loudly
@@ -34,7 +34,7 @@ export const PAPERCUSP_OPS_HIVES_TEMPLATE: TemplateManifest = {
   scope: "aspect",
   category: "agentic",
   summary:
-    "The judgment plane quartermaster and oddsmith instantiate: a domain hive + an -ops hive over it " +
+    "The proven judgment-plane shape: a domain hive + an -ops hive over it " +
     "(the Queen surveying a backlog and placing member harnesses), crossing into the app at exactly ONE " +
     "seam — work_items of a declared kind go up, a typed contract comes down through a single parse gate " +
     "into an app table. Nothing else crosses; confinement is enforced at install and the app's " +
@@ -50,7 +50,7 @@ export const PAPERCUSP_OPS_HIVES_TEMPLATE: TemplateManifest = {
   // building agent specializes for its domain.
   contracts: ["candidate-set"],
   decisionPoints: [
-    { id: "seam-work-item-kind", prompt: "What work_item kind crosses the seam (quartermaster: purchase-research; oddsmith: bet-analysis)?" },
+    { id: "seam-work-item-kind", prompt: "What work_item kind crosses the seam (worked instances: purchase-research, bet-analysis)?" },
     { id: "contract-shape", prompt: "What does the down-leg contract carry (specialize the candidate-set template; one parse gate, rejects emitted as events)?" },
     { id: "domain-lexicon", prompt: "What are the domain nouns/verbs for hives, roles, and work (replaces the placeholder lexicon in the starter blueprints)?" },
     { id: "domain-roles", prompt: "Which member roles does the domain hive place, and with what capability envelopes (confinement rule stays inviolable)?" },
@@ -108,7 +108,7 @@ export const AGENTIC_DESKTOP_APP_TEMPLATE: TemplateManifest = {
   scope: "app",
   category: "app",
   summary:
-    "The two-plane agentic desktop app quartermaster and oddsmith instantiate: papercusp-ops-hives " +
+    "The proven two-plane agentic desktop app shape: papercusp-ops-hives " +
     "(judgment plane + the ONE seam) layered onto the non-agentic desktop-app BASE template — whose " +
     "requires-closure brings the tauri-desktop-shell chassis, papercusp-data-layer, and papercusp-ui — " +
     "plus glue guidance. An app built from this composition must pass the UNION of the full closure's " +
@@ -274,7 +274,7 @@ export const PAPERCUSP_UI_TEMPLATE: TemplateManifest = {
     { id: "ui-surfaces", prompt: "Which surfaces does the app's deterministic plane need — data grids, terminal/agent-output panes, markdown/docs views, JSON inspectors, a multi-panel workbench? Take only the components those surfaces use; drop the rest from the composition." },
     { id: "grid-usage", prompt: "papergrid is a META-PACKAGE — apps depend on the grid SUB-PACKAGES directly (@papercusp/grid-core, @papercusp/bloom-grid, @papercusp/grid). Which grids does the app need, and do any need server-rendered rows (bloom-grid) vs pure client virtualization (grid-core)?" },
     { id: "workbench-layout", prompt: "What is the panel layout — which panels register in the dock-workbench registry, what is the default logical layout, and where does layout persistence live (the app's data layer vs localStorage)?" },
-    { id: "branding-lexicon", prompt: "Which brand pack names the app's nouns? Register the domain's term keys with @papercusp/lexicon, wire the configure*() host seam to the app's pack selection, and route EVERY user-facing noun through it — never hardcode a display label a rebrand would have to grep for." },
+    { id: "branding-lexicon", prompt: "How are user-facing nouns kept rebrandable? @papercusp/lexicon's TermKey is a CLOSED papercusp-internal vocabulary (fleet, harness, operator, ...) resolved through the active brand pack — route THOSE terms through it (wire the configure*() host seam to the app's pack selection) wherever your chrome surfaces them. The app's OWN domain nouns are NOT lexicon terms: keep them in one app-local terms module so a rebrand is still one edit — never hardcode a display label a rebrand would have to grep for." },
   ],
   composesWith: ["tauri-desktop-shell", "papercusp-data-sync"],
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml", "agent-insights/templates-component-catalog"],
@@ -346,7 +346,7 @@ export const RELEASE_PIPELINE_TEMPLATE: TemplateManifest = {
     { id: "release-channels", prompt: "Which release channels does the app ship (stable only? stable+beta?) and what tag scheme names them? The kit's channel→tag resolution (defaultTagFor) encodes the answer; every channel needs its own updater feed URL." },
     { id: "release-targets", prompt: "What is the target matrix — linux-x86_64 (deb/AppImage) built locally, mac universal (dmg) and windows (msi/nsis) on VMs over the kit's SSH frame? Which targets are release-blocking vs best-effort?" },
     { id: "signing-and-updater", prompt: "Where does the Tauri signing key live (keyPath + passwordEnv — the key and password are NEVER committed; keychain/keyfile per platform), and where do updater manifests point (latestJsonUrl — usually the gh release asset URL)? A desktop app without signing/updater wiring is a prototype." },
-    { id: "sidecar-build", prompt: "What does buildSidecar(ctx) do for THIS app — the ONE injected seam (papercusp: a ~1,070-line bundler; oddsmith: ~42 lines of esbuild)? Keep it a pure function of the repo tree; everything else is the kit's." },
+    { id: "sidecar-build", prompt: "What does buildSidecar(ctx) do for THIS app — the ONE injected seam (worked instances range from ~42 lines of esbuild to a ~1,070-line bundler)? Keep it a pure function of the repo tree; everything else is the kit's." },
   ],
   composesWith: ["tauri-desktop-shell", "desktop-app", "agentic-desktop-app"],
   docs: [
@@ -362,7 +362,7 @@ export const RELEASE_PIPELINE_TEMPLATE: TemplateManifest = {
 
 /**
  * Aspect: the web app chassis (owner directive 2026-07-05 / P-029 — extracted
- * from the Restart webapp audit, agent-insights/
+ * from the origin-webapp audit, agent-insights/
  * restart-webapp-audit-papercusp-webapp-template). The web twin of
  * tauri-desktop-shell: the HOST is config/skeleton (a pattern component),
  * not a lib — the heavy web stack (UI kit, sync, search) already lives in
@@ -374,8 +374,8 @@ export const PAPERCUSP_WEB_HOST_TEMPLATE: TemplateManifest = {
   scope: "aspect",
   category: "shell",
   summary:
-    "The web app chassis — the web twin of tauri-desktop-shell, extracted from the Restart webapp (the first " +
-    "papercusp project): a Next.js app-router host built with output:'standalone' (outputFileTracingRoot at " +
+    "The web app chassis — the web twin of tauri-desktop-shell, extracted from the first " +
+    "papercusp webapp: a Next.js app-router host built with output:'standalone' (outputFileTracingRoot at " +
     "the monorepo root + transpilePackages for every workspace lib — the classic monorepo miss), started as " +
     "node server.js with static/public assets staged in, operator.json discovery written on boot, an auth " +
     "seam (middleware.ts gate stub + a minimal basic-auth reverse proxy — placeholders to REPLACE before real " +
@@ -437,7 +437,7 @@ export const PAPERCUSP_WEBAPP_TEMPLATE: TemplateManifest = {
   category: "app",
   summary:
     "A whole papercusp-style WEB app — what desktop-app is to the desktop, this is to the browser (extracted " +
-    "from the Restart webapp, the first papercusp project): the papercusp-web-host chassis (Next.js " +
+    "from the first papercusp webapp): the papercusp-web-host chassis (Next.js " +
     "standalone host, auth seam, deploy skeleton) + papercusp-data-layer (app-owned Postgres, connection " +
     "discovery, typed-contract write gates) + papercusp-ui (headless primitives, data grids, dock workbench, " +
     "brand lexicon), pulled in as hard requires. A thin pure composition — no own components; an app built " +

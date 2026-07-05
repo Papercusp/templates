@@ -4,7 +4,6 @@
 > CANONICAL statement of the confinement rule for your app. Every GUIDE and doc
 > points here and never restates it (anti-drift). Replace every `{{…}}` token
 > while walking the template's decision points; keep the structure.
-> Exemplars: `quartermaster/blueprints/README.md`, `oddsmith/blueprints/README.md`.
 
 The **agentic plane**: papercusp blueprints layered on the deterministic app.
 The deterministic planes ({{DETERMINISTIC_PLANES e.g. ingest, approvals,
@@ -26,7 +25,7 @@ one seam — **`work_items`** (kind `{{SEAM_WORK_ITEM_KIND}}`) going up, and the
 Every hive role is **{{SAFE_CAPABILITY_CLASS e.g. web-read + propose-only}}**.
 No blueprint role can {{DANGEROUS_ACTIONS e.g. add to a cart, check out, read
 the card vault, or mutate approvals/purchases}} — enforced at install via role
-capability envelopes (the oddsmith `ops-guard` pattern).
+capability envelopes (the proven `ops-guard` pattern).
 
 ## Seam contract
 

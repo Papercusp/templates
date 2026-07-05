@@ -8,8 +8,7 @@ hard `requires` pull in the web chassis + data + UI closure:
 - **`papercusp-web-host`** — the web chassis: Next.js app-router host built
   standalone (tracing root + workspace transpile), operator.json discovery,
   the auth seam (stubs to replace), Dockerfile deploy skeleton, serial-PG
-  test rig. Extracted from the Restart webapp — the first project built on
-  papercusp.
+  test rig. Extracted from the first webapp built on papercusp.
 - **`papercusp-data-layer`** — the app-owned data plane: Postgres booted
   with (or provisioned for) the app, migrations on boot, connection
   discovery (env → discovery file → fallback), and typed-contract gates on
@@ -29,8 +28,8 @@ seam convention, a deploy step — do NOT guess:
 
 - read the papercusp documentation served on your install at **`/internal/docs`**
   (start with the `agent-insights` section; this template's `template.yaml`
-  `docs:` list names its canonical pages — including the Restart audit that
-  this template was extracted from), and
+  `docs:` list names its canonical pages — including the origin-webapp audit
+  that this template was extracted from), and
 - inspect the **operator app** itself — it is a running reference instance
   of every pattern these templates encode.
 

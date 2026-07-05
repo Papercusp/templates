@@ -7,8 +7,8 @@ points you may modify freely; the MUSTs below are about the *shape* that keeps
 the chassis portable and bootable, not about sealed code. "Done" = this
 template's `checks/` green (plus every composed template's — union rule).
 
-Worked examples: `quartermaster/apps/desktop` (primary: `src-tauri/src/main.rs`,
-`bin/serve.ts`, `src/_hono/`), the oddsmith equivalents.
+Worked example: see `reference/README.md` + the worked checks-config it
+names.
 
 ## MUST — consult the live papercusp docs when this GUIDE is not enough
 
@@ -40,7 +40,7 @@ Postgres, and writing a discovery file so the shell/CLI can find it.
    the app home, removed on shutdown — the shell polls it; the CLI reads it.
 3. **Graceful shutdown ordering** on SIGTERM: host close → sync stop → PG stop
    → discovery-file removal — and a force-exit timer so a wedged component
-   can't hang the process (the quartermaster SIGTERM-wedge lesson, WI-2667).
+   can't hang the process (the SIGTERM-wedge lesson, WI-2667).
    The FINAL step must be **synchronous** (`unlinkSync`, not `await rm`) —
    when the sidecar runs under a dev runtime like `tsx`, the runtime's own
    signal cleanup races your handler and can kill the process (raw exit 143)

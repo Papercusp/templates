@@ -12,8 +12,8 @@ injects its *sidecar build* and a config. That split is the whole design:
   orchestration over an SSH frame. Pure core; every side effect behind
   Exec/Fs/Log ports.
 - **Injected per app (the seam):** `buildSidecar(ctx)` — however THIS app
-  bundles its sidecar (papercusp: a ~1,070-line bundler; oddsmith: ~42 lines
-  of esbuild) — plus app id/name/repo/targets/signing via
+  bundles its sidecar (worked instances range from ~42 lines of esbuild to
+  a ~1,070-line bundler) — plus app id/name/repo/targets/signing via
   `TauriReleaseConfig`.
 
 The `tauri-desktop-shell` template already pins this kit at the same version —

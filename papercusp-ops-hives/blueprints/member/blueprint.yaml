@@ -5,8 +5,7 @@
 # decision points. The STRUCTURE — director-drives-one-worker spine, work-item
 # in/out payloads through YOUR contracts package, judge acceptance,
 # depth-over-fan-out, read+propose confinement — is the proven
-# purchase-research/bet-analysis shape and SHOULD survive your edits.
-# Exemplar: quartermaster/blueprints/purchase-research/blueprint.yaml.
+# research-member shape and SHOULD survive your edits.
 id: "{{SEAM_WORK_ITEM_KIND}}"
 extends: research
 version: 0.1.0
@@ -99,7 +98,7 @@ roles:
       {{WORK_UNIT_DESCRIPTION}} (work_items:get on FEATURE_ID gives the
       {{INPUT_TYPE}} payload). Produce a ranked, calibrated {{CONTRACT_NAME}}.
 
-      Method ({{adapt to your domain — this is the proven quartermaster
+      Method ({{adapt to your domain — this is the proven research-member
       shape}}): (1) read the input + constraints closely for variant/edge
       specifics — a near-miss is not a match; (2) gather evidence adaptively
       (never one-shot), recalling prior work via memory:search; (3) VERIFY

@@ -17,7 +17,7 @@
  *
  * Asserts the hive blueprint declares a gym block with a collectTrace mode and
  * a signals list covering every required id — the un-gameable guardrails the
- * ops hive is scored + self-improved against. (Quartermaster's exemplar set:
+ * ops hive is scored + self-improved against. (consumer #1's exemplar set:
  * no-checkout-reach, candidate-has-evidence, price-ceiling-honored,
  * schema-clean-output.)
  */

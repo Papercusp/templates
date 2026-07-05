@@ -4,11 +4,9 @@
  * Building agent: this becomes YOUR app's contracts package (e.g.
  * `@myapp/contracts`) — the typed definition of the ONLY things that cross
  * the app⇄hive seam. Specialize it while walking the `contract-shape`
- * decision point; the INVARIANTS marked MUST are the proven
- * quartermaster/oddsmith discipline and are what the seam-round-trip and
- * schema-clean-output checks enforce. Exemplars:
- * `quartermaster/packages/contracts` (CandidateSet),
- * `oddsmith/libs/prospect-contract` + `@oddsmith/contracts` (Signal).
+ * decision point; the INVARIANTS marked MUST are the proven two-plane-ops
+ * discipline and are what the seam-round-trip and schema-clean-output
+ * checks enforce.
  *
  * MUST (Tier B — typed-contracts):
  *  - Both payloads are wire-validated zod schemas, `.strict()` — unknown keys
@@ -33,7 +31,7 @@ import { z } from "zod";
 
 /** The work-item kind carrying these payloads (the blueprint declares it too). */
 export const SEAM_KIND = "{{SEAM_WORK_ITEM_KIND}}";
-/** Work-item id prefix for the kind (quartermaster: PR; oddsmith: BA). */
+/** Work-item id prefix for the kind (e.g. PR for purchase-research). */
 export const SEAM_ID_PREFIX = "{{ID_PREFIX}}";
 
 // ────────────────────── payload.in — going UP ────────────────────────

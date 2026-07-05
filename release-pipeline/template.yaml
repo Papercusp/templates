@@ -47,7 +47,7 @@ decisionPoints:
   - id: sidecar-build
     prompt: >-
       What does buildSidecar(ctx) do for THIS app — the ONE injected seam
-      (papercusp: a ~1,070-line bundler; oddsmith: ~42 lines of esbuild)?
+      (worked instances range from ~42 lines of esbuild to a ~1,070-line bundler)?
       Keep it a pure function of the repo tree; everything else is the kit's.
 composesWith:
   - tauri-desktop-shell

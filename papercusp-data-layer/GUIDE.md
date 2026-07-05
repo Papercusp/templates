@@ -26,9 +26,10 @@ Three legs:
 1. **Embedded server** — the `embedded-postgres-server` pattern: the app
    boots its own Postgres under the app home (per-app data dir), runs
    migrations forward-only on boot, picks a free port PER BOOT, and writes a
-   JSON discovery file so every other process can find it. Reference
-   instances: quartermaster's and oddsmith's `embedded-postgres-server`
-   packages.
+   JSON discovery file so every other process can find it. (This file
+   carries the PG CONNECTION info — it is DISTINCT from a host chassis's
+   own `{port, pid}` discovery file; a composition carrying both writes TWO
+   files, WI-2879.)
 2. **Connection resolution** — `@papercusp/embedded-pg-discovery`
    (`resolvePgUrl`): env vars (in order; empty string = absent) → discovery
    file's `url` → fallback. Pure and zero-dependency; the app-specific
@@ -46,6 +47,11 @@ Three legs:
   Always resolve through `resolvePgUrl` (decision point
   `connection-resolution`). Hardcoded ports are the classic
   wedged-on-second-boot bug.
+- Use **postgres-js** (the `postgres` package) as the app's PG client, not
+  node-postgres (`pg`): `@papercusp/search`'s `SearchSource` API types its
+  handle as a postgres-js `Sql` tagged-template function (WI-2872) — a data
+  layer wired with `pg` forces a second client library (or a nontrivial
+  adapter) the moment the composition adds search.
 - Migrations run on boot, forward-only — a desktop app has no ops window;
   a migration that needs a human is a defect.
 - Every trust-boundary write (agent output, imported files, network

@@ -55,6 +55,10 @@ function resolveTemplateYamls(): string[] {
 }
 
 const yamlPaths = resolveTemplateYamls();
+// A config-CHOSEN set is a legitimate SUBSET of the registry: composesWith is
+// descriptive affinity and may name templates outside it (WI-2881) — only the
+// unconfigured registry walk demands every ref resolve.
+const chosenSubset = Boolean((config?.composition?.templateYamls as string[] | undefined)?.length);
 const manifests: TemplateManifest[] = yamlPaths.map((p) => parseTemplateManifest(parse(readFileSync(p, "utf8"))));
 
 /**
@@ -103,8 +107,8 @@ describe("composition-integrity", () => {
     }
   });
 
-  it("the set is coherent: unique ids, resolvable composesWith", () => {
-    const set = validateTemplateSet(manifests);
+  it("the set is coherent: unique ids (+ registry-mode composesWith resolution)", () => {
+    const set = validateTemplateSet(manifests, { allowExternalComposesWith: chosenSubset });
     expect(set.errors, set.errors.join("; ")).toEqual([]);
     expect(set.ok).toBe(true);
   });

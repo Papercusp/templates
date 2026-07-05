@@ -78,8 +78,19 @@ export interface TemplateComposition {
  * Registry-level validation of a whole template set: every entry validates as
  * a TemplateManifest, ids are unique, and every composesWith reference
  * resolves to a template id in the set. Returns EVERY problem.
+ *
+ * `allowExternalComposesWith` relaxes ONLY the composesWith-resolution leg,
+ * for validating a materialized app's CHOSEN subset (WI-2881): composesWith
+ * is descriptive affinity — an aspect legitimately names apps the chosen set
+ * does not include (e.g. the data/ui aspects name tauri-desktop-shell inside
+ * a web-only composition). Default STRICT is the registry mode, where a
+ * dangling ref is rot (a typo'd or deleted template id must fail loudly).
+ * `requires` stays a HARD edge in both modes.
  */
-export function validateTemplateSet(entries: unknown[]): { ok: boolean; errors: string[] } {
+export function validateTemplateSet(
+  entries: unknown[],
+  opts?: { allowExternalComposesWith?: boolean },
+): { ok: boolean; errors: string[] } {
   const errors: string[] = [];
   const ids = new Set<string>();
   const manifests: TemplateManifest[] = [];
@@ -96,8 +107,10 @@ export function validateTemplateSet(entries: unknown[]): { ok: boolean; errors: 
   });
   const byId = new Map(manifests.map((m) => [m.id, m]));
   for (const m of manifests) {
-    for (const ref of m.composesWith) {
-      if (!ids.has(ref)) errors.push(`'${m.id}' composesWith unknown template '${ref}'`);
+    if (!opts?.allowExternalComposesWith) {
+      for (const ref of m.composesWith) {
+        if (!ids.has(ref)) errors.push(`'${m.id}' composesWith unknown template '${ref}'`);
+      }
     }
     // requires is a HARD pinned edge (P-015): the target must exist in the set
     // AND its current version must match the pin — a mismatched pin is rot.

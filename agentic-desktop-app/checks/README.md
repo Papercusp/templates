@@ -29,4 +29,4 @@ The union rule means a composed app must ALSO pass the closure's suites:
 (`../../papercusp-data-layer/checks/`, `../../papercusp-ui/checks/`), and
 the desktop-app base's own `composition-integrity`. Worked example config
 for consumer #1:
-[`../reference/quartermaster.checks-config.json`](../reference/quartermaster.checks-config.json).
+[`../reference/worked-example.checks-config.json`](../reference/worked-example.checks-config.json).

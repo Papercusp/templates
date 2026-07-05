@@ -1,19 +1,17 @@
 # reference/ — worked examples
 
-Pointers, not copies (the living repos are the truth). NOTE: the exemplar
-repos below are PRIVATE — an external builder's clone 404s (WI-2863); the
-PORTABLE truth is this template's `GUIDE.md` + `checks/` + the checked-in
-worked configs:
+What every builder can rely on, wherever this template was cloned from:
 
-- **quartermaster** — `github.com/Papercusp/quartermaster` (primary exemplar,
-  and consumer #1 — RETROFITTED as-if-template-built, P-013):
-  `blueprints/` (ops hive + member + confinement README),
-  `packages/contracts` (CandidateSet + the parse gate),
-  `apps/desktop` (`src-tauri/src/main.rs`, `bin/serve.ts`, `src/_hono/`),
-  `libs/hive-app-seam` (consumes the extracted Tier B component),
-  `packages/template-checks` (the materialized check suites + this config +
-  the DECISIONS.md decision-point disclosure; `npm run template-checks`).
-- **oddsmith** — the pattern's origin: `blueprints/`, `@oddsmith/contracts`,
-  `apps/desktop`, `agent-insights/two-dispatch-models-queen-bee-vs-coding-factory`.
-- **Docs**: `/internal/docs/agent-insights/templates-system-design` (design of
-  record) · `templates-component-catalog` · `templates-template-yaml`.
+- **[`worked-example.checks-config.json`](worked-example.checks-config.json)**
+  — a COMPLETE `TEMPLATE_CHECKS_CONFIG` for a two-plane desktop app (a
+  purchasing-ops domain; schema: `@papercusp/template-kit`
+  `TemplateChecksConfig`): confinement lists, the seam section with real
+  fixtures, component pins, boot + gym. Copy the shape, replace the domain.
+- **Your papercusp install** — the operator app is a running papercusp-native
+  reference; the docs at `/internal/docs` (start with `agent-insights`) are
+  the design record.
+- **Sibling templates**: `../../desktop-app/` (the non-agentic BASE this
+  template requires) · `../../papercusp-ops-hives/` (the judgment plane it
+  layers on, with starter blueprints + the contract template).
+- **Docs**: `/internal/docs/agent-insights/templates-system-design` ·
+  `templates-component-catalog` · `templates-template-yaml`.

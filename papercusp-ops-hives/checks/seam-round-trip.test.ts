@@ -30,7 +30,7 @@
  * the reject is what the ingest-sentinel reacts to); and the member blueprint
  * declares the same seam kind. The live enqueue→DB-row leg is app
  * infrastructure — delegate it via `roundTripCommand` to the app's own
- * integration suite (quartermaster: the research-seam tests).
+ * integration suite (consumer #1: the research-seam tests).
  */
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";

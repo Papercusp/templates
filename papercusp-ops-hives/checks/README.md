@@ -23,8 +23,8 @@ relative to the config file's dir. **Without the env var every suite SKIPS**
 — copying the files never breaks an unwired repo; wiring the config is part
 of composing the app.
 
-Worked example: the quartermaster config at
-`../../agentic-desktop-app/reference/quartermaster.checks-config.json`.
+Worked example: the worked config at
+`../../agentic-desktop-app/reference/worked-example.checks-config.json`.
 
 ```sh
 TEMPLATE_CHECKS_CONFIG=/path/to/checks-config.json npx vitest run checks/

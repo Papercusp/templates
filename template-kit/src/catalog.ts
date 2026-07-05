@@ -29,7 +29,7 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
       path: "libs/generic/hive-app-seam",
       package: "@papercusp/hive-app-seam",
     },
-    tests: "npm test in the lib (17 vitest tests); consumed with app tests unmodified in quartermaster + oddsmith",
+    tests: "npm test in the lib (17 vitest tests); consumed with app tests unmodified in both internal reference apps",
     summary:
       "The ONE app⇄hive seam (Tier B component #1): first-run hive bootstrap (bundled-blueprint local install + " +
       "idempotent fingerprint marker + ensure-hive), the generic domain work-items transport over " +
@@ -46,7 +46,7 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     provides: ["desktop-window-lifecycle", "sidecar-process-lifecycle", "packaged-sidecar-resolution"],
     composesWith: ["hono-host", "embedded-postgres-server"],
     source: {
-      path: "quartermaster:apps/desktop/src-tauri/src/main.rs (reference; extraction = P-003)",
+      path: "internal reference app: apps/desktop/src-tauri/src/main.rs (extraction = P-003)",
     },
     tests: "reference apps' shells build + boot E2E (deb proven green 2026-07-04); packaged-sidecar checks land with P-003",
     summary:
@@ -65,7 +65,7 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     provides: ["embedded-postgres", "db-lifecycle", "connection-discovery"],
     composesWith: ["hono-host", "hive-app-seam"],
     source: {
-      path: "quartermaster:libs/embedded-postgres-server (@quartermaster/embedded-postgres-server) + oddsmith:libs/embedded-postgres-server (@oddsmith/embedded-postgres-server)",
+      path: "both internal reference apps: libs/embedded-postgres-server (an app-local package each)",
       package: "@papercusp/embedded-pg-discovery (the discovery half, already shared)",
     },
     tests: "each app's PG-backed integration suites (testcontainers global setup) exercise it end-to-end",
@@ -87,7 +87,7 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
       path: "libs/generic/tauri-release-kit",
       package: "@papercusp/tauri-release-kit",
     },
-    tests: "npm test in the lib (vitest); driven for real by quartermaster + oddsmith bin/release.ts",
+    tests: "npm test in the lib (vitest); driven for real by both internal reference apps' bin/release.ts",
     summary:
       "Provider-agnostic Tauri desktop build+release orchestration: a pure core (version bump, channel/tag " +
       "resolution, latest.json updater-manifest generation, artifact classification) plus a per-target driver " +
@@ -102,7 +102,7 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     provides: ["contract-schema", "single-parse-gate", "payload-validation"],
     composesWith: ["hive-app-seam"],
     source: {
-      path: "quartermaster:packages/contracts (parseCandidateSet/PurchaseResearchInputSchema) + oddsmith:libs/prospect-contract + @oddsmith/contracts (SignalSchema)",
+      path: "internal reference apps: the contracts packages (parseCandidateSet/PurchaseResearchInputSchema; SignalSchema)",
     },
     tests: "contract packages' own vitest suites + every seam test that round-trips a payload through the gate",
     summary:
@@ -121,7 +121,7 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     provides: ["sidecar-http-host", "operator-json-discovery", "spa-serving", "sse-streams"],
     composesWith: ["tauri-shell", "embedded-postgres-server", "hive-app-seam"],
     source: {
-      path: "quartermaster:apps/desktop/bin/serve.ts + apps/desktop/src/_hono/ (reference); oddsmith equivalent under apps/desktop",
+      path: "internal reference apps: apps/desktop/bin/serve.ts + apps/desktop/src/_hono/",
     },
     tests: "each app's _hono route integration suites (real PG + fake transports)",
     summary:
@@ -348,8 +348,8 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     composesWith: ["embedded-postgres-server", "hive-app-seam"],
     source: {
       path:
-        "Restart:apps/web (origin — next.config.js standalone + tracing root, middleware.ts, auth-proxy.mjs, " +
-        "Dockerfile.web); papercup:apps/operator (the papercusp-native reference instance)",
+        "origin webapp: apps/web (next.config.js standalone + tracing root, middleware.ts, auth-proxy.mjs, " +
+        "Dockerfile.web); the install's operator app (the papercusp-native reference instance)",
     },
     tests: "the composed app's boot-e2e (papercusp-web-host checks/) + the app's own vitest serial-PG rig",
     summary:

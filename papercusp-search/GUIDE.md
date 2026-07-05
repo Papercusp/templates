@@ -26,7 +26,11 @@ The search plane has four legs, cheap→rich; take only what the app needs:
 1. **Retrieval** — `@papercusp/search`: a host-agnostic engine over the app's
    Postgres. You register a **SearchSource** per searchable surface — each
    source owns its own tsvector/pgvector SQL, so the engine never couples to
-   your schema. Runs BM25-only out of the box.
+   your schema. Runs BM25-only out of the box. The `SearchSource` handle is
+   a **postgres-js `Sql`** tagged-template function (the `postgres`
+   package), NOT node-postgres (`pg`) — wire your data layer with
+   postgres-js from the start (WI-2872; the data-layer GUIDE says the
+   same), or budget for an adapter.
 2. **Fusion** — `@papercusp/rrf`: pure Reciprocal Rank Fusion. Turns on when
    you have a second ranking to fuse — canonically BM25 + vector similarity
    (hybrid mode needs a query embedder injected; bring your own provider).

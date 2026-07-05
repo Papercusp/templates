@@ -6,8 +6,7 @@
 # Replace every {{…}} token while walking the template's decision points
 # (GUIDE.md §Decision points); the STRUCTURE — one seam, capability-enveloped
 # roles, gym signals, reactive sentinel, finalize learning pass — is the
-# proven quartermaster-ops/oddsmith shape and SHOULD survive your edits.
-# Exemplar: quartermaster/blueprints/quartermaster-ops/blueprint.yaml.
+# proven ops-hive shape and SHOULD survive your edits.
 #
 # QUEEN/BEE model — dispatch/scaling is the Queen + fleet placement (inherited
 # via work), NOT an orchestrator loop. The Queen surveys the
@@ -33,8 +32,8 @@ lexicon:
 
 # Placement width (the ONE scaling knob): how many member harnesses the Queen
 # keeps placed at once. Depth stays 1-per-item inside the member. Consider
-# ensembleN ONLY for high-variance judgment domains (oddsmith forecasts use
-# it; quartermaster sourcing does not — a fetch-and-verify pass needs one
+# ensembleN ONLY for high-variance judgment domains (forecasting uses it;
+# fetch-and-verify sourcing does not — such a pass needs one
 # researcher + a judge rubric, not an ensemble).
 knobs:
   width: 4
@@ -63,7 +62,7 @@ gym:
 # Queen runs on a cadence or reactively (decision point: domain-roles).
 # CONFINEMENT (inviolable — blueprints/README.md): every capability list is
 # READ + PROPOSE only. The install pins this with capability:envelope_set_role
-# across EVERY hive role (the oddsmith ops-guard pattern).
+# across EVERY hive role (the proven ops-guard pattern).
 roles:
   - id: "{{DOMAIN}}-reviewer"
     description: >-

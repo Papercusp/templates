@@ -10,8 +10,8 @@ scope: app
 category: app
 summary: >-
   A whole papercusp-style WEB app — what desktop-app is to the desktop, this
-  is to the browser (extracted from the Restart webapp, the first papercusp
-  project): the papercusp-web-host chassis (Next.js standalone host, auth
+  is to the browser (extracted from the first papercusp webapp): the
+  papercusp-web-host chassis (Next.js standalone host, auth
   seam, deploy skeleton) + papercusp-data-layer (app-owned Postgres,
   connection discovery, typed-contract write gates) + papercusp-ui (headless
   primitives, data grids, dock workbench, brand lexicon), pulled in as hard

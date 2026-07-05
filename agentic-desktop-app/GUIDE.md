@@ -13,7 +13,7 @@ this template."* This is the **app-scope** template, and it is a LAYER
 2. [`papercusp-ops-hives`](../papercusp-ops-hives/GUIDE.md) — the judgment
    plane (domain hive + -ops hive + the ONE work_items⇄contract seam),
 
-into ONE two-plane app, the way quartermaster and oddsmith were built. A
+into ONE two-plane app — the proven two-plane ops shape. A
 required base app joins the composition without owning it — THIS template is
 the root (`composeTemplates`' root-app rule). You compose **freely** — the
 old deterministic generator is gone on purpose — and "done" is the **union
@@ -50,7 +50,7 @@ seam convention, a release step — do NOT guess:
 
 | id | The question |
 |---|---|
-| `domain` | What is the app's domain — the noun the deterministic plane ledgers and the judgment plane reasons about? (quartermaster: purchase items → candidates; oddsmith: market prospects → signals.) Every aspect-level decision point hangs off this answer. |
+| `domain` | What is the app's domain — the noun the deterministic plane ledgers and the judgment plane reasons about? (e.g. a purchasing-ops app: purchase items → candidates; a market-forecasting app: prospects → signals.) Every aspect-level decision point hangs off this answer. |
 
 ## Composition walk
 

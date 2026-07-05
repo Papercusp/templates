@@ -7,7 +7,7 @@ version: "0.1.0"
 scope: aspect
 category: agentic
 summary: >-
-  The judgment plane quartermaster and oddsmith instantiate: a domain hive +
+  The proven judgment-plane shape: a domain hive +
   an -ops hive over it (the Queen surveying a backlog and placing member
   harnesses), crossing into the app at exactly ONE seam — work_items of a
   declared kind go up, a typed contract comes down through a single parse gate
@@ -26,8 +26,8 @@ contracts:
 decisionPoints:
   - id: seam-work-item-kind
     prompt: >-
-      What work_item kind crosses the seam (quartermaster: purchase-research;
-      oddsmith: bet-analysis)?
+      What work_item kind crosses the seam (worked instances: purchase-research,
+      bet-analysis)?
   - id: contract-shape
     prompt: >-
       What does the down-leg contract carry (specialize the candidate-set

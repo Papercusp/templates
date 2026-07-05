@@ -27,7 +27,7 @@ construction** — the design of record is
 | Template | Scope | Category | What |
 |---|---|---|---|
 | [`desktop-app`](desktop-app/) | app | app | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app |
-| [`papercusp-webapp`](papercusp-webapp/) | app | app | a WHOLE web app, no agents — the browser twin of `desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the Restart webapp) |
+| [`papercusp-webapp`](papercusp-webapp/) | app | app | a WHOLE web app, no agents — the browser twin of `desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the first papercusp webapp) |
 | [`agentic-desktop-app`](agentic-desktop-app/) | app | app | the app WITH agents: `papercusp-ops-hives` layered onto the `desktop-app` BASE (P-022 — an app template may require another as its base) |
 | [`papercusp-ops-hives`](papercusp-ops-hives/) | aspect | agentic | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam |
 | [`tauri-desktop-shell`](tauri-desktop-shell/) | aspect | shell | the deterministic chassis: Tauri shell → Node/Hono sidecar → embedded Postgres + release kit |
@@ -56,8 +56,8 @@ npm test -w @papercusp/templates                 # composition-integrity green, 
 TEMPLATE_CHECKS_CONFIG=<config> npm test -w @papercusp/templates   # the full union
 ```
 
-Worked consumer-#1 config (runs green against quartermaster):
-[`agentic-desktop-app/reference/quartermaster.checks-config.json`](agentic-desktop-app/reference/quartermaster.checks-config.json).
+Worked example config:
+[`agentic-desktop-app/reference/worked-example.checks-config.json`](agentic-desktop-app/reference/worked-example.checks-config.json).
 Per-check contracts: each template's `checks/README.md`.
 
 ## The template gym (landed: P-009)
@@ -65,11 +65,11 @@ Per-check contracts: each template's `checks/README.md`.
 Anti-rot cadence (D-007: *the template is tested by building an app from it*):
 the `template-gym` system routine (`system:template-gym`, every 6h) re-verifies
 five legs — the P-013 verbatim-materialization invariant (`<id>/checks/*.test.ts`
-⇄ quartermaster `packages/template-checks/`, byte-identical;
+⇄ consumer #1's `packages/template-checks/`, byte-identical;
 `composition-integrity` is declared repo-side-only), docs⇄catalog drift
 (`COMPONENT_CATALOG` ids ⊆ the published catalog page), the template-kit drift
 pins, this workspace's suite, and consumer #1's configured union inside the
-quartermaster repo. A standing RED auto-files ONE `template-drift` work-item
+consumer-#1 repo. A standing RED auto-files ONE `template-drift` work-item
 (stable watchdogKey `template-gym:<leg>`); the gym is advisory and never gates.
 
 Code: `packages/operator-core/lib/harness/routines/template-gym-{runner,action}.ts`
@@ -78,7 +78,7 @@ Code: `packages/operator-core/lib/harness/routines/template-gym-{runner,action}.
 ```sh
 npx tsx packages/operator-core/lib/harness/routines/template-gym-runner.ts \
   [--legs materialization,docs-catalog,kit-suite,template-suite,app-checks] \
-  [--qm-root <quartermaster clone>]        # default: the sibling ../quartermaster
+  [--qm-root <consumer-1 clone>]           # default: the sibling clone
 ```
 
 Run history: `~/.papercusp/template-gym/` (`last-run.json` + `runs.jsonl`).
@@ -126,11 +126,10 @@ official v1 mechanism that closes them:
   `<id>/checks/*.test.ts` — `composition-integrity` green against the
   mirror's template set, the app-parameterized checks SKIP until your app
   sets `TEMPLATE_CHECKS_CONFIG`.
-- **Reference repos are PRIVATE** (`quartermaster`, `aviynw/Restart`) —
-  external `git clone` 404s are expected. The reference pointers are
-  optional color; the PORTABLE truth every builder can rely on is each
-  template's `GUIDE.md` + `checks/` + the checked-in worked configs (e.g.
-  `agentic-desktop-app/reference/quartermaster.checks-config.json`).
+- **Worked exemplars are papercusp-internal** — the templates cite proven
+  shapes, not repos to clone. The PORTABLE truth every builder can rely on
+  is each template's `GUIDE.md` + `checks/` + the checked-in worked configs
+  (e.g. `agentic-desktop-app/reference/worked-example.checks-config.json`).
 
 ## Cupboard install
 

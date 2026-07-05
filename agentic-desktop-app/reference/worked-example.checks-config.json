@@ -1,9 +1,9 @@
 {
-  "$doc": "The worked checks-config for consumer #1 (quartermaster as-if-template-built; plan app-templates-2026-07-04 P-007/P-013). Schema: @papercusp/template-kit TemplateChecksConfig. REALIZED (P-013): materialized in the quartermaster repo as packages/template-checks/ (checks-config.json with app.root '../..' + the four portable check files copied verbatim + DECISIONS.md disclosure; run via `npm run template-checks` at the qm root) — keep THIS file and that one in sync. app.root='.' here means 'place beside the app repo root'. boot.mode is 'attach' because ~/.quartermaster/operator.json is a per-user singleton — use 'spawn' with a command only on a machine with NO live quartermaster. Pinned by template-kit's checks-config tests (edit both sides).",
-  "app": { "name": "quartermaster", "root": "." },
+  "$doc": "The worked checks-config for a two-plane desktop app (a purchasing-ops domain; plan app-templates-2026-07-04 P-007/P-013). Schema: @papercusp/template-kit TemplateChecksConfig. A materialized app copies the portable check files verbatim and writes ITS OWN config shaped like this one (app.root='.' means 'place beside the app repo root'; run via a `template-checks` npm script at the app root). boot.mode is 'attach' because the app-home operator.json is a per-user singleton — use 'spawn' with a command only on a machine where the app is NOT live. Pinned by template-kit's checks-config tests.",
+  "app": { "name": "purchase-ops", "root": "." },
   "confinement": {
     "blueprints": [
-      "blueprints/quartermaster-ops/blueprint.yaml",
+      "blueprints/purchase-ops/blueprint.yaml",
       "blueprints/purchase-research/blueprint.yaml"
     ],
     "dangerousCapabilities": [
@@ -53,11 +53,11 @@
     "roundTripCwd": "apps/desktop"
   },
   "components": {
-    "$doc": "P-022 (agentic-desktop-app re-layered onto the desktop-app base): the composition's npm-visible component pins. PATTERN components map to app-local packages (embedded-postgres-server -> @quartermaster/embedded-postgres-server; typed-contracts -> @quartermaster/contracts); papergrid is a META-package so the app depends on the SUB-package it uses (@papercusp/grid-core); lexicon is DROPPED per the ui template's ui-surfaces decision point (see DECISIONS.md).",
+    "$doc": "P-022 (agentic-desktop-app re-layered onto the desktop-app base): the composition's npm-visible component pins. PATTERN components map to app-local packages (embedded-postgres-server -> @purchase-ops/embedded-postgres-server; typed-contracts -> @purchase-ops/contracts); papergrid is a META-package so the app depends on the SUB-package it uses (@papercusp/grid-core); lexicon is DROPPED per the ui template's ui-surfaces decision point (see DECISIONS.md).",
     "packages": [
-      "@quartermaster/embedded-postgres-server",
+      "@purchase-ops/embedded-postgres-server",
       "@papercusp/embedded-pg-discovery",
-      "@quartermaster/contracts",
+      "@purchase-ops/contracts",
       "@papercusp/ui-primitives",
       "@papercusp/grid-core",
       "@papercusp/dock-workbench",
@@ -67,11 +67,11 @@
   },
   "boot": {
     "mode": "attach",
-    "discoveryFile": "~/.quartermaster/operator.json",
+    "discoveryFile": "~/.purchase-ops/operator.json",
     "healthPath": "/api/health"
   },
   "gym": {
-    "blueprint": "blueprints/quartermaster-ops/blueprint.yaml",
+    "blueprint": "blueprints/purchase-ops/blueprint.yaml",
     "requiredSignals": [
       "no-checkout-reach",
       "candidate-has-evidence",

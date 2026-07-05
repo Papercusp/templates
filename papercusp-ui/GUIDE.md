@@ -46,10 +46,15 @@ Four legs; take only what the app's surfaces need:
   never fork a primitive to hardcode brand values into it.
 - Depend on the grid SUB-PACKAGES directly (decision point `grid-usage`) —
   `@papercusp/papergrid` is the catalog handle, not the import.
-- Route every user-facing noun through the lexicon (decision point
-  `branding-lexicon`): resolve via term keys + the active pack; assert routed
-  keys in tests, not literal strings. A hardcoded display label is a rebrand
-  grep waiting to happen.
+- Know what the lexicon is FOR (decision point `branding-lexicon`):
+  `@papercusp/lexicon`'s `TermKey` is a CLOSED papercusp-internal vocabulary
+  (fleet, harness, operator, …) — route those terms through it wherever your
+  chrome surfaces them, and assert routed keys in tests. Your app's OWN
+  domain nouns ("clipping", "invoice", …) are NOT lexicon terms (WI-2873):
+  keep them in one app-local terms module (a small constants file) so a
+  rebrand is still one edit — do not hack app nouns into papercusp term
+  keys, and never hardcode a display label a rebrand would have to grep
+  for.
 - Declare every component you keep (and the primitives' peer deps) as real
   dependencies — the `components-integrated` check fails a composition wired
   "on paper".
