@@ -27,9 +27,11 @@ construction** — the design of record is
 | Template | Scope | Category | What |
 |---|---|---|---|
 | [`desktop-app`](desktop-app/) | app | app | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app |
+| [`papercusp-webapp`](papercusp-webapp/) | app | app | a WHOLE web app, no agents — the browser twin of `desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the Restart webapp) |
 | [`agentic-desktop-app`](agentic-desktop-app/) | app | app | the app WITH agents: `papercusp-ops-hives` layered onto the `desktop-app` BASE (P-022 — an app template may require another as its base) |
 | [`papercusp-ops-hives`](papercusp-ops-hives/) | aspect | agentic | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam |
 | [`tauri-desktop-shell`](tauri-desktop-shell/) | aspect | shell | the deterministic chassis: Tauri shell → Node/Hono sidecar → embedded Postgres + release kit |
+| [`papercusp-web-host`](papercusp-web-host/) | aspect | shell | the web chassis: Next.js standalone host (tracing root + workspace transpile), operator.json discovery, auth seam, Dockerfile builder (P-029) |
 | [`papercusp-data-layer`](papercusp-data-layer/) | aspect | data | app-owned embedded Postgres + connection discovery + typed-contract write gates |
 | [`papercusp-data-sync`](papercusp-data-sync/) | aspect | data | live UI state sync: client transports + SSE server + event-maintained projections |
 | [`papercusp-search`](papercusp-search/) | aspect | search | search over app data: sources + hybrid retrieval + rerank + RRF fusion |
