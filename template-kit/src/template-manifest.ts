@@ -77,6 +77,27 @@ export interface TemplateDecisionPoint {
   prompt: string;
 }
 
+/** The `enforcedBy` sentinel for a MUST no check enforces (visible, lintable debt). */
+export const MUST_PROSE_ONLY = "prose-only";
+
+/**
+ * A structured MUST invariant (template-prompt-hardening-2026-07-05 P-002).
+ * GUIDEs carry numbered MUST sections; historically their mapping onto the
+ * checks was informal, so unenforced MUSTs were only discovered per build
+ * round (the round-2 GUIDE-gap items). Declaring each MUST here with its
+ * enforcing check makes the enforcement gap a queryable fact: `enforcedBy`
+ * must resolve to a declared check id, or be the literal "prose-only" —
+ * and `unenforcedMusts()` lists the debt.
+ */
+export interface TemplateMust {
+  /** kebab-case id, unique within the template (`thin-shell`). */
+  id: string;
+  /** One-sentence statement of the invariant; GUIDE.md expands on it. */
+  rule: string;
+  /** The check id (within this template) that enforces it, or "prose-only". */
+  enforcedBy: string;
+}
+
 /** One app-parameterized acceptance check shipped in checks/. */
 export interface TemplateCheck {
   /** kebab-case id, unique within the template (`seam-round-trip`). */
@@ -128,6 +149,12 @@ export interface TemplateManifest {
   docs?: string[];
   /** The acceptance suite. Non-empty — checks are the load-bearing replacement for the old deterministic generator. */
   checks: TemplateCheck[];
+  /**
+   * Structured MUST invariants, each linked to the check that enforces it
+   * (or explicitly "prose-only" — visible debt). Optional while templates
+   * adopt; the GUIDE's numbered MUSTs should mirror these ids.
+   */
+  musts?: TemplateMust[];
 }
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -267,7 +294,46 @@ export function validateTemplateManifest(raw: unknown): { ok: boolean; errors: s
     });
   }
 
+  if (raw.musts !== undefined) {
+    if (!Array.isArray(raw.musts)) {
+      errors.push('musts: must be an array of { id, rule, enforcedBy } when present (P-002 structured MUSTs)');
+    } else {
+      // enforcedBy resolves against the DECLARED check ids (best-effort when
+      // checks itself is malformed — those errors are already reported above).
+      const checkIds = new Set(
+        Array.isArray(raw.checks)
+          ? raw.checks.filter(isRecord).map((c) => c.id).filter((id): id is string => typeof id === "string")
+          : [],
+      );
+      const seen = new Set<string>();
+      raw.musts.forEach((m, i) => {
+        if (!isRecord(m)) {
+          errors.push(`musts[${i}]: must be an object { id, rule, enforcedBy }`);
+          return;
+        }
+        if (typeof m.id !== "string" || !KEBAB.test(m.id)) errors.push(`musts[${i}].id: required kebab-case string`);
+        if (typeof m.rule !== "string" || m.rule.trim() === "") errors.push(`musts[${i}].rule: required non-empty string`);
+        if (typeof m.enforcedBy !== "string" || m.enforcedBy.trim() === "") {
+          errors.push(`musts[${i}].enforcedBy: required — a check id or the literal "${MUST_PROSE_ONLY}"`);
+        } else if (m.enforcedBy !== MUST_PROSE_ONLY && !checkIds.has(m.enforcedBy)) {
+          errors.push(
+            `musts[${i}].enforcedBy: '${m.enforcedBy}' is not a declared check id (use "${MUST_PROSE_ONLY}" if nothing enforces it yet)`,
+          );
+        }
+        if (typeof m.id === "string") {
+          if (seen.has(m.id)) errors.push(`musts[${i}]: duplicate must '${m.id}'`);
+          seen.add(m.id);
+        }
+      });
+    }
+  }
+
   return { ok: errors.length === 0, errors };
+}
+
+/** The MUSTs nothing enforces yet — the visible check-coverage debt (P-002). */
+export function unenforcedMusts(manifest: TemplateManifest): TemplateMust[] {
+  return (manifest.musts ?? []).filter((m) => m.enforcedBy === MUST_PROSE_ONLY);
 }
 
 /** Fail-loud form: returns the typed manifest or throws one Error listing every problem. */

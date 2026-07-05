@@ -62,3 +62,16 @@ checks:
     summary: >-
       the composed set resolves (composeTemplates ok: pins consistent, one
       root app scope) and the union of checks is what CI runs
+musts:
+  - id: thin-app-template
+    rule: "The app template adds glue guidance and decision points, never its own components — capability belongs in aspects"
+    enforcedBy: composition-integrity
+  - id: full-union-green
+    rule: "The composed app passes the FULL union of the closure checks — boot-e2e, components-integrated, composition-integrity"
+    enforcedBy: prose-only
+  - id: no-agent-surfaces
+    rule: "No hives and no seam in an app built from this template — if agents appear mid-build, add papercusp-ops-hives to the composition explicitly"
+    enforcedBy: prose-only
+  - id: auth-before-exposure
+    rule: "The web-host auth placeholders are replaced before any non-local exposure"
+    enforcedBy: prose-only

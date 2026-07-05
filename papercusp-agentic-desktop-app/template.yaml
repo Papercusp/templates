@@ -45,3 +45,13 @@ checks:
     summary: >-
       the composed set resolves (composeTemplates ok: pins consistent, one
       root app scope) and the union of checks is what CI runs
+musts:
+  - id: walk-decision-points
+    rule: "Answer EVERY decision point of the closure — the answers are the ship disclosure that makes free composition reviewable (domain is answered once)"
+    enforcedBy: prose-only
+  - id: honor-closure-musts
+    rule: "Honor every closure member MUST tiers in full — the seam discipline is Tier B, the chassis invariants keep it bootable"
+    enforcedBy: prose-only
+  - id: mechanical-validation
+    rule: "Expand through resolveRequiresClosure, compose through composeTemplates, and run the union of checks as the CI gate"
+    enforcedBy: composition-integrity

@@ -65,3 +65,16 @@ checks:
   - id: gym-signals
     run: checks/gym-signals.test.ts
     summary: the hive's guardrail gym signals are present and wired
+musts:
+  - id: seam-only-crossing
+    rule: "Every judgment-plane crossing composes @papercusp/hive-app-seam (bootstrap, work-items transport, ingest loop) — never hand-rolled calls against /api/harness/*"
+    enforcedBy: seam-round-trip
+  - id: one-parse-gate
+    rule: "An app-owned contracts package with strict schemas both directions; the parse gate is the ONLY path from agent output to an app table and rejects emit events, never silent drops"
+    enforcedBy: seam-round-trip
+  - id: confinement-inviolable
+    rule: "Every hive role is read + propose-only against the app dangerous surface, pinned via role capability envelopes; the app blueprints/README.md is the canonical statement of the rule"
+    enforcedBy: confinement-guard
+  - id: nothing-else-crosses
+    rule: "No second transport, no side-channel table writes, no direct DB access from a role"
+    enforcedBy: prose-only

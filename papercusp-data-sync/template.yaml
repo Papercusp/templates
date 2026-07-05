@@ -57,3 +57,13 @@ checks:
     summary: >-
       every pinned component package is a declared dependency of the composed
       app (config section: components)
+musts:
+  - id: sidecar-host-streams
+    rule: "Live surfaces stream over the sidecar host — never a second server for sync"
+    enforcedBy: prose-only
+  - id: burst-policy
+    rule: "Every synced surface has a burst policy (wake floor / coalesce window) — an unbounded change stream into a UI is a self-inflicted outage"
+    enforcedBy: prose-only
+  - id: deps-declared
+    rule: "Every kept component is a real package dependency — not wired on paper"
+    enforcedBy: components-integrated

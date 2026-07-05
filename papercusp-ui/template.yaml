@@ -64,3 +64,16 @@ checks:
     summary: >-
       every pinned component package is a declared dependency of the composed
       app (config section: components)
+musts:
+  - id: headless-primitives
+    rule: "Primitives stay headless and are styled from the app design system — never forked to hardcode brand values"
+    enforcedBy: prose-only
+  - id: grid-subpackages
+    rule: "Depend on the grid sub-packages directly — @papercusp/papergrid is the catalog handle, not the import"
+    enforcedBy: prose-only
+  - id: lexicon-scope
+    rule: "papercusp-internal TermKeys route through the lexicon; the app own domain nouns live in one app-local terms module (WI-2873) — never hardcode a label a rebrand would grep for"
+    enforcedBy: prose-only
+  - id: deps-declared
+    rule: "Every kept component (and the primitives peer deps) is a real package dependency — not wired on paper"
+    enforcedBy: components-integrated

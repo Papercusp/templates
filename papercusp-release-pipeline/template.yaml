@@ -64,3 +64,16 @@ checks:
     summary: >-
       every pinned component package is a declared dependency of the composed
       app (config section: components)
+musts:
+  - id: no-signing-material-in-repo
+    rule: "Signing material never enters the repo — signing.keyPath points outside it"
+    enforcedBy: prose-only
+  - id: kit-bumps-versions
+    rule: "The kit bumps versions, never by hand — every file carrying the version is listed in its config"
+    enforcedBy: prose-only
+  - id: generated-updater-manifests
+    rule: "Updater manifests are generated, never hand-rolled — latest.json comes from the kit"
+    enforcedBy: prose-only
+  - id: buildsidecar-only-seam
+    rule: "buildSidecar() stays the ONLY app-specific code path in the release plane"
+    enforcedBy: prose-only

@@ -61,3 +61,16 @@ checks:
     summary: >-
       every pinned component package is a declared dependency of the composed
       app (config section: components)
+musts:
+  - id: own-postgres-search
+    rule: "Search queries the app OWN embedded Postgres — never a separate search engine or service"
+    enforcedBy: prose-only
+  - id: source-per-surface
+    rule: "Each searchable surface is its own SearchSource owning its SQL — never one source with schema switches"
+    enforcedBy: prose-only
+  - id: secrets-injected
+    rule: "Rerank and embedding-provider keys are injected config — never committed"
+    enforcedBy: prose-only
+  - id: deps-declared
+    rule: "Every kept component is a real package dependency — not wired on paper"
+    enforcedBy: components-integrated

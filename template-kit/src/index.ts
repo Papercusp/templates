@@ -20,8 +20,10 @@ export {
 } from "./component-manifest.js";
 export { COMPONENT_CATALOG } from "./catalog.js";
 export {
+  MUST_PROSE_ONLY,
   parseTemplateManifest,
   TEMPLATE_CATEGORIES,
+  unenforcedMusts,
   validateTemplateAgainstCatalog,
   validateTemplateManifest,
   type TemplateCategory,
@@ -29,6 +31,7 @@ export {
   type TemplateComponentRef,
   type TemplateDecisionPoint,
   type TemplateManifest,
+  type TemplateMust,
   type TemplateRequireRef,
   type TemplateScope,
 } from "./template-manifest.js";
@@ -39,6 +42,11 @@ export {
   type ComposedFrom,
   type TemplateComposition,
 } from "./composition.js";
+export {
+  lintTemplateProse,
+  type TemplateProseFile,
+  type TemplateProseLintInput,
+} from "./guide-lint.js";
 export {
   parseChecksConfig,
   validateChecksConfig,

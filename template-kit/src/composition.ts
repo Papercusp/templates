@@ -38,6 +38,7 @@ import type {
   TemplateComponentRef,
   TemplateDecisionPoint,
   TemplateManifest,
+  TemplateMust,
   TemplateScope,
 } from "./template-manifest.js";
 import { validateTemplateManifest } from "./template-manifest.js";
@@ -72,6 +73,8 @@ export interface TemplateComposition {
    * per-composition — key by (templateId, check.id).
    */
   checks: ComposedFrom<TemplateCheck>[];
+  /** Additive union of structured MUSTs (P-002) — each keeps its source template. */
+  musts: ComposedFrom<TemplateMust>[];
 }
 
 /**
@@ -268,6 +271,7 @@ export function composeTemplates(
     contracts: templates.flatMap((t) => tag(t.id, t.contracts)),
     decisionPoints: templates.flatMap((t) => tag(t.id, t.decisionPoints)),
     checks: templates.flatMap((t) => tag(t.id, t.checks)),
+    musts: templates.flatMap((t) => tag(t.id, t.musts ?? [])),
   };
   return { ok: true, errors: [], composition };
 }

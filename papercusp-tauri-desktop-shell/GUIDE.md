@@ -83,4 +83,4 @@ differently in places; the checks don't care.
    (MUSTs 2–5).
 3. SPA per `ui-shape`; wire `/api`.
 4. Release pipeline via tauri-release-kit.
-5. Run `checks/boot-e2e` (+ composed templates' checks) until green.
+5. Run `checks/boot-e2e.test.ts` (+ composed templates' checks) until green.

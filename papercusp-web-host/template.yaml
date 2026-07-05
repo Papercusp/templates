@@ -62,3 +62,22 @@ checks:
     summary: >-
       composed web app builds, host starts, discovery file written, health
       returns 200
+musts:
+  - id: standalone-output
+    rule: "output standalone + outputFileTracingRoot + complete transpilePackages — all three before first deploy"
+    enforcedBy: prose-only
+  - id: auth-before-exposure
+    rule: "Both auth placeholders replaced before any non-local exposure — the auth-strategy decision point is not optional"
+    enforcedBy: prose-only
+  - id: discovery-lifecycle
+    rule: "The discovery file is written on boot and removed on shutdown"
+    enforcedBy: boot-e2e
+  - id: wire-boot-check
+    rule: "checks/boot-e2e.test.ts is wired in the composed app TEMPLATE_CHECKS_CONFIG boot section, spawn mode in CI"
+    enforcedBy: prose-only
+  - id: next-manual-sig-handle
+    rule: "NEXT_MANUAL_SIG_HANDLE=1 whenever the app registers its own shutdown hook (WI-2880) — else Next truncates async cleanup"
+    enforcedBy: boot-e2e
+  - id: native-deps-copy
+    rule: "A post-build native-deps copy step for every spawn-based dependency (WI-2875) — the standalone tracer will not carry them"
+    enforcedBy: prose-only

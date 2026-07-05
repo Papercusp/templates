@@ -63,6 +63,12 @@ export const PAPERCUSP_OPS_HIVES_TEMPLATE: TemplateManifest = {
     { id: "seam-round-trip", run: "checks/seam-round-trip.test.ts", summary: "enqueue → complete with payload → contract parse gate ingests → app table row exists" },
     { id: "gym-signals", run: "checks/gym-signals.test.ts", summary: "the hive's guardrail gym signals are present and wired" },
   ],
+  musts: [
+    { id: "seam-only-crossing", rule: "Every judgment-plane crossing composes @papercusp/hive-app-seam (bootstrap, work-items transport, ingest loop) — never hand-rolled calls against /api/harness/*", enforcedBy: "seam-round-trip" },
+    { id: "one-parse-gate", rule: "An app-owned contracts package with strict schemas both directions; the parse gate is the ONLY path from agent output to an app table and rejects emit events, never silent drops", enforcedBy: "seam-round-trip" },
+    { id: "confinement-inviolable", rule: "Every hive role is read + propose-only against the app dangerous surface, pinned via role capability envelopes; the app blueprints/README.md is the canonical statement of the rule", enforcedBy: "confinement-guard" },
+    { id: "nothing-else-crosses", rule: "No second transport, no side-channel table writes, no direct DB access from a role", enforcedBy: "prose-only" },
+  ],
 };
 
 /** Aspect: the app chassis — the deterministic plane's host stack + release pipeline. */
@@ -92,6 +98,13 @@ export const TAURI_DESKTOP_SHELL_TEMPLATE: TemplateManifest = {
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml", "agent-insights/templates-component-catalog"],
   checks: [
     { id: "boot-e2e", run: "checks/boot-e2e.test.ts", summary: "composed app builds, sidecar spawns, discovery file written, health returns 200" },
+  ],
+  musts: [
+    { id: "thin-shell", rule: "No domain logic in Rust — the shell is a HOST; packaged sidecar resolution is resource_dir()/dist-sidecar + vendored bin/node + bundled_path_env, dev is the repo dist-sidecar", enforcedBy: "prose-only" },
+    { id: "discovery-file", rule: "Port + pid written to the app home at boot and removed on shutdown — the shell polls it, the CLI reads it", enforcedBy: "boot-e2e" },
+    { id: "graceful-shutdown", rule: "SIGTERM ordering host close, sync stop, PG stop, discovery-file removal, with a force-exit timer; the final unlink is synchronous (WI-2866/WI-2667 lessons)", enforcedBy: "boot-e2e" },
+    { id: "embedded-pg-lifecycle", rule: "Embedded Postgres boot/stop bound to the sidecar, migrations on boot, connection via @papercusp/embedded-pg-discovery, portable initdb flags (WI-2649)", enforcedBy: "boot-e2e" },
+    { id: "env-gated-planes", rule: "Booting with no optional-plane config changes nothing — an unset operator URL means the plane is off, never a crash", enforcedBy: "boot-e2e" },
   ],
 };
 
@@ -131,6 +144,11 @@ export const AGENTIC_DESKTOP_APP_TEMPLATE: TemplateManifest = {
   checks: [
     { id: "composition-integrity", run: "checks/composition-integrity.test.ts", summary: "the composed set resolves (composeTemplates ok: pins consistent, one root app scope) and the union of checks is what CI runs" },
   ],
+  musts: [
+    { id: "walk-decision-points", rule: "Answer EVERY decision point of the closure — the answers are the ship disclosure that makes free composition reviewable (domain is answered once)", enforcedBy: "prose-only" },
+    { id: "honor-closure-musts", rule: "Honor every closure member MUST tiers in full — the seam discipline is Tier B, the chassis invariants keep it bootable", enforcedBy: "prose-only" },
+    { id: "mechanical-validation", rule: "Expand through resolveRequiresClosure, compose through composeTemplates, and run the union of checks as the CI gate", enforcedBy: "composition-integrity" },
+  ],
 };
 
 /**
@@ -168,6 +186,11 @@ export const PAPERCUSP_DATA_SYNC_TEMPLATE: TemplateManifest = {
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml", "agent-insights/templates-component-catalog"],
   checks: [
     { id: "components-integrated", run: "checks/components-integrated.test.ts", summary: "every pinned component package is a declared dependency of the composed app (config section: components)" },
+  ],
+  musts: [
+    { id: "sidecar-host-streams", rule: "Live surfaces stream over the sidecar host — never a second server for sync", enforcedBy: "prose-only" },
+    { id: "burst-policy", rule: "Every synced surface has a burst policy (wake floor / coalesce window) — an unbounded change stream into a UI is a self-inflicted outage", enforcedBy: "prose-only" },
+    { id: "deps-declared", rule: "Every kept component is a real package dependency — not wired on paper", enforcedBy: "components-integrated" },
   ],
 };
 
@@ -207,6 +230,12 @@ export const PAPERCUSP_SEARCH_TEMPLATE: TemplateManifest = {
   checks: [
     { id: "components-integrated", run: "checks/components-integrated.test.ts", summary: "every pinned component package is a declared dependency of the composed app (config section: components)" },
   ],
+  musts: [
+    { id: "own-postgres-search", rule: "Search queries the app OWN embedded Postgres — never a separate search engine or service", enforcedBy: "prose-only" },
+    { id: "source-per-surface", rule: "Each searchable surface is its own SearchSource owning its SQL — never one source with schema switches", enforcedBy: "prose-only" },
+    { id: "secrets-injected", rule: "Rerank and embedding-provider keys are injected config — never committed", enforcedBy: "prose-only" },
+    { id: "deps-declared", rule: "Every kept component is a real package dependency — not wired on paper", enforcedBy: "components-integrated" },
+  ],
 };
 
 /**
@@ -242,6 +271,14 @@ export const PAPERCUSP_DATA_LAYER_TEMPLATE: TemplateManifest = {
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml", "agent-insights/templates-component-catalog"],
   checks: [
     { id: "components-integrated", run: "checks/components-integrated.test.ts", summary: "every pinned component package is a declared dependency of the composed app (config section: components)" },
+  ],
+  musts: [
+    { id: "app-owns-postgres", rule: "The app owns its embedded Postgres under the app home — never a system or external database", enforcedBy: "prose-only" },
+    { id: "no-hardcoded-pg", rule: "Never hardcode the PG port or URL — the port rotates per boot; always resolve through resolvePgUrl", enforcedBy: "prose-only" },
+    { id: "postgres-js-client", rule: "postgres-js is the app PG client, not node-postgres — the search aspect SearchSource types its handle as a postgres-js Sql function (WI-2872)", enforcedBy: "prose-only" },
+    { id: "forward-only-migrations", rule: "Migrations run on boot and are forward-only — a desktop app has no ops window", enforcedBy: "prose-only" },
+    { id: "single-parse-gate", rule: "Every trust-boundary write goes through a single typed-contract parse gate — mandatory for the seam down-leg when composing papercusp-ops-hives", enforcedBy: "prose-only" },
+    { id: "deps-declared", rule: "Every kept component is a real package dependency — not wired on paper", enforcedBy: "components-integrated" },
   ],
 };
 
@@ -281,6 +318,12 @@ export const PAPERCUSP_UI_TEMPLATE: TemplateManifest = {
   checks: [
     { id: "components-integrated", run: "checks/components-integrated.test.ts", summary: "every pinned component package is a declared dependency of the composed app (config section: components)" },
   ],
+  musts: [
+    { id: "headless-primitives", rule: "Primitives stay headless and are styled from the app design system — never forked to hardcode brand values", enforcedBy: "prose-only" },
+    { id: "grid-subpackages", rule: "Depend on the grid sub-packages directly — @papercusp/papergrid is the catalog handle, not the import", enforcedBy: "prose-only" },
+    { id: "lexicon-scope", rule: "papercusp-internal TermKeys route through the lexicon; the app own domain nouns live in one app-local terms module (WI-2873) — never hardcode a label a rebrand would grep for", enforcedBy: "prose-only" },
+    { id: "deps-declared", rule: "Every kept component (and the primitives peer deps) is a real package dependency — not wired on paper", enforcedBy: "components-integrated" },
+  ],
 };
 
 /**
@@ -318,6 +361,11 @@ export const DESKTOP_APP_TEMPLATE: TemplateManifest = {
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml"],
   checks: [
     { id: "composition-integrity", run: "checks/composition-integrity.test.ts", summary: "the composed set resolves (composeTemplates ok: pins consistent, one root app scope) and the union of checks is what CI runs" },
+  ],
+  musts: [
+    { id: "thin-app-template", rule: "The app template adds glue guidance and decision points, never its own components — capability belongs in aspects", enforcedBy: "composition-integrity" },
+    { id: "full-union-green", rule: "The composed app passes the FULL union of the closure checks — boot-e2e, components-integrated, composition-integrity", enforcedBy: "prose-only" },
+    { id: "no-agent-surfaces", rule: "No hives and no seam in an app built from this template — if agents appear mid-build, switch the composition root to papercusp-agentic-desktop-app", enforcedBy: "prose-only" },
   ],
 };
 
@@ -357,6 +405,12 @@ export const RELEASE_PIPELINE_TEMPLATE: TemplateManifest = {
   ],
   checks: [
     { id: "components-integrated", run: "checks/components-integrated.test.ts", summary: "every pinned component package is a declared dependency of the composed app (config section: components)" },
+  ],
+  musts: [
+    { id: "no-signing-material-in-repo", rule: "Signing material never enters the repo — signing.keyPath points outside it", enforcedBy: "prose-only" },
+    { id: "kit-bumps-versions", rule: "The kit bumps versions, never by hand — every file carrying the version is listed in its config", enforcedBy: "prose-only" },
+    { id: "generated-updater-manifests", rule: "Updater manifests are generated, never hand-rolled — latest.json comes from the kit", enforcedBy: "prose-only" },
+    { id: "buildsidecar-only-seam", rule: "buildSidecar() stays the ONLY app-specific code path in the release plane", enforcedBy: "prose-only" },
   ],
 };
 
@@ -422,6 +476,14 @@ export const PAPERCUSP_WEB_HOST_TEMPLATE: TemplateManifest = {
   checks: [
     { id: "boot-e2e", run: "checks/boot-e2e.test.ts", summary: "composed web app builds, host starts, discovery file written, health returns 200" },
   ],
+  musts: [
+    { id: "standalone-output", rule: "output standalone + outputFileTracingRoot + complete transpilePackages — all three before first deploy", enforcedBy: "prose-only" },
+    { id: "auth-before-exposure", rule: "Both auth placeholders replaced before any non-local exposure — the auth-strategy decision point is not optional", enforcedBy: "prose-only" },
+    { id: "discovery-lifecycle", rule: "The discovery file is written on boot and removed on shutdown", enforcedBy: "boot-e2e" },
+    { id: "wire-boot-check", rule: "checks/boot-e2e.test.ts is wired in the composed app TEMPLATE_CHECKS_CONFIG boot section, spawn mode in CI", enforcedBy: "prose-only" },
+    { id: "next-manual-sig-handle", rule: "NEXT_MANUAL_SIG_HANDLE=1 whenever the app registers its own shutdown hook (WI-2880) — else Next truncates async cleanup", enforcedBy: "boot-e2e" },
+    { id: "native-deps-copy", rule: "A post-build native-deps copy step for every spawn-based dependency (WI-2875) — the standalone tracer will not carry them", enforcedBy: "prose-only" },
+  ],
 };
 
 /**
@@ -482,6 +544,12 @@ export const PAPERCUSP_WEBAPP_TEMPLATE: TemplateManifest = {
   ],
   checks: [
     { id: "composition-integrity", run: "checks/composition-integrity.test.ts", summary: "the composed set resolves (composeTemplates ok: pins consistent, one root app scope) and the union of checks is what CI runs" },
+  ],
+  musts: [
+    { id: "thin-app-template", rule: "The app template adds glue guidance and decision points, never its own components — capability belongs in aspects", enforcedBy: "composition-integrity" },
+    { id: "full-union-green", rule: "The composed app passes the FULL union of the closure checks — boot-e2e, components-integrated, composition-integrity", enforcedBy: "prose-only" },
+    { id: "no-agent-surfaces", rule: "No hives and no seam in an app built from this template — if agents appear mid-build, add papercusp-ops-hives to the composition explicitly", enforcedBy: "prose-only" },
+    { id: "auth-before-exposure", rule: "The web-host auth placeholders are replaced before any non-local exposure", enforcedBy: "prose-only" },
   ],
 };
 
