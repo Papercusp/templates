@@ -48,7 +48,7 @@ decisionPoints:
       metrics (search-core's shared eval-harness contract)? A search plane
       without an eval set degrades silently.
 composesWith:
-  - tauri-desktop-shell
+  - papercusp-tauri-desktop-shell
   - papercusp-data-sync
   - papercusp-data-layer
 docs:

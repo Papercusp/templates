@@ -1,7 +1,7 @@
 # papercusp-webapp — composition GUIDE
 
 **Papercusp Official: Web App.** This is an **app-scope** template — the
-starting point for a WHOLE web app, exactly as `desktop-app` is for a
+starting point for a WHOLE web app, exactly as `papercusp-desktop-app` is for a
 desktop app. It is a THIN pure composition: no components of its own; its
 hard `requires` pull in the web chassis + data + UI closure:
 
@@ -18,7 +18,7 @@ hard `requires` pull in the web chassis + data + UI closure:
   brand-lexicon terminology.
 
 Need agents? Do NOT bolt them on here — layer `papercusp-ops-hives` onto
-this composition the way `agentic-desktop-app` layers onto `desktop-app`.
+this composition the way `papercusp-agentic-desktop-app` layers onto `papercusp-desktop-app`.
 
 ## MUST — consult the live papercusp docs when this GUIDE is not enough
 

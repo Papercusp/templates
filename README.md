@@ -26,17 +26,17 @@ construction** — the design of record is
 
 | Template | Scope | Category | What |
 |---|---|---|---|
-| [`desktop-app`](desktop-app/) | app | app | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app |
-| [`papercusp-webapp`](papercusp-webapp/) | app | app | a WHOLE web app, no agents — the browser twin of `desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the first papercusp webapp) |
-| [`agentic-desktop-app`](agentic-desktop-app/) | app | app | the app WITH agents: `papercusp-ops-hives` layered onto the `desktop-app` BASE (P-022 — an app template may require another as its base) |
+| [`papercusp-desktop-app`](papercusp-desktop-app/) | app | app | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app |
+| [`papercusp-webapp`](papercusp-webapp/) | app | app | a WHOLE web app, no agents — the browser twin of `papercusp-desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the first papercusp webapp) |
+| [`papercusp-agentic-desktop-app`](papercusp-agentic-desktop-app/) | app | app | the app WITH agents: `papercusp-ops-hives` layered onto the `papercusp-desktop-app` BASE (P-022 — an app template may require another as its base) |
 | [`papercusp-ops-hives`](papercusp-ops-hives/) | aspect | agentic | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam |
-| [`tauri-desktop-shell`](tauri-desktop-shell/) | aspect | shell | the deterministic chassis: Tauri shell → Node/Hono sidecar → embedded Postgres + release kit |
+| [`papercusp-tauri-desktop-shell`](papercusp-tauri-desktop-shell/) | aspect | shell | the deterministic chassis: Tauri shell → Node/Hono sidecar → embedded Postgres + release kit |
 | [`papercusp-web-host`](papercusp-web-host/) | aspect | shell | the web chassis: Next.js standalone host (tracing root + workspace transpile), operator.json discovery, auth seam, Dockerfile builder (P-029) |
 | [`papercusp-data-layer`](papercusp-data-layer/) | aspect | data | app-owned embedded Postgres + connection discovery + typed-contract write gates |
 | [`papercusp-data-sync`](papercusp-data-sync/) | aspect | data | live UI state sync: client transports + SSE server + event-maintained projections |
 | [`papercusp-search`](papercusp-search/) | aspect | search | search over app data: sources + hybrid retrieval + rerank + RRF fusion |
 | [`papercusp-ui`](papercusp-ui/) | aspect | ui | the operator-style SPA kit: headless primitives, papergrid, dock-workbench, lexicon |
-| [`release-pipeline`](release-pipeline/) | aspect | release | tauri-release-kit as an aspect: channels, signing, updater feed, target matrix (P-023) |
+| [`papercusp-release-pipeline`](papercusp-release-pipeline/) | aspect | release | tauri-release-kit as an aspect: channels, signing, updater feed, target matrix (P-023) |
 
 An app built from N templates must pass the **union of their checks**
 (`composeTemplates` — see the schema doc §Composition semantics). An app-scope
@@ -57,7 +57,7 @@ TEMPLATE_CHECKS_CONFIG=<config> npm test -w @papercusp/templates   # the full un
 ```
 
 Worked example config:
-[`agentic-desktop-app/reference/worked-example.checks-config.json`](agentic-desktop-app/reference/worked-example.checks-config.json).
+[`papercusp-agentic-desktop-app/reference/worked-example.checks-config.json`](papercusp-agentic-desktop-app/reference/worked-example.checks-config.json).
 Per-check contracts: each template's `checks/README.md`.
 
 ## The template gym (landed: P-009)
@@ -149,7 +149,7 @@ official v1 mechanism that closes them:
 - **Worked exemplars are papercusp-internal** — the templates cite proven
   shapes, not repos to clone. The PORTABLE truth every builder can rely on
   is each template's `GUIDE.md` + `checks/` + the checked-in worked configs
-  (e.g. `agentic-desktop-app/reference/worked-example.checks-config.json`).
+  (e.g. `papercusp-agentic-desktop-app/reference/worked-example.checks-config.json`).
 
 ## Cupboard install
 

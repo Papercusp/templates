@@ -56,7 +56,7 @@ export const PAPERCUSP_OPS_HIVES_TEMPLATE: TemplateManifest = {
     { id: "domain-roles", prompt: "Which member roles does the domain hive place, and with what capability envelopes (confinement rule stays inviolable)?" },
     { id: "app-tables", prompt: "Which app tables does ingested contract output land in, and what is the app-plane read model over them?" },
   ],
-  composesWith: ["tauri-desktop-shell", "agentic-desktop-app"],
+  composesWith: ["papercusp-tauri-desktop-shell", "papercusp-agentic-desktop-app"],
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml", "agent-insights/templates-component-catalog"],
   checks: [
     { id: "confinement-guard", run: "checks/confinement-guard.test.ts", summary: "no hive role holds cart/checkout/vault/approvals-write-analog capabilities" },
@@ -67,7 +67,7 @@ export const PAPERCUSP_OPS_HIVES_TEMPLATE: TemplateManifest = {
 
 /** Aspect: the app chassis — the deterministic plane's host stack + release pipeline. */
 export const TAURI_DESKTOP_SHELL_TEMPLATE: TemplateManifest = {
-  id: "tauri-desktop-shell",
+  id: "papercusp-tauri-desktop-shell",
   version: "0.1.0",
   scope: "aspect",
   category: "shell",
@@ -88,7 +88,7 @@ export const TAURI_DESKTOP_SHELL_TEMPLATE: TemplateManifest = {
     { id: "ui-shape", prompt: "What SPA surface does the deterministic plane need (grids, approvals view, streams)? FREE tier — compose as judged best." },
     { id: "app-identity", prompt: "App name, bundle identifier, app-home directory, and release channels (feeds tauri.conf + tauri-release-kit config)." },
   ],
-  composesWith: ["papercusp-ops-hives", "agentic-desktop-app"],
+  composesWith: ["papercusp-ops-hives", "papercusp-agentic-desktop-app"],
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml", "agent-insights/templates-component-catalog"],
   checks: [
     { id: "boot-e2e", run: "checks/boot-e2e.test.ts", summary: "composed app builds, sidecar spawns, discovery file written, health returns 200" },
@@ -98,19 +98,19 @@ export const TAURI_DESKTOP_SHELL_TEMPLATE: TemplateManifest = {
 /**
  * App: template #1 — a THIN pure composition (no own components; P-014 allows
  * this exactly for non-empty composesWith). P-022 (owner #5): the agentic app
- * is a LAYER — it requires the non-agentic 'desktop-app' as its BASE app
- * (whose closure brings tauri-desktop-shell + papercusp-data-layer +
+ * is a LAYER — it requires the non-agentic 'papercusp-desktop-app' as its BASE app
+ * (whose closure brings papercusp-tauri-desktop-shell + papercusp-data-layer +
  * papercusp-ui) and adds papercusp-ops-hives, the judgment plane, on top.
  */
 export const AGENTIC_DESKTOP_APP_TEMPLATE: TemplateManifest = {
-  id: "agentic-desktop-app",
+  id: "papercusp-agentic-desktop-app",
   version: "0.1.0",
   scope: "app",
   category: "app",
   summary:
     "The proven two-plane agentic desktop app shape: papercusp-ops-hives " +
-    "(judgment plane + the ONE seam) layered onto the non-agentic desktop-app BASE template — whose " +
-    "requires-closure brings the tauri-desktop-shell chassis, papercusp-data-layer, and papercusp-ui — " +
+    "(judgment plane + the ONE seam) layered onto the non-agentic papercusp-desktop-app BASE template — whose " +
+    "requires-closure brings the papercusp-tauri-desktop-shell chassis, papercusp-data-layer, and papercusp-ui — " +
     "plus glue guidance. An app built from this composition must pass the UNION of the full closure's " +
     "checks — that additive rule is what keeps free-form composition safe without a deterministic composer.",
   components: [],
@@ -118,13 +118,13 @@ export const AGENTIC_DESKTOP_APP_TEMPLATE: TemplateManifest = {
   decisionPoints: [
     { id: "domain", prompt: "What is the app's domain — the noun the deterministic plane ledgers and the judgment plane reasons about? Drives every aspect-level decision point." },
   ],
-  composesWith: ["desktop-app", "papercusp-ops-hives"],
-  // P-015: requires is the HARD pinned edge. P-022 re-layered it: desktop-app
+  composesWith: ["papercusp-desktop-app", "papercusp-ops-hives"],
+  // P-015: requires is the HARD pinned edge. P-022 re-layered it: papercusp-desktop-app
   // is the required BASE app (a base app joins the composition without owning
   // it — composeTemplates' root-app rule) and pulls the whole chassis + data
   // + UI closure; papercusp-ops-hives adds the judgment plane.
   requires: [
-    { id: "desktop-app", version: "0.1.0" },
+    { id: "papercusp-desktop-app", version: "0.1.0" },
     { id: "papercusp-ops-hives", version: "0.1.0" },
   ],
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml"],
@@ -164,7 +164,7 @@ export const PAPERCUSP_DATA_SYNC_TEMPLATE: TemplateManifest = {
     { id: "projection-set", prompt: "Which derived read models does the UI query (feed projection-index from the change stream), and what burst policy per subscriber (wake floor / coalesce window via debounce-coalesce)?" },
     { id: "large-assets", prompt: "Does the app move large files (models, media, archives)? If so, route them through resumable-download with streaming checksums; if not, drop the component from the composition." },
   ],
-  composesWith: ["tauri-desktop-shell", "papercusp-search", "papercusp-data-layer"],
+  composesWith: ["papercusp-tauri-desktop-shell", "papercusp-search", "papercusp-data-layer"],
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml", "agent-insights/templates-component-catalog"],
   checks: [
     { id: "components-integrated", run: "checks/components-integrated.test.ts", summary: "every pinned component package is a declared dependency of the composed app (config section: components)" },
@@ -202,7 +202,7 @@ export const PAPERCUSP_SEARCH_TEMPLATE: TemplateManifest = {
     { id: "relevance-stack", prompt: "Is raw retrieval enough, or does the app need the precision stack — cross-encoder reranking (@papercusp/rerank; needs a ZeroEntropy API key) plus search-core's steering/rewrite/category-match? Drop rerank + search-core from the composition when plain retrieval suffices." },
     { id: "relevance-evals", prompt: "What proves relevance for THIS domain — which golden queries and which metrics (search-core's shared eval-harness contract)? A search plane without an eval set degrades silently." },
   ],
-  composesWith: ["tauri-desktop-shell", "papercusp-data-sync", "papercusp-data-layer"],
+  composesWith: ["papercusp-tauri-desktop-shell", "papercusp-data-sync", "papercusp-data-layer"],
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml", "agent-insights/templates-component-catalog"],
   checks: [
     { id: "components-integrated", run: "checks/components-integrated.test.ts", summary: "every pinned component package is a declared dependency of the composed app (config section: components)" },
@@ -238,7 +238,7 @@ export const PAPERCUSP_DATA_LAYER_TEMPLATE: TemplateManifest = {
     { id: "connection-resolution", prompt: "Parameterize @papercusp/embedded-pg-discovery for THIS app: which env vars (in priority order), which discovery-file path under the app home, which fallback URL? Never hardcode the port — it rotates per boot." },
     { id: "contract-gates", prompt: "Which writes cross a trust boundary (agent output, imported files, network payloads)? Each gets the typed-contracts discipline — a dedicated contracts package + ONE parse gate, rejects surfaced as events. If the app composes papercusp-ops-hives this is MANDATORY for the seam; if nothing untrusted writes, drop the pattern." },
   ],
-  composesWith: ["tauri-desktop-shell", "papercusp-data-sync", "papercusp-search"],
+  composesWith: ["papercusp-tauri-desktop-shell", "papercusp-data-sync", "papercusp-search"],
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml", "agent-insights/templates-component-catalog"],
   checks: [
     { id: "components-integrated", run: "checks/components-integrated.test.ts", summary: "every pinned component package is a declared dependency of the composed app (config section: components)" },
@@ -276,7 +276,7 @@ export const PAPERCUSP_UI_TEMPLATE: TemplateManifest = {
     { id: "workbench-layout", prompt: "What is the panel layout — which panels register in the dock-workbench registry, what is the default logical layout, and where does layout persistence live (the app's data layer vs localStorage)?" },
     { id: "branding-lexicon", prompt: "How are user-facing nouns kept rebrandable? @papercusp/lexicon's TermKey is a CLOSED papercusp-internal vocabulary (fleet, harness, operator, ...) resolved through the active brand pack — route THOSE terms through it (wire the configure*() host seam to the app's pack selection) wherever your chrome surfaces them. The app's OWN domain nouns are NOT lexicon terms: keep them in one app-local terms module so a rebrand is still one edit — never hardcode a display label a rebrand would have to grep for." },
   ],
-  composesWith: ["tauri-desktop-shell", "papercusp-data-sync"],
+  composesWith: ["papercusp-tauri-desktop-shell", "papercusp-data-sync"],
   docs: ["agent-insights/templates-system-design", "agent-insights/templates-template-yaml", "agent-insights/templates-component-catalog"],
   checks: [
     { id: "components-integrated", run: "checks/components-integrated.test.ts", summary: "every pinned component package is a declared dependency of the composed app (config section: components)" },
@@ -290,16 +290,16 @@ export const PAPERCUSP_UI_TEMPLATE: TemplateManifest = {
  * template re-layers onto this (owner #5 / P-022).
  */
 export const DESKTOP_APP_TEMPLATE: TemplateManifest = {
-  id: "desktop-app",
+  id: "papercusp-desktop-app",
   version: "0.1.0",
   scope: "app",
   category: "app",
   summary:
-    "A whole papercusp-style desktop app with NO agent orchestration: the tauri-desktop-shell chassis (thin " +
+    "A whole papercusp-style desktop app with NO agent orchestration: the papercusp-tauri-desktop-shell chassis (thin " +
     "Tauri host → Node/Hono sidecar → release pipeline) + papercusp-data-layer (app-owned embedded Postgres, " +
     "connection discovery, typed-contract write gates) + papercusp-ui (headless primitives, data grids, dock " +
     "workbench, brand lexicon), pulled in as hard requires. A thin pure composition — no own components; an " +
-    "app built from it must pass the UNION of the closure's checks. Need agents? Use agentic-desktop-app, " +
+    "app built from it must pass the UNION of the closure's checks. Need agents? Use papercusp-agentic-desktop-app, " +
     "which layers the judgment plane on top of this.",
   components: [],
   contracts: [],
@@ -307,11 +307,11 @@ export const DESKTOP_APP_TEMPLATE: TemplateManifest = {
     { id: "domain", prompt: "What is the app's domain — the noun its data layer ledgers and its UI surfaces? Drives every aspect-level decision point (schema, searchable surfaces, panels, lexicon terms)." },
     { id: "optional-planes", prompt: "Beyond the required closure, does the app need live UI state sync (compose papercusp-data-sync) or search over its data (compose papercusp-search)? Add them to the composition now if so — both are designed to drop onto this chassis." },
   ],
-  composesWith: ["tauri-desktop-shell", "papercusp-data-layer", "papercusp-ui", "papercusp-data-sync", "papercusp-search"],
+  composesWith: ["papercusp-tauri-desktop-shell", "papercusp-data-layer", "papercusp-ui", "papercusp-data-sync", "papercusp-search"],
   // P-015: HARD pinned deps — composing/installing this app template pulls
   // the whole chassis+data+ui closure in; the checks union covers the closure.
   requires: [
-    { id: "tauri-desktop-shell", version: "0.1.0" },
+    { id: "papercusp-tauri-desktop-shell", version: "0.1.0" },
     { id: "papercusp-data-layer", version: "0.1.0" },
     { id: "papercusp-ui", version: "0.1.0" },
   ],
@@ -329,7 +329,7 @@ export const DESKTOP_APP_TEMPLATE: TemplateManifest = {
  * composing both stays pin-consistent.
  */
 export const RELEASE_PIPELINE_TEMPLATE: TemplateManifest = {
-  id: "release-pipeline",
+  id: "papercusp-release-pipeline",
   version: "0.1.0",
   scope: "aspect",
   category: "release",
@@ -348,7 +348,7 @@ export const RELEASE_PIPELINE_TEMPLATE: TemplateManifest = {
     { id: "signing-and-updater", prompt: "Where does the Tauri signing key live (keyPath + passwordEnv — the key and password are NEVER committed; keychain/keyfile per platform), and where do updater manifests point (latestJsonUrl — usually the gh release asset URL)? A desktop app without signing/updater wiring is a prototype." },
     { id: "sidecar-build", prompt: "What does buildSidecar(ctx) do for THIS app — the ONE injected seam (worked instances range from ~42 lines of esbuild to a ~1,070-line bundler)? Keep it a pure function of the repo tree; everything else is the kit's." },
   ],
-  composesWith: ["tauri-desktop-shell", "desktop-app", "agentic-desktop-app"],
+  composesWith: ["papercusp-tauri-desktop-shell", "papercusp-desktop-app", "papercusp-agentic-desktop-app"],
   docs: [
     "agent-insights/templates-system-design",
     "agent-insights/templates-template-yaml",
@@ -364,7 +364,7 @@ export const RELEASE_PIPELINE_TEMPLATE: TemplateManifest = {
  * Aspect: the web app chassis (owner directive 2026-07-05 / P-029 — extracted
  * from the origin-webapp audit, agent-insights/
  * restart-webapp-audit-papercusp-webapp-template). The web twin of
- * tauri-desktop-shell: the HOST is config/skeleton (a pattern component),
+ * papercusp-tauri-desktop-shell: the HOST is config/skeleton (a pattern component),
  * not a lib — the heavy web stack (UI kit, sync, search) already lives in
  * the sibling aspect templates.
  */
@@ -374,7 +374,7 @@ export const PAPERCUSP_WEB_HOST_TEMPLATE: TemplateManifest = {
   scope: "aspect",
   category: "shell",
   summary:
-    "The web app chassis — the web twin of tauri-desktop-shell, extracted from the first " +
+    "The web app chassis — the web twin of papercusp-tauri-desktop-shell, extracted from the first " +
     "papercusp webapp: a Next.js app-router host built with output:'standalone' (outputFileTracingRoot at " +
     "the monorepo root + transpilePackages for every workspace lib — the classic monorepo miss), started as " +
     "node server.js with static/public assets staged in, operator.json discovery written on boot, an auth " +
@@ -426,7 +426,7 @@ export const PAPERCUSP_WEB_HOST_TEMPLATE: TemplateManifest = {
 
 /**
  * App: the non-agentic whole-WEB-app template (owner directive 2026-07-05 /
- * P-030 — 'Papercusp Official: Web App'). What desktop-app is to the desktop
+ * P-030 — 'Papercusp Official: Web App'). What papercusp-desktop-app is to the desktop
  * this is to the browser: a THIN pure composition swapping the tauri chassis
  * for papercusp-web-host; data + UI closure identical.
  */
@@ -436,13 +436,13 @@ export const PAPERCUSP_WEBAPP_TEMPLATE: TemplateManifest = {
   scope: "app",
   category: "app",
   summary:
-    "A whole papercusp-style WEB app — what desktop-app is to the desktop, this is to the browser (extracted " +
+    "A whole papercusp-style WEB app — what papercusp-desktop-app is to the desktop, this is to the browser (extracted " +
     "from the first papercusp webapp): the papercusp-web-host chassis (Next.js " +
     "standalone host, auth seam, deploy skeleton) + papercusp-data-layer (app-owned Postgres, connection " +
     "discovery, typed-contract write gates) + papercusp-ui (headless primitives, data grids, dock workbench, " +
     "brand lexicon), pulled in as hard requires. A thin pure composition — no own components; an app built " +
     "from it must pass the UNION of the closure's checks. No agent plane here; an agentic web app layers " +
-    "papercusp-ops-hives onto this the way agentic-desktop-app layers onto desktop-app.",
+    "papercusp-ops-hives onto this the way papercusp-agentic-desktop-app layers onto papercusp-desktop-app.",
   components: [],
   contracts: [],
   decisionPoints: [

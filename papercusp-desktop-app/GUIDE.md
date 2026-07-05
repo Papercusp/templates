@@ -1,11 +1,11 @@
-# desktop-app — composition GUIDE
+# papercusp-desktop-app — composition GUIDE
 
 **Papercusp Official: Desktop App.** This is an **app-scope** template — the
 starting point for a WHOLE desktop app that does **not** need agent
 orchestration. It is a THIN pure composition: no components of its own; its
 hard `requires` pull in the full chassis + data + UI closure:
 
-- **`tauri-desktop-shell`** — the deterministic chassis: thin Tauri 2 host →
+- **`papercusp-tauri-desktop-shell`** — the deterministic chassis: thin Tauri 2 host →
   Node/Hono sidecar (SPA + /api on a free localhost port) → embedded
   Postgres → tauri-release-kit build/release pipeline.
 - **`papercusp-data-layer`** — the app-owned data plane: embedded Postgres
@@ -16,7 +16,7 @@ hard `requires` pull in the full chassis + data + UI closure:
   the papergrid data-grid stack, the dock-workbench panel shell, and
   brand-lexicon terminology.
 
-Need agents? Do NOT bolt them on here — use **`agentic-desktop-app`**, which
+Need agents? Do NOT bolt them on here — use **`papercusp-agentic-desktop-app`**, which
 layers the ops-hives judgment plane onto this same chassis.
 
 ## MUST — consult the live papercusp docs when this GUIDE is not enough
@@ -57,7 +57,7 @@ seam convention, a release step — do NOT guess:
   and `composition-integrity` (the set itself).
 - No agent-orchestration surfaces in an app built from THIS template — no
   hives, no seam. If the requirement appears mid-build, switch the
-  composition root to `agentic-desktop-app` instead of hand-rolling agents.
+  composition root to `papercusp-agentic-desktop-app` instead of hand-rolling agents.
 
 ## SHOULD
 

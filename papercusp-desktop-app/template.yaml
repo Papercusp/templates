@@ -1,22 +1,22 @@
-# desktop-app — 'Papercusp Official: Desktop App' (scope: app, category: app;
+# papercusp-desktop-app — 'Papercusp Official: Desktop App' (scope: app, category: app;
 # owner directive 2026-07-04 #4 / P-021). A WHOLE desktop app WITHOUT agent
-# orchestration: a THIN pure composition pulling tauri-desktop-shell +
+# orchestration: a THIN pure composition pulling papercusp-tauri-desktop-shell +
 # papercusp-data-layer + papercusp-ui via hard requires. The agentic app
 # template re-layers on top of this (owner #5 / P-022). Machine twin:
 # @papercusp/template-kit src/reference-templates.ts DESKTOP_APP_TEMPLATE —
 # the kit's suite pins this file to it.
-id: desktop-app
+id: papercusp-desktop-app
 version: "0.1.0"
 scope: app
 category: app
 summary: >-
   A whole papercusp-style desktop app with NO agent orchestration: the
-  tauri-desktop-shell chassis (thin Tauri host → Node/Hono sidecar → release
+  papercusp-tauri-desktop-shell chassis (thin Tauri host → Node/Hono sidecar → release
   pipeline) + papercusp-data-layer (app-owned embedded Postgres, connection
   discovery, typed-contract write gates) + papercusp-ui (headless primitives,
   data grids, dock workbench, brand lexicon), pulled in as hard requires. A
   thin pure composition — no own components; an app built from it must pass
-  the UNION of the closure's checks. Need agents? Use agentic-desktop-app,
+  the UNION of the closure's checks. Need agents? Use papercusp-agentic-desktop-app,
   which layers the judgment plane on top of this.
 components: []
 contracts: []
@@ -33,7 +33,7 @@ decisionPoints:
       papercusp-search)? Add them to the composition now if so — both are
       designed to drop onto this chassis.
 composesWith:
-  - tauri-desktop-shell
+  - papercusp-tauri-desktop-shell
   - papercusp-data-layer
   - papercusp-ui
   - papercusp-data-sync
@@ -41,7 +41,7 @@ composesWith:
 # P-015: HARD pinned deps — composing/installing this app template pulls the
 # whole chassis+data+ui closure in; the checks union covers the closure.
 requires:
-  - { id: tauri-desktop-shell, version: 0.1.0 }
+  - { id: papercusp-tauri-desktop-shell, version: 0.1.0 }
   - { id: papercusp-data-layer, version: 0.1.0 }
   - { id: papercusp-ui, version: 0.1.0 }
 docs:

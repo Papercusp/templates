@@ -90,7 +90,7 @@ export interface ChecksCompositionSection {
 
 /**
  * `components-integrated` (P-017) — the generic check every lib-integration
- * aspect template (data-sync, search, data-layer, ui, release-pipeline)
+ * aspect template (data-sync, search, data-layer, ui, papercusp-release-pipeline)
  * ships: the composed app actually DEPENDS on the template's pinned component
  * packages. `packages` lists the npm package names the app must declare
  * (dependencies or devDependencies, any workspace package.json under root).

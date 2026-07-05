@@ -14,8 +14,8 @@
  *   composition rules the design doc states (§Composition):
  *     · exactly ONE ROOT scope:'app' template per composition (two whole-app
  *       scaffolds cannot both own an app). P-022: an app template MAY require
- *       another app template as its BASE (agentic-desktop-app layers the
- *       judgment plane onto desktop-app) — a required base app joins the
+ *       another app template as its BASE (papercusp-agentic-desktop-app layers the
+ *       judgment plane onto papercusp-desktop-app) — a required base app joins the
  *       composition without owning it; only an app no other app in the
  *       selection requires is a root, and there must be exactly one;
  *     · component pins must be CONSISTENT — the same catalog component pinned
@@ -56,8 +56,8 @@ export interface TemplateComposition {
   scope: TemplateScope;
   /**
    * The ROOT app-scope template when present — the one app no other app in
-   * the selection requires (P-022: a required BASE app, e.g. desktop-app
-   * under agentic-desktop-app, is a member but never the owner).
+   * the selection requires (P-022: a required BASE app, e.g. papercusp-desktop-app
+   * under papercusp-agentic-desktop-app, is a member but never the owner).
    */
   appTemplateId?: string;
   /** Deduped union of component refs (pins verified consistent across the set). */
@@ -82,7 +82,7 @@ export interface TemplateComposition {
  * `allowExternalComposesWith` relaxes ONLY the composesWith-resolution leg,
  * for validating a materialized app's CHOSEN subset (WI-2881): composesWith
  * is descriptive affinity — an aspect legitimately names apps the chosen set
- * does not include (e.g. the data/ui aspects name tauri-desktop-shell inside
+ * does not include (e.g. the data/ui aspects name papercusp-tauri-desktop-shell inside
  * a web-only composition). Default STRICT is the registry mode, where a
  * dangling ref is rot (a typo'd or deleted template id must fail loudly).
  * `requires` stays a HARD edge in both modes.
@@ -197,7 +197,7 @@ export function composeTemplates(
   }
 
   // P-022: an app template may REQUIRE another app template as its BASE
-  // (agentic-desktop-app layers onto desktop-app). A base app is a member of
+  // (papercusp-agentic-desktop-app layers onto papercusp-desktop-app). A base app is a member of
   // the composition but never its owner — the single ROOT app (one no other
   // app in the selection requires) owns it. Two independent roots are still
   // the "two whole-app scaffolds cannot both own an app" conflict.

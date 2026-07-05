@@ -1,4 +1,4 @@
-# tauri-desktop-shell — composition GUIDE
+# papercusp-tauri-desktop-shell — composition GUIDE
 
 **You are the building agent.** This aspect composes the **deterministic
 chassis** of a desktop app: thin Tauri shell → Node/Hono sidecar → embedded

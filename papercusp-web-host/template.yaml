@@ -1,6 +1,6 @@
 # papercusp-web-host — aspect: the web app chassis (P-029; extracted per the
 # origin-webapp audit — agent-insights/restart-webapp-audit-papercusp-webapp-
-# template). The web twin of tauri-desktop-shell. Machine twin:
+# template). The web twin of papercusp-tauri-desktop-shell. Machine twin:
 # @papercusp/template-kit src/reference-templates.ts
 # PAPERCUSP_WEB_HOST_TEMPLATE — the kit's suite pins this file to it.
 id: papercusp-web-host
@@ -8,7 +8,7 @@ version: "0.1.0"
 scope: aspect
 category: shell
 summary: >-
-  The web app chassis — the web twin of tauri-desktop-shell, extracted from
+  The web app chassis — the web twin of papercusp-tauri-desktop-shell, extracted from
   the first papercusp webapp: a Next.js app-router host
   built with output:'standalone' (outputFileTracingRoot at the monorepo root
   + transpilePackages for every workspace lib — the classic monorepo miss),

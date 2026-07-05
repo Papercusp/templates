@@ -9,7 +9,7 @@ What every builder can rely on, wherever this template was cloned from:
 - **The contract template in `../contracts/`** — `candidate-set.ts`, the
   typed down-leg contract you specialize per domain.
 - **Worked checks-config**:
-  [`../../agentic-desktop-app/reference/worked-example.checks-config.json`](../../agentic-desktop-app/reference/worked-example.checks-config.json)
+  [`../../papercusp-agentic-desktop-app/reference/worked-example.checks-config.json`](../../papercusp-agentic-desktop-app/reference/worked-example.checks-config.json)
   — its `confinement`, `seam`, and `gym` sections configure this template's
   checks.
 - **Your papercusp install** — the docs at `/internal/docs` (start with

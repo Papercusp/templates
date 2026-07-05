@@ -45,8 +45,8 @@ decisionPoints:
       Which app tables does ingested contract output land in, and what is the
       app-plane read model over them?
 composesWith:
-  - tauri-desktop-shell
-  - agentic-desktop-app
+  - papercusp-tauri-desktop-shell
+  - papercusp-agentic-desktop-app
 docs:
   - agent-insights/templates-system-design
   - agent-insights/templates-template-yaml

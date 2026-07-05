@@ -1,6 +1,6 @@
 /**
  * boot-e2e — the composed app boots: sidecar spawns, discovery file written,
- * health 200, graceful shutdown cleans up. (tauri-desktop-shell template
+ * health 200, graceful shutdown cleans up. (papercusp-tauri-desktop-shell template
  * check; plan app-templates-2026-07-04 P-007.)
  *
  * PORTABLE + APP-PARAMETERIZED: copied verbatim into a composed app, driven by

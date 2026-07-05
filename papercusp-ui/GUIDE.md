@@ -67,7 +67,7 @@ Four legs; take only what the app's surfaces need:
   `papercusp-data-layer` template) rather than browser storage when the app
   has one — layouts survive reinstalls with the app home.
 - Serve the SPA from the sidecar host (`hono-host` in
-  `tauri-desktop-shell`) — this kit is the SPA's inside, not a second host.
+  `papercusp-tauri-desktop-shell`) — this kit is the SPA's inside, not a second host.
 
 ## FREE
 

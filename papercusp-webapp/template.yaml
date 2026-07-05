@@ -1,5 +1,5 @@
 # papercusp-webapp — 'Papercusp Official: Web App' (scope: app, category:
-# app; owner directive 2026-07-05 / P-030). What desktop-app is to the
+# app; owner directive 2026-07-05 / P-030). What papercusp-desktop-app is to the
 # desktop this is to the browser: a THIN pure composition swapping the tauri
 # chassis for papercusp-web-host; data + UI closure identical. Machine twin:
 # @papercusp/template-kit src/reference-templates.ts
@@ -9,7 +9,7 @@ version: "0.1.0"
 scope: app
 category: app
 summary: >-
-  A whole papercusp-style WEB app — what desktop-app is to the desktop, this
+  A whole papercusp-style WEB app — what papercusp-desktop-app is to the desktop, this
   is to the browser (extracted from the first papercusp webapp): the
   papercusp-web-host chassis (Next.js standalone host, auth
   seam, deploy skeleton) + papercusp-data-layer (app-owned Postgres,
@@ -18,7 +18,7 @@ summary: >-
   requires. A thin pure composition — no own components; an app built from
   it must pass the UNION of the closure's checks. No agent plane here; an
   agentic web app layers papercusp-ops-hives onto this the way
-  agentic-desktop-app layers onto desktop-app.
+  papercusp-agentic-desktop-app layers onto papercusp-desktop-app.
 components: []
 contracts: []
 decisionPoints:

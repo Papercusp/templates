@@ -52,7 +52,7 @@ decisionPoints:
       so a rebrand is still one edit — never hardcode a display label a
       rebrand would have to grep for.
 composesWith:
-  - tauri-desktop-shell
+  - papercusp-tauri-desktop-shell
   - papercusp-data-sync
 docs:
   - agent-insights/templates-system-design

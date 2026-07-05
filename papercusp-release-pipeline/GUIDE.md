@@ -1,4 +1,4 @@
-# release-pipeline — composition GUIDE
+# papercusp-release-pipeline — composition GUIDE
 
 **Papercusp Official: Release Pipeline.** An **aspect** template: the desktop
 release plane, as deepened guidance around ONE component —
@@ -16,7 +16,7 @@ injects its *sidecar build* and a config. That split is the whole design:
   a ~1,070-line bundler) — plus app id/name/repo/targets/signing via
   `TauriReleaseConfig`.
 
-The `tauri-desktop-shell` template already pins this kit at the same version —
+The `papercusp-tauri-desktop-shell` template already pins this kit at the same version —
 composing both is pin-consistent by construction. Compose THIS aspect when the
 app is going to ship for real and the release leg deserves first-class
 decisions, not defaults.
@@ -53,7 +53,7 @@ seam convention, a release step — do NOT guess:
 
 ## SHOULD
 
-- Ship the pipeline from day one (the desktop-app GUIDE says the same from the
+- Ship the pipeline from day one (the papercusp-desktop-app GUIDE says the same from the
   other side): a desktop app without signing/updater wiring is a prototype.
 - Drive Linux targets locally and Mac/Windows through the kit's SSH-frame VM
   drivers; keep VM credentials in the config, out of the scripts.

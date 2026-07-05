@@ -1,6 +1,6 @@
 # papercusp-web-host — composition GUIDE
 
-**The web app chassis** — the web twin of `tauri-desktop-shell`, extracted
+**The web app chassis** — the web twin of `papercusp-tauri-desktop-shell`, extracted
 from the first webapp built on papercusp (audit:
 `/internal/docs/agent-insights/restart-webapp-audit-papercusp-webapp-template`).
 Where the desktop chassis is Tauri host → Node/Hono sidecar, this chassis is

@@ -3,7 +3,7 @@
  * pins consistent with the catalog, exactly one ROOT app-scope template per
  * composition (P-022: an app may require another app as its BASE), and the
  * union-of-checks is the full additive set. (agentic-
- * desktop-app template check; plan app-templates-2026-07-04 P-007.)
+ * papercusp-desktop-app template check; plan app-templates-2026-07-04 P-007.)
  *
  * Unlike the other checks this one validates the TEMPLATE SET (the
  * composition plan), not the built app — so it runs wherever
@@ -64,7 +64,7 @@ const manifests: TemplateManifest[] = yamlPaths.map((p) => parseTemplateManifest
 /**
  * An app-scope template + its requires-CLOSURE + the transitive closure of
  * composesWith affinity. Hard `requires` edges join FIRST — including an
- * app-scope BASE (P-022: agentic-desktop-app requires desktop-app; a base
+ * app-scope BASE (P-022: papercusp-agentic-desktop-app requires papercusp-desktop-app; a base
  * app is a member of the composition, never its owner — composeTemplates'
  * root-app rule). The affinity walk then NEVER absorbs a FOREIGN app-scope
  * template: composesWith is descriptive affinity (an aspect may name every

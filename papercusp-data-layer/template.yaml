@@ -43,7 +43,7 @@ decisionPoints:
       events. If the app composes papercusp-ops-hives this is MANDATORY for
       the seam; if nothing untrusted writes, drop the pattern.
 composesWith:
-  - tauri-desktop-shell
+  - papercusp-tauri-desktop-shell
   - papercusp-data-sync
   - papercusp-search
 docs:

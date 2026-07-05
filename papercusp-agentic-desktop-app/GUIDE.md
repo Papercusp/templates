@@ -1,12 +1,12 @@
-# agentic-desktop-app — composition GUIDE (template #1)
+# papercusp-agentic-desktop-app — composition GUIDE (template #1)
 
 **You are the building agent.** Someone said *"build me an app for X using
 this template."* This is the **app-scope** template, and it is a LAYER
 (P-022) — it carries no components of its own. Your job is to compose:
 
-1. [`desktop-app`](../desktop-app/GUIDE.md) — the required **BASE app**: the
+1. [`papercusp-desktop-app`](../papercusp-desktop-app/GUIDE.md) — the required **BASE app**: the
    whole non-agentic desktop app, whose own requires-closure brings the
-   [`tauri-desktop-shell`](../tauri-desktop-shell/GUIDE.md) chassis (Tauri
+   [`papercusp-tauri-desktop-shell`](../papercusp-tauri-desktop-shell/GUIDE.md) chassis (Tauri
    shell → Node/Hono sidecar → embedded PG → release kit),
    [`papercusp-data-layer`](../papercusp-data-layer/GUIDE.md), and
    [`papercusp-ui`](../papercusp-ui/GUIDE.md), and
@@ -43,7 +43,7 @@ seam convention, a release step — do NOT guess:
   Tier B — not optional; the chassis shape invariants keep it bootable).
 - Validate your composition mechanically: expand this template through
   `resolveRequiresClosure`, run the closure through `composeTemplates` —
-  pins consistent, one ROOT app scope (this one; desktop-app is the base) —
+  pins consistent, one ROOT app scope (this one; papercusp-desktop-app is the base) —
   and run the union of checks as your CI gate.
 
 ## The one decision point here
@@ -55,7 +55,7 @@ seam convention, a release step — do NOT guess:
 ## Composition walk
 
 1. Answer `domain`. Name the app (`app-identity`, shell aspect).
-2. Build the BASE app (desktop-app GUIDE walk 1–4): the full non-agentic app
+2. Build the BASE app (papercusp-desktop-app GUIDE walk 1–4): the full non-agentic app
    first — chassis boots (`boot-e2e`), data layer resolved, UI surfaces up.
    An app that works WITHOUT its judgment plane is the P-022 layering rule
    made practical.

@@ -1,14 +1,14 @@
-# release-pipeline — 'Papercusp Official: Release Pipeline' (scope: aspect,
+# papercusp-release-pipeline — 'Papercusp Official: Release Pipeline' (scope: aspect,
 # category: release; owner directive 2026-07-04 / P-023). tauri-release-kit as
 # a composable aspect: the release DANCE (version bump, channel→tag, target
 # matrix, artifact classification, latest.json updater manifest, gh release
 # upload, Mac/Windows VM orchestration over an SSH frame) owned by the kit;
 # the app injects ONLY its sidecar build + a TauriReleaseConfig. Same 0.1.0
-# pin the tauri-desktop-shell template carries — composing both stays
+# pin the papercusp-tauri-desktop-shell template carries — composing both stays
 # pin-consistent. Machine twin: @papercusp/template-kit
 # src/reference-templates.ts RELEASE_PIPELINE_TEMPLATE — the kit's suite pins
 # this file to it.
-id: release-pipeline
+id: papercusp-release-pipeline
 version: "0.1.0"
 scope: aspect
 category: release
@@ -50,9 +50,9 @@ decisionPoints:
       (worked instances range from ~42 lines of esbuild to a ~1,070-line bundler)?
       Keep it a pure function of the repo tree; everything else is the kit's.
 composesWith:
-  - tauri-desktop-shell
-  - desktop-app
-  - agentic-desktop-app
+  - papercusp-tauri-desktop-shell
+  - papercusp-desktop-app
+  - papercusp-agentic-desktop-app
 docs:
   - agent-insights/templates-system-design
   - agent-insights/templates-template-yaml

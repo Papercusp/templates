@@ -13,7 +13,7 @@ What every builder can rely on, wherever this template was cloned from:
   scripts, `middleware.ts` (auth gate stub), `auth-proxy.mjs` (basic-auth
   reverse proxy), the Dockerfile workspace-manifest COPY layer, the
   serial-PG vitest rig.
-- **Sibling shape**: `../../tauri-desktop-shell/` — the desktop twin; same
+- **Sibling shape**: `../../papercusp-tauri-desktop-shell/` — the desktop twin; same
   discovery-file + graceful-shutdown lifecycle.
 - **Docs**: `/internal/docs/agent-insights/templates-system-design` ·
   `templates-component-catalog` · `templates-template-yaml`.

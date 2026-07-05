@@ -7,7 +7,7 @@ Validates the TEMPLATE SET (the composition plan), not the built app: every
 set is coherent (unique ids, resolvable `composesWith`), and each app-scope
 template + its `requires` closure + its `composesWith` affinity composes via
 `@papercusp/template-kit` `composeTemplates` — pins consistent, exactly one
-ROOT app scope (P-022: a required BASE app, e.g. desktop-app under THIS
+ROOT app scope (P-022: a required BASE app, e.g. papercusp-desktop-app under THIS
 template, joins the composition without owning it; a foreign app the root
 does not require stays a separate composition), and the **full additive
 union-of-checks** (`templateId:checkId`) survives. That union IS the app's
@@ -25,8 +25,8 @@ dependency-free portable checks):
 The union rule means a composed app must ALSO pass the closure's suites:
 `confinement-guard` / `seam-round-trip` / `gym-signals`
 (`../../papercusp-ops-hives/checks/`), `boot-e2e`
-(`../../tauri-desktop-shell/checks/`), `components-integrated`
+(`../../papercusp-tauri-desktop-shell/checks/`), `components-integrated`
 (`../../papercusp-data-layer/checks/`, `../../papercusp-ui/checks/`), and
-the desktop-app base's own `composition-integrity`. Worked example config
+the papercusp-desktop-app base's own `composition-integrity`. Worked example config
 for consumer #1:
 [`../reference/worked-example.checks-config.json`](../reference/worked-example.checks-config.json).

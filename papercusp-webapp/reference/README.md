@@ -6,7 +6,7 @@ What every builder can rely on, wherever this template was cloned from:
   reference instance: operator-style panels, grids, live sync — everything
   the `papercusp-ui` / `papercusp-data-sync` aspects package. The docs at
   `/internal/docs` (start with `agent-insights`) are the design record.
-- **Sibling shape**: `../../desktop-app/` — the desktop twin of this
+- **Sibling shape**: `../../papercusp-desktop-app/` — the desktop twin of this
   template; same thin-composition discipline, tauri chassis instead of web.
 - **Origin / design of record**: this template was extracted from the first
   webapp built on papercusp — the audit at

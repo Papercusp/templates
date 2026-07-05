@@ -1,7 +1,7 @@
-# tauri-desktop-shell — aspect: the deterministic app chassis. Machine twin:
+# papercusp-tauri-desktop-shell — aspect: the deterministic app chassis. Machine twin:
 # @papercusp/template-kit src/reference-templates.ts
 # TAURI_DESKTOP_SHELL_TEMPLATE — the kit's suite pins this file to it.
-id: tauri-desktop-shell
+id: papercusp-tauri-desktop-shell
 version: "0.1.0"
 scope: aspect
 category: shell
@@ -33,7 +33,7 @@ decisionPoints:
       (feeds tauri.conf + tauri-release-kit config).
 composesWith:
   - papercusp-ops-hives
-  - agentic-desktop-app
+  - papercusp-agentic-desktop-app
 docs:
   - agent-insights/templates-system-design
   - agent-insights/templates-template-yaml

@@ -44,7 +44,7 @@ decisionPoints:
       them through resumable-download with streaming checksums; if not, drop
       the component from the composition.
 composesWith:
-  - tauri-desktop-shell
+  - papercusp-tauri-desktop-shell
   - papercusp-search
   - papercusp-data-layer
 docs:

@@ -45,7 +45,7 @@ The search plane has four legs, cheap→rich; take only what the app needs:
 ## MUST
 
 - Search queries the app's OWN embedded Postgres (the
-  `embedded-postgres-server` pattern from `tauri-desktop-shell`) — do NOT
+  `embedded-postgres-server` pattern from `papercusp-tauri-desktop-shell`) — do NOT
   stand up a separate search engine/service; the whole point of this family
   is search without new infrastructure.
 - Each searchable surface is its own SearchSource owning its SQL — never

@@ -1,4 +1,4 @@
-# release-pipeline — check contracts
+# papercusp-release-pipeline — check contracts
 
 ## `components-integrated` (`components-integrated.test.ts`) — the kit is really wired in
 

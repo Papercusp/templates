@@ -2,7 +2,7 @@
 
 ## `composition-integrity` (`composition-integrity.test.ts`) — the set resolves
 
-The SAME portable check the desktop-app template ships (copied verbatim).
+The SAME portable check the papercusp-desktop-app template ships (copied verbatim).
 Validates the TEMPLATE SET (the composition plan), not the built app: every
 `template.yaml` parses + matches the component catalog (no stale pins), the
 set is coherent (unique ids, resolvable `composesWith`), and each app-scope

@@ -8,7 +8,7 @@ What every builder can rely on, wherever this template was cloned from:
   checks union; rename the `MyApp`/`MYAPP_*` identifiers per your
   `app-identity` answer.
 - **Worked checks-config**:
-  [`../../agentic-desktop-app/reference/worked-example.checks-config.json`](../../agentic-desktop-app/reference/worked-example.checks-config.json)
+  [`../../papercusp-agentic-desktop-app/reference/worked-example.checks-config.json`](../../papercusp-agentic-desktop-app/reference/worked-example.checks-config.json)
   — its `boot` section configures this template's `boot-e2e` check (attach
   mode against a live app; use spawn mode in CI).
 - **Your papercusp install** — the operator app is a running papercusp-native

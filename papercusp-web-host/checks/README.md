@@ -2,7 +2,7 @@
 
 ## `boot-e2e` (`boot-e2e.test.ts`) — the composed web app actually boots
 
-The SAME portable check the tauri-desktop-shell template ships (copied
+The SAME portable check the papercusp-tauri-desktop-shell template ships (copied
 verbatim — the web host adopts the identical discovery-file lifecycle):
 host spawns → discovery file (`operator.json` analog) written → health
 returns 200 → SIGTERM → clean exit within the grace window → discovery file

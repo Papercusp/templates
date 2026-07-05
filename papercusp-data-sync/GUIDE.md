@@ -38,7 +38,7 @@ The sync plane has four legs, cheap→rich; take only what the app needs:
 ## MUST
 
 - Live surfaces stream over the sidecar host (the `hono-host` pattern from
-  `tauri-desktop-shell`) — do NOT open a second server for sync.
+  `papercusp-tauri-desktop-shell`) — do NOT open a second server for sync.
 - Every synced surface gets a burst policy (wake floor / coalesce window). An
   unbounded change stream into a UI is the classic self-inflicted outage.
 - Declare every component you keep as a real dependency — the

@@ -10,7 +10,7 @@ What every builder can rely on, wherever this template was cloned from:
 - **Your papercusp install** — the operator app is a running papercusp-native
   reference; the docs at `/internal/docs` (start with `agent-insights`) are
   the design record.
-- **Sibling templates**: `../../desktop-app/` (the non-agentic BASE this
+- **Sibling templates**: `../../papercusp-desktop-app/` (the non-agentic BASE this
   template requires) · `../../papercusp-ops-hives/` (the judgment plane it
   layers on, with starter blueprints + the contract template).
 - **Docs**: `/internal/docs/agent-insights/templates-system-design` ·

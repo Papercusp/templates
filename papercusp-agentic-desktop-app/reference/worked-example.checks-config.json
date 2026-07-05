@@ -53,7 +53,7 @@
     "roundTripCwd": "apps/desktop"
   },
   "components": {
-    "$doc": "P-022 (agentic-desktop-app re-layered onto the desktop-app base): the composition's npm-visible component pins. PATTERN components map to app-local packages (embedded-postgres-server -> @purchase-ops/embedded-postgres-server; typed-contracts -> @purchase-ops/contracts); papergrid is a META-package so the app depends on the SUB-package it uses (@papercusp/grid-core); lexicon is DROPPED per the ui template's ui-surfaces decision point (see DECISIONS.md).",
+    "$doc": "P-022 (papercusp-agentic-desktop-app re-layered onto the papercusp-desktop-app base): the composition's npm-visible component pins. PATTERN components map to app-local packages (embedded-postgres-server -> @purchase-ops/embedded-postgres-server; typed-contracts -> @purchase-ops/contracts); papergrid is a META-package so the app depends on the SUB-package it uses (@papercusp/grid-core); lexicon is DROPPED per the ui template's ui-surfaces decision point (see DECISIONS.md).",
     "packages": [
       "@purchase-ops/embedded-postgres-server",
       "@papercusp/embedded-pg-discovery",

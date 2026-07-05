@@ -1,4 +1,4 @@
-# desktop-app — check contracts
+# papercusp-desktop-app — check contracts
 
 ## `composition-integrity` (`composition-integrity.test.ts`) — the set resolves
 
@@ -8,7 +8,7 @@ set is coherent (unique ids, resolvable `composesWith`), and each app-scope
 template + its `requires` closure + its `composesWith` affinity composes via
 `@papercusp/template-kit` `composeTemplates` — pins consistent, exactly one
 ROOT app scope (P-022: a required BASE app joins the composition without
-owning it — THIS template is agentic-desktop-app's base; a foreign app the
+owning it — THIS template is papercusp-agentic-desktop-app's base; a foreign app the
 root does not require stays its own composition), and the **full additive
 union-of-checks** (`templateId:checkId`) survives. That union IS the app's
 definition of done.
@@ -23,6 +23,6 @@ dependency-free portable checks):
   `composition.templateYamls` names a materialized app's CHOSEN set.
 
 The union rule means an app built from this template must ALSO pass the
-closure's aspect suites: `boot-e2e` (`../../tauri-desktop-shell/checks/`)
+closure's aspect suites: `boot-e2e` (`../../papercusp-tauri-desktop-shell/checks/`)
 and `components-integrated` (`../../papercusp-data-layer/checks/`,
 `../../papercusp-ui/checks/`, plus any optional plane you composed).
