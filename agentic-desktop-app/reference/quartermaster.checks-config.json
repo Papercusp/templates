@@ -52,6 +52,19 @@
     "roundTripCommand": ["npx", "vitest", "run", "src/lib/research-seam.test.ts", "src/lib/hive-bootstrap.test.ts"],
     "roundTripCwd": "apps/desktop"
   },
+  "components": {
+    "$doc": "P-022 (agentic-desktop-app re-layered onto the desktop-app base): the composition's npm-visible component pins. PATTERN components map to app-local packages (embedded-postgres-server -> @quartermaster/embedded-postgres-server; typed-contracts -> @quartermaster/contracts); papergrid is a META-package so the app depends on the SUB-package it uses (@papercusp/grid-core); lexicon is DROPPED per the ui template's ui-surfaces decision point (see DECISIONS.md).",
+    "packages": [
+      "@quartermaster/embedded-postgres-server",
+      "@papercusp/embedded-pg-discovery",
+      "@quartermaster/contracts",
+      "@papercusp/ui-primitives",
+      "@papercusp/grid-core",
+      "@papercusp/dock-workbench",
+      "@papercusp/hive-app-seam"
+    ],
+    "manifests": ["apps/desktop/package.json", "packages/db/package.json"]
+  },
   "boot": {
     "mode": "attach",
     "discoveryFile": "~/.quartermaster/operator.json",

@@ -1,44 +1,108 @@
-# Papercusp Official templates
+# Templates
 
-Composable **app** and **aspect** templates for building papercusp-powered
-apps. Each `<template-id>/` directory is one template:
+Distributable units an agent composes into an app (or an app-aspect) on
+papercusp: **components** (version-pinned refs into the
+[component catalog](../libs/generic/template-kit/src/catalog.ts)) +
+**guidance** (`GUIDE.md`, the composition prompt) + **checks** (the acceptance
+suite any composition must pass). Correctness by **verification, not
+construction** — the design of record is
+`apps/operator-docs … agent-insights/templates-system-design`
+(served at `/internal/docs/agent-insights/templates-system-design`).
 
-- `template.yaml` — the machine-readable manifest: pinned components,
-  decision points, what it composes with, category, and its checks.
-- `GUIDE.md` — the composition prompt an agent follows, written in
-  MUST / SHOULD / FREE tiers.
-- `checks/` — portable, app-parameterized acceptance checks copied verbatim
-  into the composed app (driven by the app's `TEMPLATE_CHECKS_CONFIG`).
+## Source of truth (v1 — plan app-templates-2026-07-04 P-006/D-005)
 
-## The set
+- **This directory is the v1 template source of truth**: versioned with the
+  repo, git-synced, readable by the anti-rot gym (P-009). The Cupboard/Comb
+  Templates section (P-010) *projects* from here.
+- **Manifests are pinned by test**: `@papercusp/template-kit`
+  `src/reference-templates.ts` is the machine form; the kit's suite asserts
+  each `templates/<id>/template.yaml` here parses, validates, and matches it.
+  Edit BOTH sides (yaml + reference manifest) — a mismatch fails the kit's
+  tests loudly.
+- Schema: `agent-insights/templates-template-yaml`
+  (validator: `@papercusp/template-kit` `parseTemplateManifest`).
 
-| Template | Scope | Category |
-|---|---|---|
-| `agentic-desktop-app` | app | app |
-| `tauri-desktop-shell` | aspect | shell |
-| `papercusp-ops-hives` | aspect | agentic |
-| `papercusp-data-sync` | aspect | data |
-| `papercusp-data-layer` | aspect | data |
-| `papercusp-search` | aspect | search |
+## The set (the official expansion — Phase 5, owner directive 2026-07-04)
 
-An app is a **composition of templates**: an `app`-scope template pulls in
-its `requires` closure of aspects, and the composed app must pass the UNION
-of every composed template's checks.
+| Template | Scope | Category | What |
+|---|---|---|---|
+| [`desktop-app`](desktop-app/) | app | app | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app |
+| [`agentic-desktop-app`](agentic-desktop-app/) | app | app | the app WITH agents: `papercusp-ops-hives` layered onto the `desktop-app` BASE (P-022 — an app template may require another as its base) |
+| [`papercusp-ops-hives`](papercusp-ops-hives/) | aspect | agentic | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam |
+| [`tauri-desktop-shell`](tauri-desktop-shell/) | aspect | shell | the deterministic chassis: Tauri shell → Node/Hono sidecar → embedded Postgres + release kit |
+| [`papercusp-data-layer`](papercusp-data-layer/) | aspect | data | app-owned embedded Postgres + connection discovery + typed-contract write gates |
+| [`papercusp-data-sync`](papercusp-data-sync/) | aspect | data | live UI state sync: client transports + SSE server + event-maintained projections |
+| [`papercusp-search`](papercusp-search/) | aspect | search | search over app data: sources + hybrid retrieval + rerank + RRF fusion |
+| [`papercusp-ui`](papercusp-ui/) | aspect | ui | the operator-style SPA kit: headless primitives, papergrid, dock-workbench, lexicon |
+| [`release-pipeline`](release-pipeline/) | aspect | release | tauri-release-kit as an aspect: channels, signing, updater feed, target matrix (P-023) |
 
-## Installing
+An app built from N templates must pass the **union of their checks**
+(`composeTemplates` — see the schema doc §Composition semantics). An app-scope
+template may `require` another app-scope template as its BASE; every
+composition has exactly ONE ROOT app (the one no other app requires).
 
-Templates are distributed through the **Papercusp Cupboard** (the listings
-directory built into the operator app). Install from the Cupboard UI, or
-point the operator's install-template endpoint at this repo.
+## Running the checks (landed: P-007)
 
-## Docs
+The `<id>/checks/*.test.ts` files are PORTABLE template content — copied
+verbatim into a composed app and parameterized via a JSON config named by the
+**`TEMPLATE_CHECKS_CONFIG`** env var (schema: `@papercusp/template-kit`
+`TemplateChecksConfig`). Unconfigured they SKIP. This directory is also the
+`@papercusp/templates` workspace member, so in-repo:
 
-These templates assume you are building ON a live papercusp install. The
-canonical documentation is served on your install at `/internal/docs`
-(start with the `agent-insights` section — each template's `template.yaml`
-`docs:` list names its pages), and the operator app itself is a running
-reference instance of every pattern encoded here.
+```sh
+npm test -w @papercusp/templates                 # composition-integrity green, rest skip
+TEMPLATE_CHECKS_CONFIG=<config> npm test -w @papercusp/templates   # the full union
+```
 
-> This repo is a published mirror of the canonical `templates/` tree in the
-> papercusp monorepo; changes land there first and are synced here on
-> release.
+Worked consumer-#1 config (runs green against quartermaster):
+[`agentic-desktop-app/reference/quartermaster.checks-config.json`](agentic-desktop-app/reference/quartermaster.checks-config.json).
+Per-check contracts: each template's `checks/README.md`.
+
+## The template gym (landed: P-009)
+
+Anti-rot cadence (D-007: *the template is tested by building an app from it*):
+the `template-gym` system routine (`system:template-gym`, every 6h) re-verifies
+five legs — the P-013 verbatim-materialization invariant (`<id>/checks/*.test.ts`
+⇄ quartermaster `packages/template-checks/`, byte-identical;
+`composition-integrity` is declared repo-side-only), docs⇄catalog drift
+(`COMPONENT_CATALOG` ids ⊆ the published catalog page), the template-kit drift
+pins, this workspace's suite, and consumer #1's configured union inside the
+quartermaster repo. A standing RED auto-files ONE `template-drift` work-item
+(stable watchdogKey `template-gym:<leg>`); the gym is advisory and never gates.
+
+Code: `packages/operator-core/lib/harness/routines/template-gym-{runner,action}.ts`
+(+ `seed-template-gym-routine.ts`). On-demand run + per-leg re-run:
+
+```sh
+npx tsx packages/operator-core/lib/harness/routines/template-gym-runner.ts \
+  [--legs materialization,docs-catalog,kit-suite,template-suite,app-checks] \
+  [--qm-root <quartermaster clone>]        # default: the sibling ../quartermaster
+```
+
+Run history: `~/.papercusp/template-gym/` (`last-run.json` + `runs.jsonl`).
+
+## Cupboard distribution (landed: P-010)
+
+Each template here is publishable as a **`kind=template` Cupboard listing**
+(repo-backed: the listing points at this dir via `listing_ref = <id>`; nothing
+is flattened or copied at publish time). The loop:
+
+- **Publish**: the `template:publish` agent tool (title ≤200 / description
+  ≤280 — worker caps). D-007 review policy: a template carries GUIDE.md — an
+  instruction-carrying artifact — so listings land **pending** and are publicly
+  invisible until operator approval. The official set uses
+  **"Papercusp Official:"** title prefixes.
+- **Public mirror (REQUIRED)**: the worker rejects listings on private repos
+  (`private_repo_rejected` — a listing users can't clone is broken), and this
+  monorepo is private. Official listings therefore publish from the PUBLIC
+  mirror **[Papercusp/templates](https://github.com/Papercusp/templates)** —
+  a copy of these `<id>/` dirs (this tree stays canonical; push changed dirs
+  to the mirror before re-publishing). Mirror-sync automation is a tracked
+  follow-up (P-027).
+- **Install**: the Cupboard **Templates** tab (`?kind=template`) →
+  `POST /api/cupboard/install-template` → shallow-clone + kit validation
+  (schema + component-catalog pin check — a stale pin fails the install, same
+  rule as the gym) → materialized under **`~/.papercusp/templates/<id>/`**,
+  where the from-template scaffold entry (P-011) reads it.
+- Worker side: D1 migration `010_template_kind.sql`;
+  operator side: `operator-core/lib/cupboard/install-template-core.ts`.

@@ -1,4 +1,4 @@
-# checks/ — the acceptance suite (landed: plan app-templates-2026-07-04 P-007)
+# desktop-app — check contracts
 
 ## `composition-integrity` (`composition-integrity.test.ts`) — the set resolves
 
@@ -7,9 +7,9 @@ Validates the TEMPLATE SET (the composition plan), not the built app: every
 set is coherent (unique ids, resolvable `composesWith`), and each app-scope
 template + its `requires` closure + its `composesWith` affinity composes via
 `@papercusp/template-kit` `composeTemplates` — pins consistent, exactly one
-ROOT app scope (P-022: a required BASE app, e.g. desktop-app under THIS
-template, joins the composition without owning it; a foreign app the root
-does not require stays a separate composition), and the **full additive
+ROOT app scope (P-022: a required BASE app joins the composition without
+owning it — THIS template is agentic-desktop-app's base; a foreign app the
+root does not require stays its own composition), and the **full additive
 union-of-checks** (`templateId:checkId`) survives. That union IS the app's
 definition of done.
 
@@ -18,15 +18,11 @@ dependency-free portable checks):
 
 - **In this repo, unconfigured** — against the sibling `templates/<id>/`
   dirs, as the `@papercusp/templates` workspace suite
-  (`npm test -w @papercusp/templates`). The release gate pins it continuously.
+  (`npm test -w @papercusp/templates`).
 - **Configured** — `TEMPLATE_CHECKS_CONFIG` section
   `composition.templateYamls` names a materialized app's CHOSEN set.
 
-The union rule means a composed app must ALSO pass the closure's suites:
-`confinement-guard` / `seam-round-trip` / `gym-signals`
-(`../../papercusp-ops-hives/checks/`), `boot-e2e`
-(`../../tauri-desktop-shell/checks/`), `components-integrated`
-(`../../papercusp-data-layer/checks/`, `../../papercusp-ui/checks/`), and
-the desktop-app base's own `composition-integrity`. Worked example config
-for consumer #1:
-[`../reference/quartermaster.checks-config.json`](../reference/quartermaster.checks-config.json).
+The union rule means an app built from this template must ALSO pass the
+closure's aspect suites: `boot-e2e` (`../../tauri-desktop-shell/checks/`)
+and `components-integrated` (`../../papercusp-data-layer/checks/`,
+`../../papercusp-ui/checks/`, plus any optional plane you composed).

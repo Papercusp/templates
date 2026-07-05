@@ -1,0 +1,62 @@
+# papercusp-ui — 'Papercusp Official: UI Kit' (scope: aspect, category: ui;
+# owner directive 2026-07-04 / P-020). Integrates the UI generic-library
+# family into a composed app: headless React primitives, the data-grid stack,
+# the dockview workbench shell, and brand-lexicon terminology resolution.
+# Machine twin: @papercusp/template-kit src/reference-templates.ts
+# PAPERCUSP_UI_TEMPLATE — the kit's suite pins this file to it.
+id: papercusp-ui
+version: "0.1.0"
+scope: aspect
+category: ui
+summary: >-
+  The UI kit for a papercusp-composed app: @papercusp/ui-primitives (headless
+  ANSI/terminal, markdown, JSON-tree, and virtualized-list primitives —
+  brand-value-free, consumer-styled), the papergrid data-grid stack
+  (grid-core sort/selection/virtualization + bloom-grid server-rendered
+  rows), @papercusp/dock-workbench (host-agnostic dockview panel workbench
+  with pluggable layout persistence), and @papercusp/lexicon (canonical term
+  keys → brand-pack display labels, so rebranding is a pack swap). Compose
+  into any app whose deterministic plane needs an operator-style SPA.
+components:
+  - { id: ui-primitives, version: 0.0.1 }
+  - { id: papergrid, version: 0.1.0 }
+  - { id: dock-workbench, version: 0.0.1 }
+  - { id: lexicon, version: 0.1.0 }
+contracts: []
+decisionPoints:
+  - id: ui-surfaces
+    prompt: >-
+      Which surfaces does the app's deterministic plane need — data grids,
+      terminal/agent-output panes, markdown/docs views, JSON inspectors, a
+      multi-panel workbench? Take only the components those surfaces use;
+      drop the rest from the composition.
+  - id: grid-usage
+    prompt: >-
+      papergrid is a META-PACKAGE — apps depend on the grid SUB-PACKAGES
+      directly (@papercusp/grid-core, @papercusp/bloom-grid, @papercusp/grid).
+      Which grids does the app need, and do any need server-rendered rows
+      (bloom-grid) vs pure client virtualization (grid-core)?
+  - id: workbench-layout
+    prompt: >-
+      What is the panel layout — which panels register in the dock-workbench
+      registry, what is the default logical layout, and where does layout
+      persistence live (the app's data layer vs localStorage)?
+  - id: branding-lexicon
+    prompt: >-
+      Which brand pack names the app's nouns? Register the domain's term keys
+      with @papercusp/lexicon, wire the configure*() host seam to the app's
+      pack selection, and route EVERY user-facing noun through it — never
+      hardcode a display label a rebrand would have to grep for.
+composesWith:
+  - tauri-desktop-shell
+  - papercusp-data-sync
+docs:
+  - agent-insights/templates-system-design
+  - agent-insights/templates-template-yaml
+  - agent-insights/templates-component-catalog
+checks:
+  - id: components-integrated
+    run: checks/components-integrated.test.ts
+    summary: >-
+      every pinned component package is a declared dependency of the composed
+      app (config section: components)
