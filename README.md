@@ -28,8 +28,8 @@ construction** — the design of record is
 |---|---|---|---|
 | [`papercusp-desktop-app`](papercusp-desktop-app/) | app | app | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app |
 | [`papercusp-webapp`](papercusp-webapp/) | app | app | a WHOLE web app, no agents — the browser twin of `papercusp-desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the first papercusp webapp) |
-| [`papercusp-agentic-desktop-app`](papercusp-agentic-desktop-app/) | app | app | the app WITH agents: `papercusp-ops-hives` layered onto the `papercusp-desktop-app` BASE (P-022 — an app template may require another as its base) |
-| [`papercusp-ops-hives`](papercusp-ops-hives/) | aspect | agentic | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam |
+| [`papercusp-agentic-desktop-app`](papercusp-agentic-desktop-app/) | app | app | the app WITH agents: `papercusp-ops-pots` layered onto the `papercusp-desktop-app` BASE (P-022 — an app template may require another as its base) |
+| [`papercusp-ops-pots`](papercusp-ops-pots/) | aspect | agentic | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam |
 | [`papercusp-tauri-desktop-shell`](papercusp-tauri-desktop-shell/) | aspect | shell | the deterministic chassis: Tauri shell → Node/Hono sidecar → embedded Postgres + release kit |
 | [`papercusp-web-host`](papercusp-web-host/) | aspect | shell | the web chassis: Next.js standalone host (tracing root + workspace transpile), operator.json discovery, auth seam, Dockerfile builder (P-029) |
 | [`papercusp-data-layer`](papercusp-data-layer/) | aspect | data | app-owned embedded Postgres + connection discovery + typed-contract write gates |
@@ -115,32 +115,84 @@ official v1 mechanism that closes them:
   `composition-integrity` runs after a plain `npm install`. The kit is NOT
   on npm; this monorepo (`libs/generic/template-kit/`) stays canonical and
   the vendored copy rides the mirror sync (below).
-- **`@papercusp/hive-app-seam`** — the papercusp-ops-hives Tier-B MUST
-  component — is vendored the same way as `hive-app-seam/` (WI-2891: the
+- **`@papercusp/pot-app-seam`** — the papercusp-ops-pots Tier-B MUST
+  component — is vendored the same way as `pot-app-seam/` (WI-2891: the
   round-3 build proved the catalog's source repo is not reachable from
   outside papercusp, so the seam MUST ride the mirror). Zero runtime deps,
   `main: ./src/index.ts`; the mirror root `package.json` wires
-  `"@papercusp/hive-app-seam": "file:./hive-app-seam"`, and an app repo
-  links it as
-  `"@papercusp/hive-app-seam": "file:../<mirror-clone>/hive-app-seam"`.
-  Canonical: `libs/generic/hive-app-seam` in the monorepo.
-- **Mirror sync is guarded** (P-027): the canonical monorepo carries
-  `scripts/templates-mirror-sync.mjs`, which diffs the canonical tree —
-  every template dir, this README, and the vendored packages
-  (`template-kit/`, `hive-app-seam/`) — against a local
-  mirror clone. Check mode (`npm run mirror:check` in the monorepo's
-  `templates/`) exits non-zero on ANY drift, and the publish tooling
-  refuses to publish official listings while red; `--push`
-  (`npm run mirror:push`) applies the sync and pushes the mirror. The
-  published mirror therefore never silently trails the canonical tree.
+  `"@papercusp/pot-app-seam": "file:./pot-app-seam"`.
+  Canonical: `libs/generic/pot-app-seam` in the monorepo.
+  ⚠ An app repo should link it from the **install-resolved `libs/generic`
+  root** (`templates:get-guide` / `templates:new-app` return it as
+  `supplyChain`), NOT from a mirror clone: the mirror is currently pre-rename
+  and 404s on `pot-app-seam/`, still serving `hive-app-seam/` (measured
+  2026-08-10, WI-37775). `npm run mirror:check` tells you whether that is
+  still true.
+- **Mirror sync has a drift CHECK you must run by hand — it is not automatic.**
+  `scripts/templates-mirror-sync.mjs` diffs this canonical tree against a local
+  clone of the mirror and exits non-zero on ANY drift:
+
+  ```bash
+  git clone https://github.com/Papercusp/templates.git /tmp/pc-templates-mirror
+  PC_TEMPLATES_MIRROR=/tmp/pc-templates-mirror npm run mirror:check   # exit 1 on drift
+  PC_TEMPLATES_MIRROR=/tmp/pc-templates-mirror npm run mirror:push    # apply + commit + push
+  ```
+
+  It compares every template dir, this README, and the vendored packages
+  (`template-kit/`, `pot-app-seam/` — `src/**` minus `*.test.ts`, plus
+  `package.json`/`tsconfig.json`), and leaves the mirror's own root plumbing
+  (`package.json`, lockfile, each vendored `README.md`) alone. Exit codes:
+  `0` in sync · `1` drift · `2` usage/env error.
+
+  ⚠ **Read this bullet's history before trusting any claim in it.** It used to
+  assert that this same check ran as a gate and that publish tooling "refuses
+  to publish official listings while red". That was false for five weeks: the
+  script had been written but was auto-committed in a side clone that was never
+  pushed, so nothing in this repo ran it or could even see it, and the mirror
+  duly went stale AND pre-rename (WI-37775). The script is now restored here
+  and covered by
+  `packages/operator-core/lib/templates-mirror-sync-cli.test.ts`.
+
+  **What still does NOT exist — do not assume otherwise:** no CI job, no
+  green-checkpoint gate and no publish tooling runs `mirror:check`. Nothing
+  stops a stale mirror from being published. Syncing remains a MANUAL step you
+  perform after changing any template dir, this README, or a vendored package —
+  the check just means you can now verify it in one command instead of by eye.
+  Assume the mirror trails the canonical tree unless you just ran the check.
+
+  **Measured 2026-08-10:** the live mirror is at 132 drift items (76 missing,
+  26 changed, 30 extraneous) — including `missing pot-app-seam/package.json`
+  and `extraneous papercusp-ops-hives/…`, i.e. it still serves the pre-rename
+  `hive-app-seam`/`papercusp-ops-hives` layout. Until someone runs
+  `mirror:push`, a `file:`-link into a mirror clone will NOT resolve
+  `@papercusp/pot-app-seam`.
 - **Other component packages** (`@papercusp/sync`, `@papercusp/ui-primitives`,
   …) are not published to npm either and are NOT vendored (they have runtime
   deps or platform coupling the mirror can't carry). The official v1
-  mechanism: `file:`-link
-  them from a **local papercusp install** (`<install>/libs/generic/<pkg>`) —
-  e.g. `"@papercusp/sync": "file:../papercusp/libs/generic/sync"`. A
-  papercusp install is a prerequisite for building a papercusp app; the
-  templates assume its `libs/generic/*` tree is reachable.
+  mechanism: `file:`-link them from a **local papercusp install**
+  (`<install>/libs/generic/<pkg>`).
+
+  ⚠ **Do NOT copy a relative example path into an app.** This bullet used to
+  read `"@papercusp/sync": "file:../papercusp/libs/generic/sync"`, which only
+  works inside a dev checkout that happens to have a sibling `papercusp/` repo.
+  On a real install there is no such sibling, so that dependency resolves to
+  nothing and `npm install` fails on a package that also 404s on npm (all of
+  these are `private: true`). **The path is per-install and the product now
+  reports it**: `templates:get-guide` and `templates:new-app` both return a
+  `supplyChain` block carrying this install's resolved `libs/generic` root and
+  an absolute `file:` spec to use, and `templates:new-app` also injects it into
+  the builder's kickoff. Read that instead of hardcoding a path
+  (`packages/operator-core/lib/cupboard/generic-libs-root.ts`).
+
+  `supplyChain.root: null` is a REAL answer, not an error: this install has no
+  source tree, so these packages cannot be linked at all — build with what the
+  template vendors, or install a build that ships `source.tar.zst`. Known
+  no-tree configurations: the **macOS GUI app** (the archive is deliberately
+  stashed out for the `gui` role to keep the DMG small — the **macOS Server
+  app does** ship it) and **cross-built macOS** bundles (Linux-native
+  `node_modules` are the wrong architecture, so staging is off by default with
+  an opt-in darwin cross-install). Linux and Windows ship it by default.
+  See WI-37790.
 - **Runnable checks harness**: the mirror root carries `package.json` +
   `vitest.config.ts`, so `npm install && npm test` runs every
   `<id>/checks/*.test.ts` — `composition-integrity` green against the

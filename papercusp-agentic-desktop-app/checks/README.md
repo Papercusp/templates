@@ -24,7 +24,7 @@ dependency-free portable checks):
 
 The union rule means a composed app must ALSO pass the closure's suites:
 `confinement-guard` / `seam-round-trip` / `gym-signals`
-(`../../papercusp-ops-hives/checks/`), `boot-e2e`
+(`../../papercusp-ops-pots/checks/`), `boot-e2e`
 (`../../papercusp-tauri-desktop-shell/checks/`), `components-integrated`
 (`../../papercusp-data-layer/checks/`, `../../papercusp-ui/checks/`), and
 the papercusp-desktop-app base's own `composition-integrity`. Worked example config

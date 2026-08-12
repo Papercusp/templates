@@ -17,7 +17,7 @@ hard `requires` pull in the web chassis + data + UI closure:
   papergrid data-grid stack, the dock-workbench panel shell, and
   brand-lexicon terminology.
 
-Need agents? Do NOT bolt them on here — layer `papercusp-ops-hives` onto
+Need agents? Do NOT bolt them on here — layer `papercusp-ops-pots` onto
 this composition the way `papercusp-agentic-desktop-app` layers onto `papercusp-desktop-app`.
 
 ## MUST — consult the live papercusp docs when this GUIDE is not enough
@@ -63,7 +63,7 @@ seam convention, a deploy step — do NOT guess:
   plane), and `composition-integrity` (the set itself).
 - No agent-orchestration surfaces in an app built from THIS template — no
   hives, no seam. If the requirement appears mid-build, add
-  `papercusp-ops-hives` to the composition explicitly instead of hand-rolling
+  `papercusp-ops-pots` to the composition explicitly instead of hand-rolling
   agents.
 - Replace the web-host auth placeholders before any non-local exposure.
 
@@ -85,3 +85,22 @@ seam convention, a deploy step — do NOT guess:
 (set coherent, pins consistent, exactly one app scope, full union-of-checks).
 Runs unconfigured against sibling `templates/<id>/` dirs, or configured via
 the `composition.templateYamls` section; see `checks/README.md`.
+
+**MUST — wire the vendored kit before you run it.** That check imports
+`@papercusp/template-kit`, which is **not on npm**. It ships WITH this
+template: `template-kit/` was copied into your app root alongside `checks/`.
+Declare it and it resolves after a plain `npm install`:
+
+```jsonc
+// your app's package.json
+"devDependencies": {
+  "@papercusp/template-kit": "file:./template-kit",
+  "vitest": "^4.1.4",
+  "yaml": "^2.6.0"
+}
+```
+
+Do NOT `npm install @papercusp/template-kit` (404 — nothing under the
+`@papercusp` scope is published) and do NOT point the dep at a papercusp
+checkout path: the vendored copy is the supported source, and it is the only
+one guaranteed present on every platform.

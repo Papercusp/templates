@@ -1,0 +1,10 @@
+{
+  "ref": "papercusp-desktop-app",
+  "id": "papercusp-desktop-app",
+  "title": "Papercusp Official: Desktop App",
+  "description": "Whole-app template: a complete desktop app with NO agent plane — the Tauri shell + embedded Postgres data layer + operator-style UI closure. The BASE the agentic app template layers onto; start here for a plain app. Docs: /internal/docs on your install.",
+  "category": "app",
+  "scope": "app",
+  "version": "0.1.0",
+  "source": "first-party"
+}

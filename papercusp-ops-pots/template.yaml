@@ -1,0 +1,80 @@
+# papercusp-ops-pots — aspect: the 2-hive ops construction (judgment plane +
+# the ONE seam). Machine twin: @papercusp/template-kit
+# src/reference-templates.ts PAPERCUSP_OPS_HIVES_TEMPLATE — the kit's suite
+# pins this file to it.
+id: papercusp-ops-pots
+version: "0.1.0"
+scope: aspect
+category: agentic
+summary: >-
+  The proven judgment-plane shape: a domain hive +
+  an -ops hive over it (the Queen surveying a backlog and placing member
+  harnesses), crossing into the app at exactly ONE seam — work_items of a
+  declared kind go up, a typed contract comes down through a single parse gate
+  into an app table. Nothing else crosses; confinement is enforced at install
+  and the app's blueprints/README.md states the rule.
+components:
+  - id: pot-app-seam
+    version: "0.1.0"
+  - id: typed-contracts
+    version: "0.0.1"
+blueprints:
+  - ops-pot
+  - member
+contracts:
+  - candidate-set
+decisionPoints:
+  - id: seam-work-item-kind
+    prompt: >-
+      What work_item kind crosses the seam (worked instances: purchase-research,
+      bet-analysis)?
+  - id: contract-shape
+    prompt: >-
+      What does the down-leg contract carry (specialize the candidate-set
+      template; one parse gate, rejects emitted as events)?
+  - id: domain-lexicon
+    prompt: >-
+      What are the domain nouns/verbs for hives, roles, and work (replaces the
+      placeholder lexicon in the starter blueprints)?
+  - id: domain-roles
+    prompt: >-
+      Which member roles does the domain hive place, and with what capability
+      envelopes (confinement rule stays inviolable)?
+  - id: app-tables
+    prompt: >-
+      Which app tables does ingested contract output land in, and what is the
+      app-plane read model over them?
+composesWith:
+  - papercusp-tauri-desktop-shell
+  - papercusp-agentic-desktop-app
+docs:
+  - agent-insights/templates-system-design
+  - agent-insights/templates-template-yaml
+  - agent-insights/templates-component-catalog
+checks:
+  - id: confinement-guard
+    run: checks/confinement-guard.test.ts
+    summary: >-
+      no hive role holds cart/checkout/vault/approvals-write-analog
+      capabilities
+  - id: seam-round-trip
+    run: checks/seam-round-trip.test.ts
+    summary: >-
+      enqueue → complete with payload → contract parse gate ingests → app
+      table row exists
+  - id: gym-signals
+    run: checks/gym-signals.test.ts
+    summary: the hive's guardrail gym signals are present and wired
+musts:
+  - id: seam-only-crossing
+    rule: "Every judgment-plane crossing composes @papercusp/pot-app-seam (bootstrap, work-items transport, ingest loop) — never hand-rolled calls against /api/harness/*"
+    enforcedBy: seam-round-trip
+  - id: one-parse-gate
+    rule: "An app-owned contracts package with strict schemas both directions; the parse gate is the ONLY path from agent output to an app table and rejects emit events, never silent drops"
+    enforcedBy: seam-round-trip
+  - id: confinement-inviolable
+    rule: "Every hive role is read + propose-only against the app dangerous surface, pinned via role capability envelopes; the app blueprints/README.md is the canonical statement of the rule"
+    enforcedBy: confinement-guard
+  - id: nothing-else-crosses
+    rule: "No second transport, no side-channel table writes, no direct DB access from a role"
+    enforcedBy: prose-only

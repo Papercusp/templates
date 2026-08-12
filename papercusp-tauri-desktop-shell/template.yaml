@@ -32,7 +32,7 @@ decisionPoints:
       App name, bundle identifier, app-home directory, and release channels
       (feeds tauri.conf + tauri-release-kit config).
 composesWith:
-  - papercusp-ops-hives
+  - papercusp-ops-pots
   - papercusp-agentic-desktop-app
 docs:
   - agent-insights/templates-system-design

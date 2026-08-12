@@ -17,7 +17,7 @@ summary: >-
   primitives, data grids, dock workbench, brand lexicon), pulled in as hard
   requires. A thin pure composition — no own components; an app built from
   it must pass the UNION of the closure's checks. No agent plane here; an
-  agentic web app layers papercusp-ops-hives onto this the way
+  agentic web app layers papercusp-ops-pots onto this the way
   papercusp-agentic-desktop-app layers onto papercusp-desktop-app.
 components: []
 contracts: []
@@ -70,7 +70,7 @@ musts:
     rule: "The composed app passes the FULL union of the closure checks — boot-e2e, components-integrated, composition-integrity"
     enforcedBy: prose-only
   - id: no-agent-surfaces
-    rule: "No hives and no seam in an app built from this template — if agents appear mid-build, add papercusp-ops-hives to the composition explicitly"
+    rule: "No hives and no seam in an app built from this template — if agents appear mid-build, add papercusp-ops-pots to the composition explicitly"
     enforcedBy: prose-only
   - id: auth-before-exposure
     rule: "The web-host auth placeholders are replaced before any non-local exposure"

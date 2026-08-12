@@ -11,7 +11,7 @@ What every builder can rely on, wherever this template was cloned from:
   reference; the docs at `/internal/docs` (start with `agent-insights`) are
   the design record.
 - **Sibling templates**: `../../papercusp-desktop-app/` (the non-agentic BASE this
-  template requires) · `../../papercusp-ops-hives/` (the judgment plane it
+  template requires) · `../../papercusp-ops-pots/` (the judgment plane it
   layers on, with starter blueprints + the contract template).
 - **Docs**: `/internal/docs/agent-insights/templates-system-design` ·
   `templates-component-catalog` · `templates-template-yaml`.

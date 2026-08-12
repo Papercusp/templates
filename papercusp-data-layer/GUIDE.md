@@ -56,7 +56,7 @@ Three legs:
   a migration that needs a human is a defect.
 - Every trust-boundary write (agent output, imported files, network
   payloads) goes through a single typed-contract parse gate. If the app
-  composes `papercusp-ops-hives`, this is MANDATORY for the seam's down-leg.
+  composes `papercusp-ops-pots`, this is MANDATORY for the seam's down-leg.
 - Declare every component package you keep as a real dependency — the
   `components-integrated` check fails a composition wired "on paper".
 

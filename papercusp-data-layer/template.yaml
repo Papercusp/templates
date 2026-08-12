@@ -40,7 +40,7 @@ decisionPoints:
       Which writes cross a trust boundary (agent output, imported files,
       network payloads)? Each gets the typed-contracts discipline — a
       dedicated contracts package + ONE parse gate, rejects surfaced as
-      events. If the app composes papercusp-ops-hives this is MANDATORY for
+      events. If the app composes papercusp-ops-pots this is MANDATORY for
       the seam; if nothing untrusted writes, drop the pattern.
 composesWith:
   - papercusp-tauri-desktop-shell
@@ -70,7 +70,7 @@ musts:
     rule: "Migrations run on boot and are forward-only — a desktop app has no ops window"
     enforcedBy: prose-only
   - id: single-parse-gate
-    rule: "Every trust-boundary write goes through a single typed-contract parse gate — mandatory for the seam down-leg when composing papercusp-ops-hives"
+    rule: "Every trust-boundary write goes through a single typed-contract parse gate — mandatory for the seam down-leg when composing papercusp-ops-pots"
     enforcedBy: prose-only
   - id: deps-declared
     rule: "Every kept component is a real package dependency — not wired on paper"

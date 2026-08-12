@@ -61,7 +61,7 @@
       "@papercusp/ui-primitives",
       "@papercusp/grid-core",
       "@papercusp/dock-workbench",
-      "@papercusp/hive-app-seam"
+      "@papercusp/pot-app-seam"
     ],
     "manifests": ["apps/desktop/package.json", "packages/db/package.json"]
   },

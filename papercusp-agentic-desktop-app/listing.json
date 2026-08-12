@@ -1,0 +1,10 @@
+{
+  "ref": "papercusp-agentic-desktop-app",
+  "id": "papercusp-agentic-desktop-app",
+  "title": "Papercusp Official: Agentic Desktop App",
+  "description": "Whole-app template: a complete papercusp-powered agentic desktop app — Tauri chassis (shell → sidecar → embedded Postgres) + the ops-hives judgment plane, one typed seam, full check union. Start here to build a whole app. Docs: /internal/docs on your install.",
+  "category": "app",
+  "scope": "app",
+  "version": "0.1.0",
+  "source": "first-party"
+}

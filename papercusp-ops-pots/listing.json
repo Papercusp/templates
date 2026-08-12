@@ -1,0 +1,10 @@
+{
+  "ref": "papercusp-ops-pots",
+  "id": "papercusp-ops-pots",
+  "title": "Papercusp Official: Ops Hives (Agent Judgment Plane)",
+  "description": "Aspect template: the agent judgment plane — a domain hive + an -ops hive over it, joined to your deterministic app through exactly ONE work_items⇄typed-contract seam. Compose into any app that needs agent orchestration. Docs: /internal/docs on your install.",
+  "category": "agentic",
+  "scope": "aspect",
+  "version": "0.1.0",
+  "source": "first-party"
+}

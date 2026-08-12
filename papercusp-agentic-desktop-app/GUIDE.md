@@ -10,7 +10,7 @@ this template."* This is the **app-scope** template, and it is a LAYER
    shell → Node/Hono sidecar → embedded PG → release kit),
    [`papercusp-data-layer`](../papercusp-data-layer/GUIDE.md), and
    [`papercusp-ui`](../papercusp-ui/GUIDE.md), and
-2. [`papercusp-ops-hives`](../papercusp-ops-hives/GUIDE.md) — the judgment
+2. [`papercusp-ops-pots`](../papercusp-ops-pots/GUIDE.md) — the judgment
    plane (domain hive + -ops hive + the ONE work_items⇄contract seam),
 
 into ONE two-plane app — the proven two-plane ops shape. A
@@ -62,8 +62,8 @@ seam convention, a release step — do NOT guess:
 3. Design the seam (ops-hives GUIDE walk 1–2): work-item kind + contract
    package. The contract is the app's most durable artifact — spend judgment
    here.
-4. Materialize the blueprints + wire `@papercusp/hive-app-seam` (ops-hives
-   walk 3–4; the package is vendored in the mirror as `hive-app-seam/` —
+4. Materialize the blueprints + wire `@papercusp/pot-app-seam` (ops-hives
+   walk 3–4; the package is vendored in the mirror as `pot-app-seam/` —
    README § Supply chain).
 5. Deterministic domain plane: tables, ingest, read model, UI (`ui-shape`,
    `app-tables`).
@@ -72,6 +72,27 @@ seam convention, a release step — do NOT guess:
    `composition-integrity`) PLUS the judgment plane's (`confinement-guard` +
    `seam-round-trip` + `gym-signals`) plus this template's
    `composition-integrity`. Ship with your decision-point answers disclosed.
+
+## Checks
+
+**MUST — wire the vendored kit before you run `composition-integrity`.** That
+check imports `@papercusp/template-kit`, which is **not on npm**. It ships WITH
+this template: `template-kit/` was copied into your app root alongside
+`checks/`. Declare it and it resolves after a plain `npm install`:
+
+```jsonc
+// your app's package.json
+"devDependencies": {
+  "@papercusp/template-kit": "file:./template-kit",
+  "vitest": "^4.1.4",
+  "yaml": "^2.6.0"
+}
+```
+
+Do NOT `npm install @papercusp/template-kit` (404 — nothing under the
+`@papercusp` scope is published) and do NOT point the dep at a papercusp
+checkout path: the vendored copy is the supported source, and it is the only
+one guaranteed present on every platform.
 
 ## FREE
 

@@ -1,7 +1,7 @@
 # papercusp-agentic-desktop-app — template #1 (scope: app). P-022 (owner #5): the
 # agentic app is a LAYER — it requires the non-agentic papercusp-desktop-app as its
 # BASE app (whose closure brings papercusp-tauri-desktop-shell + papercusp-data-layer +
-# papercusp-ui) and adds papercusp-ops-hives, the judgment plane, on top
+# papercusp-ui) and adds papercusp-ops-pots, the judgment plane, on top
 # (P-014: one app = many templates). Machine twin: @papercusp/template-kit
 # src/reference-templates.ts AGENTIC_DESKTOP_APP_TEMPLATE — the kit's suite
 # pins this file to it.
@@ -11,7 +11,7 @@ scope: app
 category: app
 summary: >-
   The proven two-plane agentic desktop app shape:
-  papercusp-ops-hives (judgment plane + the ONE seam) layered onto the
+  papercusp-ops-pots (judgment plane + the ONE seam) layered onto the
   non-agentic papercusp-desktop-app BASE template — whose requires-closure brings the
   papercusp-tauri-desktop-shell chassis, papercusp-data-layer, and papercusp-ui — plus
   glue guidance. An app built from this composition must pass the UNION of
@@ -27,15 +27,15 @@ decisionPoints:
       point.
 composesWith:
   - papercusp-desktop-app
-  - papercusp-ops-hives
+  - papercusp-ops-pots
 # P-015: HARD pinned deps. P-022 re-layered: papercusp-desktop-app is the required BASE
 # app (a base app joins the composition without owning it — composeTemplates'
 # root-app rule) and pulls the whole chassis + data + UI closure;
-# papercusp-ops-hives adds the judgment plane. The checks union covers the
+# papercusp-ops-pots adds the judgment plane. The checks union covers the
 # full closure.
 requires:
   - { id: papercusp-desktop-app, version: 0.1.0 }
-  - { id: papercusp-ops-hives, version: 0.1.0 }
+  - { id: papercusp-ops-pots, version: 0.1.0 }
 docs:
   - agent-insights/templates-system-design
   - agent-insights/templates-template-yaml
