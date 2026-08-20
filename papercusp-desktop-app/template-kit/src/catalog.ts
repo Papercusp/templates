@@ -18,18 +18,47 @@ import type { ComponentManifest } from "./component-manifest.js";
 
 export const COMPONENT_CATALOG: ComponentManifest[] = [
   {
+    id: "plan-parser",
+    version: "0.1.0",
+    tier: "A",
+    kind: "package",
+    provides: [
+      "plan-document-parsing",
+      "project-history-schema",
+      "project-history-assembler",
+    ],
+    composesWith: [],
+    source: {
+      repo: "Papercusp/plan-parser",
+      path: "libs/generic/plan-parser",
+      package: "@papercusp/plan-parser",
+    },
+    tests:
+      "npm test in the lib (vitest); the installed papercusp project-history CLI exercises the provider boundary end to end",
+    summary:
+      "Pure plan-document algebra plus the versioned Project History read-model contract and assembler. " +
+      "The package owns schema and deterministic assembly; the installed papercusp CLI supplies Papercusp-ledger and Git I/O, " +
+      "so consuming apps keep only a thin generated-artifact adapter.",
+  },
+  {
     id: "pot-app-seam",
     version: "0.1.0",
     tier: "B",
     kind: "package",
     provides: ["hive-bootstrap", "domain-work-items-transport", "ingest-loop"],
-    composesWith: ["typed-contracts", "hono-host", "embedded-postgres-server", "tauri-shell"],
+    composesWith: [
+      "typed-contracts",
+      "hono-host",
+      "embedded-postgres-server",
+      "tauri-shell",
+    ],
     source: {
       repo: "Papercusp/pot-app-seam",
       path: "libs/generic/pot-app-seam",
       package: "@papercusp/pot-app-seam",
     },
-    tests: "npm test in the lib (17 vitest tests); consumed with app tests unmodified in both internal reference apps",
+    tests:
+      "npm test in the lib (17 vitest tests); consumed with app tests unmodified in both internal reference apps",
     summary:
       "The ONE app⇄hive seam (Tier B component #1): first-run hive bootstrap (bundled-blueprint local install + " +
       "idempotent fingerprint marker + ensure-hive), the generic domain work-items transport over " +
@@ -45,12 +74,17 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     version: "0.0.1",
     tier: "A",
     kind: "pattern",
-    provides: ["desktop-window-lifecycle", "sidecar-process-lifecycle", "packaged-sidecar-resolution"],
+    provides: [
+      "desktop-window-lifecycle",
+      "sidecar-process-lifecycle",
+      "packaged-sidecar-resolution",
+    ],
     composesWith: ["hono-host", "embedded-postgres-server"],
     source: {
       path: "internal reference app: apps/desktop/src-tauri/src/main.rs (extraction = P-003)",
     },
-    tests: "reference apps' shells build + boot E2E (deb proven green 2026-07-04); packaged-sidecar checks land with P-003",
+    tests:
+      "reference apps' shells build + boot E2E (deb proven green 2026-07-04); packaged-sidecar checks land with P-003",
     summary:
       "The thin Tauri 2 host pattern — a HOST, not the app: pick a free port, spawn the Node sidecar " +
       "(packaged: resource_dir()/dist-sidecar + vendored bin/node + bundled_path_env; dev: repo dist-sidecar), " +
@@ -68,9 +102,11 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     composesWith: ["hono-host", "pot-app-seam"],
     source: {
       path: "both internal reference apps: libs/embedded-postgres-server (an app-local package each)",
-      package: "@papercusp/embedded-pg-discovery (the discovery half, already shared)",
+      package:
+        "@papercusp/embedded-pg-discovery (the discovery half, already shared)",
     },
-    tests: "each app's PG-backed integration suites (testcontainers global setup) exercise it end-to-end",
+    tests:
+      "each app's PG-backed integration suites (testcontainers global setup) exercise it end-to-end",
     summary:
       "Per-app embedded Postgres: download/extract-free native PG via embedded-postgres, boot/stop lifecycle " +
       "bound to the sidecar, migrations on boot, and connection-URL discovery via @papercusp/embedded-pg-discovery " +
@@ -82,14 +118,20 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     version: "0.1.0",
     tier: "A",
     kind: "package",
-    provides: ["desktop-build-orchestration", "release-channels", "updater-manifest", "artifact-classification"],
+    provides: [
+      "desktop-build-orchestration",
+      "release-channels",
+      "updater-manifest",
+      "artifact-classification",
+    ],
     composesWith: ["tauri-shell"],
     source: {
       repo: "Papercusp/tauri-release-kit",
       path: "libs/generic/tauri-release-kit",
       package: "@papercusp/tauri-release-kit",
     },
-    tests: "npm test in the lib (vitest); driven for real by both internal reference apps' bin/release.ts",
+    tests:
+      "npm test in the lib (vitest); driven for real by both internal reference apps' bin/release.ts",
     summary:
       "Provider-agnostic Tauri desktop build+release orchestration: a pure core (version bump, channel/tag " +
       "resolution, latest.json updater-manifest generation, artifact classification) plus a per-target driver " +
@@ -106,7 +148,8 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     source: {
       path: "internal reference apps: the contracts packages (parseCandidateSet/PurchaseResearchInputSchema; SignalSchema)",
     },
-    tests: "contract packages' own vitest suites + every seam test that round-trips a payload through the gate",
+    tests:
+      "contract packages' own vitest suites + every seam test that round-trips a payload through the gate",
     summary:
       "The typed-contract pattern — the MANDATORY down-leg discipline of the one seam: a dedicated contracts " +
       "package owns the zod schemas for what crosses the app⇄hive boundary (input payloads wire-validated at " +
@@ -120,12 +163,18 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     version: "0.0.1",
     tier: "A",
     kind: "pattern",
-    provides: ["sidecar-http-host", "operator-json-discovery", "spa-serving", "sse-streams"],
+    provides: [
+      "sidecar-http-host",
+      "operator-json-discovery",
+      "spa-serving",
+      "sse-streams",
+    ],
     composesWith: ["tauri-shell", "embedded-postgres-server", "pot-app-seam"],
     source: {
       path: "internal reference apps: apps/desktop/bin/serve.ts + apps/desktop/src/_hono/",
     },
-    tests: "each app's _hono route integration suites (real PG + fake transports)",
+    tests:
+      "each app's _hono route integration suites (real PG + fake transports)",
     summary:
       "The Node sidecar host pattern: a Hono app serving the SPA + /api routes on a free localhost port, " +
       "operator.json written to the app home for shell/CLI discovery (port + pid, removed on shutdown), SSE " +
@@ -139,9 +188,17 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     version: "0.0.1",
     tier: "A",
     kind: "package",
-    provides: ["state-sync-transport", "sse-sync-client", "reconnect-backpressure"],
+    provides: [
+      "state-sync-transport",
+      "sse-sync-client",
+      "reconnect-backpressure",
+    ],
     composesWith: ["sse", "projection-index", "debounce-coalesce", "hono-host"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/sync", package: "@papercusp/sync" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/sync",
+      package: "@papercusp/sync",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Schema-agnostic sync transports (Zero + SSE) with reconnect and backpressure handling — the client half " +
@@ -155,7 +212,11 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     kind: "package",
     provides: ["sse-response-builder", "sse-channel-bus", "pg-notify-bridge"],
     composesWith: ["sync", "hono-host", "embedded-postgres-server"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/sse", package: "@papercusp/sse" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/sse",
+      package: "@papercusp/sse",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Spec-compliant Server-Sent Events primitives — the server half of live sync: an SSE response builder for " +
@@ -169,7 +230,11 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     kind: "package",
     provides: ["event-maintained-projection", "structured-index"],
     composesWith: ["sync", "sse", "embedded-postgres-server"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/projection-index", package: "@papercusp/projection-index" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/projection-index",
+      package: "@papercusp/projection-index",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "A generic event-maintained structured→index projection: feed it source records as they change and it " +
@@ -183,7 +248,11 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     kind: "package",
     provides: ["wake-floor-debounce", "burst-coalesce"],
     composesWith: ["sync", "sse", "projection-index"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/debounce-coalesce", package: "@papercusp/debounce-coalesce" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/debounce-coalesce",
+      package: "@papercusp/debounce-coalesce",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Per-subscriber wake-floor + burst-coalesce primitive: a leading-edge debounce that enforces a minimum " +
@@ -197,7 +266,11 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     kind: "package",
     provides: ["resumable-http-download", "streaming-checksum"],
     composesWith: ["sync", "hono-host"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/resumable-download", package: "@papercusp/resumable-download" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/resumable-download",
+      package: "@papercusp/resumable-download",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Generic, domain-free resumable HTTP downloader with streaming checksum verification (HTTP Range resume) — " +
@@ -211,9 +284,22 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     version: "0.1.0",
     tier: "A",
     kind: "package",
-    provides: ["bm25-search", "hybrid-vector-search", "pluggable-search-sources"],
-    composesWith: ["rrf", "search-core", "embedded-postgres-server", "hono-host"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/search", package: "@papercusp/search" },
+    provides: [
+      "bm25-search",
+      "hybrid-vector-search",
+      "pluggable-search-sources",
+    ],
+    composesWith: [
+      "rrf",
+      "search-core",
+      "embedded-postgres-server",
+      "hono-host",
+    ],
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/search",
+      package: "@papercusp/search",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Host-agnostic BM25 + pgvector hybrid search over Postgres: the host registers pluggable SearchSources " +
@@ -226,9 +312,18 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     version: "0.1.0",
     tier: "A",
     kind: "package",
-    provides: ["rerank-steering", "llm-category-match", "query-rewrite", "search-eval-contract"],
+    provides: [
+      "rerank-steering",
+      "llm-category-match",
+      "query-rewrite",
+      "search-eval-contract",
+    ],
     composesWith: ["rerank", "search"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/search-core", package: "@papercusp/search-core" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/search-core",
+      package: "@papercusp/search-core",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Engine-agnostic search-relevance core: instruction-following rerank steering, live LLM category-match, " +
@@ -242,7 +337,11 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     kind: "package",
     provides: ["cross-encoder-rerank"],
     composesWith: ["search-core", "search"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/rerank", package: "@papercusp/rerank" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/rerank",
+      package: "@papercusp/rerank",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Engine-agnostic cross-encoder reranking (ZeroEntropy zerank): re-order a candidate list by true " +
@@ -255,7 +354,11 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     kind: "package",
     provides: ["reciprocal-rank-fusion"],
     composesWith: ["search"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/rrf", package: "@papercusp/rrf" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/rrf",
+      package: "@papercusp/rrf",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Reciprocal Rank Fusion — combine multiple ranked result lists into one. Pure and zero-dependency; the " +
@@ -271,7 +374,11 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     kind: "package",
     provides: ["pg-connection-discovery", "env-discovery-fallback-resolution"],
     composesWith: ["embedded-postgres-server", "hono-host", "tauri-shell"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/embedded-pg-discovery", package: "@papercusp/embedded-pg-discovery" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/embedded-pg-discovery",
+      package: "@papercusp/embedded-pg-discovery",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Generic Postgres connection-URL discovery for desktop / local-first apps, where the DB location isn't " +
@@ -286,9 +393,18 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     version: "0.0.1",
     tier: "A",
     kind: "package",
-    provides: ["ansi-terminal-output", "markdown-rendering", "json-tree-view", "virtualized-lists"],
+    provides: [
+      "ansi-terminal-output",
+      "markdown-rendering",
+      "json-tree-view",
+      "virtualized-lists",
+    ],
     composesWith: ["dock-workbench", "papergrid", "lexicon"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/ui-primitives", package: "@papercusp/ui-primitives" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/ui-primitives",
+      package: "@papercusp/ui-primitives",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Shared headless React UI primitives — ANSI/terminal output, markdown (GFM), JSON tree viewer, and " +
@@ -301,9 +417,17 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     version: "0.1.0",
     tier: "A",
     kind: "package",
-    provides: ["data-grid-stack", "grid-virtualization", "server-rendered-rows"],
+    provides: [
+      "data-grid-stack",
+      "grid-virtualization",
+      "server-rendered-rows",
+    ],
     composesWith: ["ui-primitives", "dock-workbench", "sync"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/papergrid", package: "@papercusp/papergrid" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/papergrid",
+      package: "@papercusp/papergrid",
+    },
     tests: "npm test in the grid sub-packages (vitest)",
     summary:
       "The Papercusp data-grid stack, published as a workspaces META-PACKAGE: @papercusp/grid-core " +
@@ -318,7 +442,11 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     kind: "package",
     provides: ["dock-panel-workbench", "panel-registry", "layout-persistence"],
     composesWith: ["ui-primitives", "papergrid"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/dock-workbench", package: "@papercusp/dock-workbench" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/dock-workbench",
+      package: "@papercusp/dock-workbench",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "Host-agnostic dockview workbench shell: a panel registry, a logical layout schema with adapters, " +
@@ -332,7 +460,11 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     kind: "package",
     provides: ["brand-lexicon-resolution", "term-registry"],
     composesWith: ["ui-primitives", "dock-workbench"],
-    source: { repo: "Papercusp/papercup", path: "libs/generic/lexicon", package: "@papercusp/lexicon" },
+    source: {
+      repo: "Papercusp/papercup",
+      path: "libs/generic/lexicon",
+      package: "@papercusp/lexicon",
+    },
     tests: "npm test in the lib (vitest)",
     summary:
       "A generic terminology resolver: canonical term keys → display labels via an active brand pack, with " +
@@ -346,14 +478,21 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     version: "0.0.1",
     tier: "A",
     kind: "pattern",
-    provides: ["web-http-host", "standalone-build", "workspace-lib-transpile", "auth-middleware-seam", "operator-json-discovery"],
+    provides: [
+      "web-http-host",
+      "standalone-build",
+      "workspace-lib-transpile",
+      "auth-middleware-seam",
+      "operator-json-discovery",
+    ],
     composesWith: ["embedded-postgres-server", "pot-app-seam"],
     source: {
       path:
         "origin webapp: apps/web (next.config.js standalone + tracing root, middleware.ts, auth-proxy.mjs, " +
         "Dockerfile.web); the install's operator app (the papercusp-native reference instance)",
     },
-    tests: "the composed app's boot-e2e (papercusp-web-host checks/) + the app's own vitest serial-PG rig",
+    tests:
+      "the composed app's boot-e2e (papercusp-web-host checks/) + the app's own vitest serial-PG rig",
     summary:
       "The web host chassis pattern — the web twin of the tauri-shell + hono-host pair: a Next.js app-router " +
       "host built with output:'standalone' (outputFileTracingRoot at the monorepo root so workspace libs trace " +
@@ -362,5 +501,32 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
       "written on boot for CLI/tooling parity, an auth seam (a middleware.ts gate stub + a minimal basic-auth " +
       "reverse proxy for pre-real-auth exposure — both placeholders by design), and a Dockerfile builder using " +
       "the workspace-manifest COPY layer for cacheable installs. Config/skeleton, not a lib.",
+  },
+
+  // ---- official mobile base (official-mobile-app-templates-2026-08-20 P-007) ----
+  {
+    id: "rust-uniffi-mobile-base",
+    version: "0.1.0",
+    tier: "A",
+    kind: "pattern",
+    provides: [
+      "portable-mobile-core",
+      "uniffi-native-boundary",
+      "cross-language-design-tokens",
+      "mobile-source-hygiene",
+    ],
+    composesWith: [],
+    source: {
+      path: "templates/papercusp-mobile-base (neutral checked reference); Papercusp and SideStage mobile apps are independent conformance consumers",
+    },
+    tests:
+      "npm test -w @papercusp/template-kit plus papercusp-mobile-base portable checks under TEMPLATE_CHECKS_CONFIG in each reference consumer",
+    summary:
+      "The three-crate Rust/UniFFI mobile-base pattern shared by Android and iPhone: portable core, one generated " +
+      "bindings boundary, off-device CLI, deterministic Kotlin/Swift design-token generation, explicit runtime " +
+      "configuration, and placeholder/secret/source hygiene. It deliberately contains no product models, endpoints, " +
+      "copy, routes, brand, or native UI. Product repositories instantiate the pattern and prove it through the " +
+      "template's parameterized checks rather than importing a product-owned crate.",
+    guide: "agent-insights/templates-system-design",
   },
 ];
