@@ -22,16 +22,21 @@ construction** — the design of record is
 - Schema: `agent-insights/templates-template-yaml`
   (validator: `@papercusp/template-kit` `parseTemplateManifest`).
 
-## The set (the official expansion — Phase 5, owner directive 2026-07-04)
+## The set (official desktop, web, and mobile roots)
 
 | Template | Scope | Category | What |
 |---|---|---|---|
 | [`papercusp-desktop-app`](papercusp-desktop-app/) | app | app | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app |
 | [`papercusp-webapp`](papercusp-webapp/) | app | app | a WHOLE web app, no agents — the browser twin of `papercusp-desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the first papercusp webapp) |
 | [`papercusp-agentic-desktop-app`](papercusp-agentic-desktop-app/) | app | app | the app WITH agents: `papercusp-ops-pots` layered onto the `papercusp-desktop-app` BASE (P-022 — an app template may require another as its base) |
+| [`papercusp-android-app`](papercusp-android-app/) | app | app | a WHOLE Android app — a thin root that hard-requires the shared mobile base + Android shell at exact `0.1.0` pins |
+| [`papercusp-iphone-app`](papercusp-iphone-app/) | app | app | a WHOLE iPhone app — a thin root that hard-requires the shared mobile base + iPhone shell at exact `0.1.0` pins |
 | [`papercusp-ops-pots`](papercusp-ops-pots/) | aspect | agentic | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam |
 | [`papercusp-tauri-desktop-shell`](papercusp-tauri-desktop-shell/) | aspect | shell | the deterministic chassis: Tauri shell → Node/Hono sidecar → embedded Postgres + release kit |
 | [`papercusp-web-host`](papercusp-web-host/) | aspect | shell | the web chassis: Next.js standalone host (tracing root + workspace transpile), operator.json discovery, auth seam, Dockerfile builder (P-029) |
+| [`papercusp-mobile-base`](papercusp-mobile-base/) | aspect | shell | the cross-platform Rust/UniFFI, design-token, configuration, source-hygiene, and portable-verification contract shared by both mobile roots |
+| [`papercusp-android-shell`](papercusp-android-shell/) | aspect | shell | the Compose/Gradle/cargo-ndk Android chassis, native acceptance, security, packaging, and release contract |
+| [`papercusp-iphone-shell`](papercusp-iphone-shell/) | aspect | shell | the SwiftUI/XcodeGen/XCFramework iPhone chassis, native acceptance, privacy, signing, and archive/export contract |
 | [`papercusp-data-layer`](papercusp-data-layer/) | aspect | data | app-owned embedded Postgres + connection discovery + typed-contract write gates |
 | [`papercusp-data-sync`](papercusp-data-sync/) | aspect | data | live UI state sync: client transports + SSE server + event-maintained projections |
 | [`papercusp-search`](papercusp-search/) | aspect | search | search over app data: sources + hybrid retrieval + rerank + RRF fusion |
@@ -42,6 +47,12 @@ An app built from N templates must pass the **union of their checks**
 (`composeTemplates` — see the schema doc §Composition semantics). An app-scope
 template may `require` another app-scope template as its BASE; every
 composition has exactly ONE ROOT app (the one no other app requires).
+
+The five official whole-app roots are `papercusp-desktop-app`,
+`papercusp-webapp`, `papercusp-agentic-desktop-app`, `papercusp-android-app`,
+and `papercusp-iphone-app`. Start from exactly one of them; aspect templates are
+pulled through its pinned closure or selected deliberately where the GUIDE
+allows composition.
 
 ## Running the checks (landed: P-007)
 
