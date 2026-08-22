@@ -54,6 +54,7 @@ export interface AndroidShellPaths {
   unitTestRoots: string[];
   instrumentationTestRoots: string[];
   lintConfig: string;
+  proguardRules: string;
   buildScript: string;
   abiVerifier: string;
   provenanceScript: string;
@@ -130,6 +131,7 @@ const REQUIRED_PATH_FIELDS = [
   "manifest",
   "packageSourceRoot",
   "lintConfig",
+  "proguardRules",
   "buildScript",
   "abiVerifier",
   "provenanceScript",
@@ -437,6 +439,7 @@ export function validateAndroidShellScaffold(
   const wrapper = readRequired(root, paths.wrapperProperties, errors);
   const manifest = readRequired(root, paths.manifest, errors);
   readRequired(root, paths.lintConfig, errors);
+  const proguard = readRequired(root, paths.proguardRules, errors);
   const build = readRequired(root, paths.buildScript, errors);
   const abiVerifier = readRequired(root, paths.abiVerifier, errors);
   const provenance = readRequired(root, paths.provenanceScript, errors);
@@ -526,6 +529,21 @@ export function validateAndroidShellScaffold(
     errors.push(
       `${paths.appGradle}: abiFilters must declare the exact four-ABI set`,
     );
+  if (!app.includes(paths.proguardRules))
+    errors.push(
+      `${paths.appGradle}: release build must load ${paths.proguardRules}`,
+    );
+  for (const rule of [
+    "-keep class com.sun.jna.**",
+    "-keep class * implements com.sun.jna.**",
+    "-dontwarn java.awt.Component",
+    "-dontwarn java.awt.GraphicsEnvironment",
+    "-dontwarn java.awt.HeadlessException",
+    "-dontwarn java.awt.Window",
+  ]) {
+    if (!proguard.includes(rule))
+      errors.push(`${paths.proguardRules}: missing JNA/R8 rule '${rule}'`);
+  }
 
   for (const token of [
     paths.udl,

@@ -13,7 +13,7 @@ construction** — the design of record is
 
 - **This directory is the v1 template source of truth**: versioned with the
   repo, git-synced, readable by the anti-rot gym (P-009). The Cupboard/Comb
-  Templates section (P-010) *projects* from here.
+  Templates section (P-010) _projects_ from here.
 - **Manifests are pinned by test**: `@papercusp/template-kit`
   `src/reference-templates.ts` is the machine form; the kit's suite asserts
   each `templates/<id>/template.yaml` here parses, validates, and matches it.
@@ -24,24 +24,24 @@ construction** — the design of record is
 
 ## The set (official desktop, web, and mobile roots)
 
-| Template | Scope | Category | What |
-|---|---|---|---|
-| [`papercusp-desktop-app`](papercusp-desktop-app/) | app | app | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app |
-| [`papercusp-webapp`](papercusp-webapp/) | app | app | a WHOLE web app, no agents — the browser twin of `papercusp-desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the first papercusp webapp) |
-| [`papercusp-agentic-desktop-app`](papercusp-agentic-desktop-app/) | app | app | the app WITH agents: `papercusp-ops-pots` layered onto the `papercusp-desktop-app` BASE (P-022 — an app template may require another as its base) |
-| [`papercusp-android-app`](papercusp-android-app/) | app | app | a WHOLE Android app — a thin root that hard-requires the shared mobile base + Android shell at exact `0.1.0` pins |
-| [`papercusp-iphone-app`](papercusp-iphone-app/) | app | app | a WHOLE iPhone app — a thin root that hard-requires the shared mobile base + iPhone shell at exact `0.1.0` pins |
-| [`papercusp-ops-pots`](papercusp-ops-pots/) | aspect | agentic | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam |
-| [`papercusp-tauri-desktop-shell`](papercusp-tauri-desktop-shell/) | aspect | shell | the deterministic chassis: Tauri shell → Node/Hono sidecar → embedded Postgres + release kit |
-| [`papercusp-web-host`](papercusp-web-host/) | aspect | shell | the web chassis: Next.js standalone host (tracing root + workspace transpile), operator.json discovery, auth seam, Dockerfile builder (P-029) |
-| [`papercusp-mobile-base`](papercusp-mobile-base/) | aspect | shell | the cross-platform Rust/UniFFI, design-token, configuration, source-hygiene, and portable-verification contract shared by both mobile roots |
-| [`papercusp-android-shell`](papercusp-android-shell/) | aspect | shell | the Compose/Gradle/cargo-ndk Android chassis, native acceptance, security, packaging, and release contract |
-| [`papercusp-iphone-shell`](papercusp-iphone-shell/) | aspect | shell | the SwiftUI/XcodeGen/XCFramework iPhone chassis, native acceptance, privacy, signing, and archive/export contract |
-| [`papercusp-data-layer`](papercusp-data-layer/) | aspect | data | app-owned embedded Postgres + connection discovery + typed-contract write gates |
-| [`papercusp-data-sync`](papercusp-data-sync/) | aspect | data | live UI state sync: client transports + SSE server + event-maintained projections |
-| [`papercusp-search`](papercusp-search/) | aspect | search | search over app data: sources + hybrid retrieval + rerank + RRF fusion |
-| [`papercusp-ui`](papercusp-ui/) | aspect | ui | the operator-style SPA kit: headless primitives, papergrid, dock-workbench, lexicon |
-| [`papercusp-release-pipeline`](papercusp-release-pipeline/) | aspect | release | tauri-release-kit as an aspect: channels, signing, updater feed, target matrix (P-023) |
+| Template                                                          | Scope  | Category | What                                                                                                                                                                              |
+| ----------------------------------------------------------------- | ------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`papercusp-desktop-app`](papercusp-desktop-app/)                 | app    | app      | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app                                                                    |
+| [`papercusp-webapp`](papercusp-webapp/)                           | app    | app      | a WHOLE web app, no agents — the browser twin of `papercusp-desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the first papercusp webapp) |
+| [`papercusp-agentic-desktop-app`](papercusp-agentic-desktop-app/) | app    | app      | the app WITH agents: `papercusp-ops-pots` layered onto the `papercusp-desktop-app` BASE (P-022 — an app template may require another as its base)                                 |
+| [`papercusp-android-app`](papercusp-android-app/)                 | app    | app      | a WHOLE Android app — a thin root that hard-requires the shared mobile base + Android shell at exact `0.1.0` pins                                                                 |
+| [`papercusp-iphone-app`](papercusp-iphone-app/)                   | app    | app      | a WHOLE iPhone app — a thin root that hard-requires the shared mobile base + iPhone shell at exact `0.1.0` pins                                                                   |
+| [`papercusp-ops-pots`](papercusp-ops-pots/)                       | aspect | agentic  | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam                                                                                                    |
+| [`papercusp-tauri-desktop-shell`](papercusp-tauri-desktop-shell/) | aspect | shell    | the deterministic chassis: Tauri shell → Node/Hono sidecar → embedded Postgres + release kit                                                                                      |
+| [`papercusp-web-host`](papercusp-web-host/)                       | aspect | shell    | the web chassis: Next.js standalone host (tracing root + workspace transpile), operator.json discovery, auth seam, Dockerfile builder (P-029)                                     |
+| [`papercusp-mobile-base`](papercusp-mobile-base/)                 | aspect | shell    | the cross-platform Rust/UniFFI, design-token, configuration, source-hygiene, and portable-verification contract shared by both mobile roots                                       |
+| [`papercusp-android-shell`](papercusp-android-shell/)             | aspect | shell    | the Compose/Gradle/cargo-ndk Android chassis, native acceptance, security, packaging, and release contract                                                                        |
+| [`papercusp-iphone-shell`](papercusp-iphone-shell/)               | aspect | shell    | the SwiftUI/XcodeGen/XCFramework iPhone chassis, native acceptance, privacy, signing, and archive/export contract                                                                 |
+| [`papercusp-data-layer`](papercusp-data-layer/)                   | aspect | data     | app-owned embedded Postgres + connection discovery + typed-contract write gates                                                                                                   |
+| [`papercusp-data-sync`](papercusp-data-sync/)                     | aspect | data     | live UI state sync: client transports + SSE server + event-maintained projections                                                                                                 |
+| [`papercusp-search`](papercusp-search/)                           | aspect | search   | search over app data: sources + hybrid retrieval + rerank + RRF fusion                                                                                                            |
+| [`papercusp-ui`](papercusp-ui/)                                   | aspect | ui       | the operator-style SPA kit: headless primitives, papergrid, dock-workbench, lexicon                                                                                               |
+| [`papercusp-release-pipeline`](papercusp-release-pipeline/)       | aspect | release  | tauri-release-kit as an aspect: channels, signing, updater feed, target matrix (P-023)                                                                                            |
 
 An app built from N templates must pass the **union of their checks**
 (`composeTemplates` — see the schema doc §Composition semantics). An app-scope
@@ -71,25 +71,26 @@ Worked example config:
 [`papercusp-agentic-desktop-app/reference/worked-example.checks-config.json`](papercusp-agentic-desktop-app/reference/worked-example.checks-config.json).
 Per-check contracts: each template's `checks/README.md`.
 
-## The template gym (landed: P-009)
+## The template gym (mobile closure: P-017)
 
-Anti-rot cadence (D-007: *the template is tested by building an app from it*):
+Anti-rot cadence (D-007: _the template is tested by building an app from it_):
 the `template-gym` system routine (`system:template-gym`, every 6h) re-verifies
-five legs — the P-013 verbatim-materialization invariant (`<id>/checks/*.test.ts`
-⇄ consumer #1's `packages/template-checks/`, byte-identical;
-`composition-integrity` is declared repo-side-only), docs⇄catalog drift
-(`COMPONENT_CATALOG` ids ⊆ the published catalog page), the template-kit drift
-pins, this workspace's suite, and consumer #1's configured union inside the
-consumer-#1 repo. A standing RED auto-files ONE `template-drift` work-item
-(stable watchdogKey `template-gym:<leg>`); the gym is advisory and never gates.
+seven mobile-closure legs: the canonical five-template manifest set is
+byte-identical in both consumer repositories; both platform roots expose their
+full composed check union; Papercusp and SideStage exercise distinct optional
+capability sets on each platform; and four real-consumer legs run the portable
+static conformance checks for Papercusp Android/iPhone and SideStage
+Android/iPhone. A standing RED auto-files ONE `template-drift` work-item (stable
+watchdogKey `template-gym:<leg>`); the gym is advisory and never gates.
 
-Code: `packages/operator-core/lib/harness/routines/template-gym-{runner,action}.ts`
-(+ `seed-template-gym-routine.ts`). On-demand run + per-leg re-run:
+Code: `packages/operator-core/lib/harness/routines/template-gym-{runner,action}.ts`.
+On-demand run + per-leg re-run:
 
 ```sh
 npx tsx packages/operator-core/lib/harness/routines/template-gym-runner.ts \
-  [--legs materialization,docs-catalog,kit-suite,template-suite,app-checks] \
-  [--qm-root <consumer-1 clone>]           # default: the sibling clone
+  [--legs mobile-manifests,mobile-check-union,mobile-capability-diversity,papercusp-android,papercusp-iphone,sidestage-android,sidestage-iphone] \
+  [--papercusp-mobile-root <clone>] [--sidestage-mobile-root <clone>] \
+  [--summary-json <path>]
 ```
 
 Run history: `~/.papercusp/template-gym/` (`last-run.json` + `runs.jsonl`).
@@ -112,6 +113,7 @@ is flattened or copied at publish time). The loop:
   a copy of these `<id>/` dirs (this tree stays canonical; push changed dirs
   to the mirror before re-publishing). Mirror-sync automation is a tracked
   follow-up (P-027).
+
 ## Supply chain — building OUTSIDE papercup (v1, WI-2860..2863 + WI-2891)
 
 A builder cloning only the public mirror gets everything it needs to compose
@@ -177,6 +179,7 @@ official v1 mechanism that closes them:
   `hive-app-seam`/`papercusp-ops-hives` layout. Until someone runs
   `mirror:push`, a `file:`-link into a mirror clone will NOT resolve
   `@papercusp/pot-app-seam`.
+
 - **Other component packages** (`@papercusp/sync`, `@papercusp/ui-primitives`,
   …) are not published to npm either and are NOT vendored (they have runtime
   deps or platform coupling the mirror can't carry). The official v1
@@ -204,6 +207,7 @@ official v1 mechanism that closes them:
   `node_modules` are the wrong architecture, so staging is off by default with
   an opt-in darwin cross-install). Linux and Windows ship it by default.
   See WI-37790.
+
 - **Runnable checks harness**: the mirror root carries `package.json` +
   `vitest.config.ts`, so `npm install && npm test` runs every
   `<id>/checks/*.test.ts` — `composition-integrity` green against the

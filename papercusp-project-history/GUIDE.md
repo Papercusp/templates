@@ -14,7 +14,7 @@ papercusp project-history generate \
   --project-id my-project \
   --project-name "My Project" \
   --repo . \
-  --output .papercusp/project-history.v1.json
+  --output .papercusp/project-history.v2.json
 ```
 
 Use `--format typescript --export-name PROJECT_HISTORY` when a server package
@@ -50,7 +50,7 @@ into the composed app and point `TEMPLATE_CHECKS_CONFIG` at:
 {
   "app": { "root": "." },
   "projectHistory": {
-    "artifact": ".papercusp/project-history.v1.json",
+    "artifact": ".papercusp/project-history.v2.json",
     "projectId": "my-project",
     "harness": "my-project"
   }

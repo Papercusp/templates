@@ -75,6 +75,7 @@ function fixture(): { root: string; section: AndroidShellSection } {
     unitTestRoots: ["android/app/src/test/kotlin"],
     instrumentationTestRoots: ["android/app/src/androidTest/kotlin"],
     lintConfig: "android/app/lint.xml",
+    proguardRules: "android/app/proguard-rules.pro",
     buildScript: "tools/build-android.sh",
     abiVerifier: "tools/verify-android-uniffi-abi.sh",
     provenanceScript: "tools/android-release-provenance.sh",
@@ -101,6 +102,9 @@ android {
     minSdk = 24
     targetSdk = 36
     ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64") }
+  }
+  buildTypes {
+    getByName("release") { proguardFiles("${paths.proguardRules}") }
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -153,6 +157,17 @@ tasks.named("preBuild").configure { dependsOn(generateUniFfiKotlin) }
     "android/app/src/androidTest/kotlin/dev/harbor/mobile/LaunchTest.kt",
   );
   put(root, paths.lintConfig, "<lint />\n");
+  put(
+    root,
+    paths.proguardRules,
+    `-keep class com.sun.jna.** { *; }
+-keep class * implements com.sun.jna.** { *; }
+-dontwarn java.awt.Component
+-dontwarn java.awt.GraphicsEnvironment
+-dontwarn java.awt.HeadlessException
+-dontwarn java.awt.Window
+`,
+  );
   put(
     root,
     paths.udl,
@@ -290,6 +305,33 @@ describe("portable Android shell contract logic", () => {
     expect(errors).toContain(
       `signing-absence must unset ${signingInputNames[0]}`,
     );
+  });
+
+  it("rejects release minification without the complete JNA/R8 rule set", () => {
+    const { root, section } = fixture();
+    put(
+      root,
+      section.paths.proguardRules,
+      `-keep class com.sun.jna.** { *; }
+-keep class * implements com.sun.jna.** { *; }
+-dontwarn java.awt.Component
+`,
+    );
+    const errors = validateAndroidShellScaffold(root, section).join("\n");
+    expect(errors).toContain("-dontwarn java.awt.GraphicsEnvironment");
+    expect(errors).toContain("-dontwarn java.awt.HeadlessException");
+    expect(errors).toContain("-dontwarn java.awt.Window");
+  });
+
+  it("keeps the GUIDE acceptance bar outcome-based and host-capable", () => {
+    const guide = readFileSync(
+      new URL("../GUIDE.md", import.meta.url),
+      "utf8",
+    ).replace(/\s+/g, " ");
+    expect(guide).toContain("renders real Rust-core output");
+    expect(guide).toContain("A live process alone is not acceptance evidence");
+    expect(guide).toContain("Android-native assertion");
+    expect(guide).toContain("host-constrained, never green");
   });
 
   it("writes atomic evidence for pass, expected failure, and host constraint", () => {

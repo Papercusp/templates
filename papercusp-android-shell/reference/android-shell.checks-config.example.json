@@ -35,6 +35,7 @@
       "unitTestRoots": ["android/app/src/test/kotlin"],
       "instrumentationTestRoots": ["android/app/src/androidTest/kotlin"],
       "lintConfig": "android/app/lint.xml",
+      "proguardRules": "android/app/proguard-rules.pro",
       "buildScript": "tools/build-android.sh",
       "abiVerifier": "tools/verify-android-uniffi-abi.sh",
       "provenanceScript": "tools/android-release-provenance.sh",

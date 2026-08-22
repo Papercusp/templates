@@ -137,6 +137,50 @@ export function validateAndroidAppComposition(
   return errors;
 }
 
+// A decision point is satisfied by an ANSWER, not by a token that stands in
+// for one. "unknown" / "TBD" / "n/a" are exactly what a hurried builder writes,
+// and a non-empty-string rule accepts every one of them — so the answer record
+// reads GREEN while nothing was actually decided.
+const PLACEHOLDER_ANSWERS: ReadonlySet<string> = new Set([
+  "fixme",
+  "n/a",
+  "na",
+  "nil",
+  "none",
+  "null",
+  "pending",
+  "placeholder",
+  "tba",
+  "tbc",
+  "tbd",
+  "tk",
+  "to be decided",
+  "to be determined",
+  "todo",
+  "unanswered",
+  "undecided",
+  "unknown",
+  "unspecified",
+  "xxx",
+]);
+
+export function isPlaceholderAnswer(answer: string): boolean {
+  const trimmed = answer.trim();
+  // No letter or digit anywhere ("-", "???", "…") is never an answer.
+  if (!/[\p{L}\p{N}]/u.test(trimmed)) {
+    return true;
+  }
+  const normalized = trimmed
+    .toLowerCase()
+    .replace(/[.!?]+$/u, "")
+    .replace(/[\s._/\\-]+/gu, " ")
+    .trim();
+  return (
+    PLACEHOLDER_ANSWERS.has(normalized) ||
+    PLACEHOLDER_ANSWERS.has(normalized.replace(/\s+/gu, ""))
+  );
+}
+
 export function validateDecisionPointAnswers(
   manifests: readonly TemplateManifest[],
   value: unknown,
@@ -152,6 +196,10 @@ export function validateDecisionPointAnswers(
     if (typeof answer !== "string" || answer.trim() === "") {
       errors.push(
         `composition.decisionPointAnswers.${key}: required non-empty answer`,
+      );
+    } else if (isPlaceholderAnswer(answer)) {
+      errors.push(
+        `composition.decisionPointAnswers.${key}: placeholder answer "${answer.trim()}" does not decide this point`,
       );
     }
   }

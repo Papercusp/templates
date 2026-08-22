@@ -158,6 +158,7 @@ export interface ChecksAndroidShellPaths {
   unitTestRoots: string[];
   instrumentationTestRoots: string[];
   lintConfig: string;
+  proguardRules: string;
   buildScript: string;
   abiVerifier: string;
   provenanceScript: string;
@@ -704,6 +705,7 @@ export function validateChecksConfig(value: unknown): string[] {
           "manifest",
           "packageSourceRoot",
           "lintConfig",
+          "proguardRules",
           "buildScript",
           "abiVerifier",
           "provenanceScript",

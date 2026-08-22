@@ -34,11 +34,25 @@ function readArtifact(path: string): Record<string, any> {
 describe.skipIf(!section)("project-history artifact", () => {
   it("is a versioned artifact for the configured project and harness", () => {
     const document = readArtifact(inApp(section!.artifact));
-    expect(document.schemaVersion).toBe(1);
+    expect(document.schemaVersion).toBe(2);
     expect(document.source?.kind).toBe("papercusp-plan-export");
     expect(document.source?.generator).toBe("papercusp project-history generate");
     expect(Array.isArray(document.plans)).toBe(true);
     expect(document.source?.planCount).toBe(document.plans.length);
+    for (const plan of document.plans) {
+      expect(plan.validationSummary).toEqual(expect.objectContaining({
+        total: expect.any(Number),
+        passed: expect.any(Number),
+        failed: expect.any(Number),
+        validating: expect.any(Number),
+        todo: expect.any(Number),
+        requiringTest: expect.any(Number),
+      }));
+      expect(Array.isArray(plan.items)).toBe(true);
+      for (const item of plan.items) {
+        expect(Array.isArray(item.validationAssertions)).toBe(true);
+      }
+    }
     if (section!.projectId) expect(document.project?.id).toBe(section!.projectId);
     if (section!.harness) expect(document.source?.harness).toBe(section!.harness);
   });

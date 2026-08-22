@@ -58,6 +58,16 @@ Compose and run the `papercusp-mobile-base` checks alongside this suite.
   an iPhone host pass.
 - Run XCTest and XCUITest with a result bundle, inspect the result, and require
   a non-zero executed test count in addition to Xcode success.
+- Any SwiftUI view whose `.accessibilityIdentifier` a XCUITest queries as a
+  container must ALSO be promoted to an accessibility container with
+  `.accessibilityElement(children: .contain)`. Setting the identifier alone on
+  a layout view (a `VStack` card, a row) does not publish that view to the
+  accessibility hierarchy, so `app.otherElements["<id>"]` never resolves. The
+  failure signature is deliberately unhelpful — `waitForExistence` burns its
+  full timeout and reports a bare `XCTAssertTrue failed` with no hint that the
+  identifier was set but unreachable — so treat a leaf assertion that passes
+  (`staticTexts[...]`) beside a container assertion that fails as this bug,
+  not as a rendering fault.
 - Always ship a privacy manifest. Keep entitlement keys, usage descriptions,
   background modes, URL/domain declarations, selected capabilities, and
   XcodeGen settings consistent. No optional declaration appears by default.

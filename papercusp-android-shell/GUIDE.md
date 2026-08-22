@@ -54,10 +54,21 @@ and run the `papercusp-mobile-base` checks alongside this suite.
 - Verify generated Kotlin checksum symbols against each packaged `.so`. Check
   every 64-bit release ELF LOAD alignment and run `zipalign -P 16` on the
   release APK.
+- Minify a real release build. Its app-scoped ProGuard rules keep JNA and the
+  generated UniFFI binding, and suppress only JNA's unreachable desktop AWT
+  helpers (`java.awt.Component`, `GraphicsEnvironment`, `HeadlessException`,
+  and `Window`). A debug-only build does not exercise this contract.
 - Run lint, JVM unit smoke, instrumentation launch/navigation smoke, and a
   merged release-manifest permission diff with non-zero expected execution.
   Missing tools, SDKs, devices, or capable hosts report `host-constrained`,
   never green.
+- On an Android-capable host, prove the launched app renders real Rust-core
+  output with an Android-native assertion. An instrumented UI assertion is
+  valid; so is a screenshot artifact paired with logcat or another check that
+  ties the rendered value to the core result. A live process alone is not
+  acceptance evidence. A host that cannot run this proof is host-constrained,
+  never green. Specify the portable outcome, not another platform's test
+  framework or lifecycle shape.
 - Release forbids cleartext. A debug-only exception is explicit and scoped;
   selected permissions/services/plugins must match the recorded capability
   answer and merged-manifest allowlist.
