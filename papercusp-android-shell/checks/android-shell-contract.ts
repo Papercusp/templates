@@ -10,7 +10,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { arch, platform } from "node:os";
-import { isAbsolute, join, relative, resolve, sep } from "node:path";
+import { isAbsolute, join, posix, relative, resolve, sep } from "node:path";
 
 export const REQUIRED_ANDROID_ABIS = [
   "arm64-v8a",
@@ -529,7 +529,11 @@ export function validateAndroidShellScaffold(
     errors.push(
       `${paths.appGradle}: abiFilters must declare the exact four-ABI set`,
     );
-  if (!app.includes(paths.proguardRules))
+  const acceptedProguardReferences = new Set([
+    paths.proguardRules,
+    posix.relative(posix.dirname(paths.appGradle), paths.proguardRules),
+  ]);
+  if (![...acceptedProguardReferences].some((path) => app.includes(path)))
     errors.push(
       `${paths.appGradle}: release build must load ${paths.proguardRules}`,
     );

@@ -1062,6 +1062,73 @@ export const PAPERCUSP_WEBAPP_TEMPLATE: TemplateManifest = {
   ],
 };
 
+/**
+ * App-scope: the agentic WEB app — the browser twin of
+ * papercusp-agentic-desktop-app (plan papercusp-agentic-webapp-template-2026-08-23):
+ * papercusp-ops-pots layered onto the non-agentic papercusp-webapp BASE app,
+ * exactly as the agentic desktop root layers onto papercusp-desktop-app.
+ */
+export const AGENTIC_WEBAPP_TEMPLATE: TemplateManifest = {
+  id: "papercusp-agentic-webapp",
+  version: "0.1.0",
+  scope: "app",
+  category: "app",
+  summary:
+    "The two-plane agentic WEB app shape — the browser twin of papercusp-agentic-desktop-app: " +
+    "papercusp-ops-pots (judgment plane + the ONE seam) layered onto the non-agentic papercusp-webapp " +
+    "BASE template — whose requires-closure brings the papercusp-web-host chassis, papercusp-data-layer, " +
+    "and papercusp-ui — plus glue guidance. An app built from this composition must pass the UNION of " +
+    "the full closure's checks — that additive rule is what keeps free-form composition safe without a " +
+    "deterministic composer.",
+  components: [],
+  contracts: [],
+  decisionPoints: [
+    {
+      id: "domain",
+      prompt:
+        "What is the app's domain — the noun the deterministic plane ledgers and the judgment plane reasons about? Drives every aspect-level decision point.",
+    },
+  ],
+  composesWith: ["papercusp-webapp", "papercusp-ops-pots"],
+  // The HARD pinned edge, mirroring papercusp-agentic-desktop-app (P-022 layering):
+  // papercusp-webapp is the required BASE app (a base app joins the composition
+  // without owning it — composeTemplates' root-app rule) and pulls the whole
+  // web chassis + data + UI closure; papercusp-ops-pots adds the judgment plane.
+  requires: [
+    { id: "papercusp-webapp", version: "0.1.0" },
+    { id: "papercusp-ops-pots", version: "0.1.0" },
+  ],
+  docs: [
+    "agent-insights/templates-system-design",
+    "agent-insights/templates-template-yaml",
+  ],
+  checks: [
+    {
+      id: "composition-integrity",
+      run: "checks/composition-integrity.test.ts",
+      summary:
+        "the composed set resolves (composeTemplates ok: pins consistent, one root app scope) and the union of checks is what CI runs",
+    },
+  ],
+  musts: [
+    {
+      id: "walk-decision-points",
+      rule: "Answer EVERY decision point of the closure — the answers are the ship disclosure that makes free composition reviewable (domain is answered once; the base's tenancy fork comes FIRST)",
+      enforcedBy: "prose-only",
+    },
+    {
+      id: "honor-closure-musts",
+      rule: "Honor every closure member MUST tiers in full — the seam discipline is Tier B, the web-host auth placeholders are replaced before any non-local exposure",
+      enforcedBy: "prose-only",
+    },
+    {
+      id: "mechanical-validation",
+      rule: "Expand through resolveRequiresClosure, compose through composeTemplates, and run the union of checks as the CI gate",
+      enforcedBy: "composition-integrity",
+    },
+  ],
+};
+
 /** Aspect: the portable Rust/UniFFI/config/token contract shared by Android and iPhone. */
 export const PAPERCUSP_MOBILE_BASE_TEMPLATE: TemplateManifest = {
   id: "papercusp-mobile-base",
@@ -1499,6 +1566,7 @@ export const REFERENCE_TEMPLATES: TemplateManifest[] = [
   PROJECT_HISTORY_TEMPLATE,
   PAPERCUSP_WEB_HOST_TEMPLATE,
   PAPERCUSP_WEBAPP_TEMPLATE,
+  AGENTIC_WEBAPP_TEMPLATE,
   PAPERCUSP_MOBILE_BASE_TEMPLATE,
   PAPERCUSP_ANDROID_SHELL_TEMPLATE,
   PAPERCUSP_IPHONE_SHELL_TEMPLATE,

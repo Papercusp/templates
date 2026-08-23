@@ -243,6 +243,30 @@ describe("portable Android shell contract logic", () => {
     expect(validateAndroidCommandPlan(section)).toEqual([]);
   });
 
+  it("accepts a module-relative Gradle reference to the configured ProGuard file", () => {
+    const { root, section } = fixture();
+    const app = readFileSync(join(root, section.paths.appGradle), "utf8");
+    put(
+      root,
+      section.paths.appGradle,
+      app.replace(section.paths.proguardRules, "proguard-rules.pro"),
+    );
+    expect(validateAndroidShellScaffold(root, section)).toEqual([]);
+  });
+
+  it("rejects a Gradle build that loads a different ProGuard file", () => {
+    const { root, section } = fixture();
+    const app = readFileSync(join(root, section.paths.appGradle), "utf8");
+    put(
+      root,
+      section.paths.appGradle,
+      app.replace(section.paths.proguardRules, "unrelated-rules.pro"),
+    );
+    expect(validateAndroidShellScaffold(root, section)).toContain(
+      `${section.paths.appGradle}: release build must load ${section.paths.proguardRules}`,
+    );
+  });
+
   it("catches identity, toolchain, ABI, and incremental-binding drift", () => {
     const { root, section } = fixture();
     put(

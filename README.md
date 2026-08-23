@@ -29,6 +29,7 @@ construction** — the design of record is
 | [`papercusp-desktop-app`](papercusp-desktop-app/)                 | app    | app      | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app                                                                    |
 | [`papercusp-webapp`](papercusp-webapp/)                           | app    | app      | a WHOLE web app, no agents — the browser twin of `papercusp-desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the first papercusp webapp) |
 | [`papercusp-agentic-desktop-app`](papercusp-agentic-desktop-app/) | app    | app      | the app WITH agents: `papercusp-ops-pots` layered onto the `papercusp-desktop-app` BASE (P-022 — an app template may require another as its base)                                 |
+| [`papercusp-agentic-webapp`](papercusp-agentic-webapp/)           | app    | app      | the WEB app WITH agents — the browser twin of `papercusp-agentic-desktop-app`: `papercusp-ops-pots` layered onto the `papercusp-webapp` BASE                                      |
 | [`papercusp-android-app`](papercusp-android-app/)                 | app    | app      | a WHOLE Android app — a thin root that hard-requires the shared mobile base + Android shell at exact `0.1.0` pins                                                                 |
 | [`papercusp-iphone-app`](papercusp-iphone-app/)                   | app    | app      | a WHOLE iPhone app — a thin root that hard-requires the shared mobile base + iPhone shell at exact `0.1.0` pins                                                                   |
 | [`papercusp-ops-pots`](papercusp-ops-pots/)                       | aspect | agentic  | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam                                                                                                    |
@@ -48,11 +49,11 @@ An app built from N templates must pass the **union of their checks**
 template may `require` another app-scope template as its BASE; every
 composition has exactly ONE ROOT app (the one no other app requires).
 
-The five official whole-app roots are `papercusp-desktop-app`,
-`papercusp-webapp`, `papercusp-agentic-desktop-app`, `papercusp-android-app`,
-and `papercusp-iphone-app`. Start from exactly one of them; aspect templates are
-pulled through its pinned closure or selected deliberately where the GUIDE
-allows composition.
+The six official whole-app roots are `papercusp-desktop-app`,
+`papercusp-webapp`, `papercusp-agentic-desktop-app`, `papercusp-agentic-webapp`,
+`papercusp-android-app`, and `papercusp-iphone-app`. Start from exactly one of
+them; aspect templates are pulled through its pinned closure or selected
+deliberately where the GUIDE allows composition.
 
 ## Running the checks (landed: P-007)
 
