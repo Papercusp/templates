@@ -20,8 +20,10 @@ export {
 } from "./component-manifest.js";
 export { COMPONENT_CATALOG } from "./catalog.js";
 export {
+  isOptionalSelect,
   MUST_PROSE_ONLY,
   parseTemplateManifest,
+  selectingDecisionPoints,
   TEMPLATE_CATEGORIES,
   unenforcedMusts,
   validateTemplateAgainstCatalog,
@@ -29,7 +31,9 @@ export {
   type TemplateCategory,
   type TemplateCheck,
   type TemplateComponentRef,
+  type TemplateDecisionOption,
   type TemplateDecisionPoint,
+  type TemplateDecisionSelect,
   type TemplateManifest,
   type TemplateMust,
   type TemplateRequireRef,
@@ -38,8 +42,10 @@ export {
 export {
   composeTemplates,
   resolveRequiresClosure,
+  resolveSelection,
   validateTemplateSet,
   type ComposedFrom,
+  type ResolvedSelection,
   type TemplateComposition,
 } from "./composition.js";
 export {
@@ -51,6 +57,7 @@ export {
   parseChecksConfig,
   validateChecksConfig,
   type ChecksBootSection,
+  type ChecksNativeDesktopSection,
   type ChecksComponentsSection,
   type ChecksCompositionSection,
   type ChecksConfinementSection,
@@ -64,8 +71,7 @@ export {
   type TemplateChecksConfig,
 } from "./checks-config.js";
 export {
-  AGENTIC_DESKTOP_APP_TEMPLATE,
-  DESKTOP_APP_TEMPLATE,
+  PAPERCUSP_APP_TEMPLATE,
   PAPERCUSP_DATA_LAYER_TEMPLATE,
   PAPERCUSP_DATA_SYNC_TEMPLATE,
   PAPERCUSP_MOBILE_BASE_TEMPLATE,

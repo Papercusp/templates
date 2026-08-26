@@ -51,8 +51,7 @@ decisionPoints:
       Keep it a pure function of the repo tree; everything else is the kit's.
 composesWith:
   - papercusp-tauri-desktop-shell
-  - papercusp-desktop-app
-  - papercusp-agentic-desktop-app
+  - papercusp-app
 docs:
   - agent-insights/templates-system-design
   - agent-insights/templates-template-yaml

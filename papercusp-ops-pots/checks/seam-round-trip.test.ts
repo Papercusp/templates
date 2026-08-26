@@ -18,7 +18,7 @@
  *     validInput: object          // a payload.in fixture the gate must ACCEPT
  *     validOutput: object         // a payload.out fixture the gate must ACCEPT
  *     invalidOutput: object       // a payload.out fixture the gate must REJECT
- *     memberBlueprint?: string    // member blueprint.yaml — cross-checks workItem.kind
+ *     agentBlueprint?: string     // stable app-agent blueprint — cross-checks workItem.kind
  *     roundTripCommand?: string[] // OPTIONAL: the app's own full enqueue→ingest
  *     roundTripCwd?: string       //   integration leg (spawned, must exit 0)
  *     roundTripTimeoutMs?: number //   default 300000
@@ -27,8 +27,8 @@
  * What it pins: the app's contract package exposes the two wire gates; a valid
  * in-payload and out-payload parse; the join key echoes UNCHANGED through the
  * round trip; a malformed out-payload is REJECTED (never silently ingested —
- * the reject is what the ingest-sentinel reacts to); and the member blueprint
- * declares the same seam kind. The live enqueue→DB-row leg is app
+ * the reject is what the ingest-sentinel reacts to); and the stable app-agent
+ * blueprint declares the same seam kind. The live enqueue→DB-row leg is app
  * infrastructure — delegate it via `roundTripCommand` to the app's own
  * integration suite (consumer #1: the research-seam tests).
  */
@@ -61,7 +61,7 @@ interface SeamSection {
   validInput: Record<string, unknown>;
   validOutput: Record<string, unknown>;
   invalidOutput: Record<string, unknown>;
-  memberBlueprint?: string;
+  agentBlueprint?: string;
   roundTripCommand?: string[];
   roundTripCwd?: string;
   roundTripTimeoutMs?: number;
@@ -105,9 +105,9 @@ describe.skipIf(!section)("seam-round-trip", () => {
     expect(() => parseOut(section!.invalidOutput)).toThrow();
   });
 
-  it("the member blueprint declares the same seam kind", () => {
-    if (!section!.memberBlueprint) return;
-    const doc = parse(readFileSync(inApp(section!.memberBlueprint), "utf8")) as {
+  it("the stable app-agent blueprint declares the same seam kind", () => {
+    if (!section!.agentBlueprint) return;
+    const doc = parse(readFileSync(inApp(section!.agentBlueprint), "utf8")) as {
       workItem?: { kind?: string };
     };
     expect(doc.workItem?.kind).toBe(section!.workItemKind);

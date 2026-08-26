@@ -33,7 +33,7 @@ decisionPoints:
       (feeds tauri.conf + tauri-release-kit config).
 composesWith:
   - papercusp-ops-pots
-  - papercusp-agentic-desktop-app
+  - papercusp-app
 docs:
   - agent-insights/templates-system-design
   - agent-insights/templates-template-yaml
@@ -42,12 +42,15 @@ checks:
   - id: boot-e2e
     run: checks/boot-e2e.test.ts
     summary: >-
-      composed app builds, sidecar spawns, discovery file written, health
-      returns 200
+      native Cargo/config/icon inputs exist, composed app builds, sidecar
+      spawns, discovery file written, health returns 200
 musts:
   - id: thin-shell
     rule: "No domain logic in Rust — the shell is a HOST; packaged sidecar resolution is resource_dir()/dist-sidecar + vendored bin/node + bundled_path_env, dev is the repo dist-sidecar"
     enforcedBy: prose-only
+  - id: native-bundle-inputs
+    rule: "Cargo.toml + committed Cargo.lock + tauri.conf.json + every explicitly configured bundle icon exist and are non-empty before native compilation"
+    enforcedBy: boot-e2e
   - id: discovery-file
     rule: "Port + pid written to the app home at boot and removed on shutdown — the shell polls it, the CLI reads it"
     enforcedBy: boot-e2e

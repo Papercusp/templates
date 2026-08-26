@@ -13,6 +13,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
+    "@papercusp/test-config": "*",
     "@types/node": "^22.0.0",
     "vitest": "^4.1.4",
     "yaml": "^2.6.0"

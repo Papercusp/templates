@@ -36,9 +36,14 @@ Postgres, and writing a discovery file so the shell/CLI can find it.
    `resource_dir()/dist-sidecar` + vendored `bin/node` + `bundled_path_env`;
    dev = repo `dist-sidecar`. (Extraction into a reusable skeleton is P-003 —
    until then, copy the reference `main.rs` shape.)
-2. **Discovery file** (`operator.json` analog): port + pid written at boot to
+2. **Native bundle inputs**: commit `Cargo.toml`, `Cargo.lock`, `tauri.conf.json`,
+   and every icon named by an explicit `bundle.icon` list. A missing default
+   `icons/icon.png` otherwise fails late inside `tauri::generate_context!`.
+   Wire these paths into the checks config's `nativeDesktop` section so the
+   portable preflight catches missing/empty assets before Cargo compilation.
+3. **Discovery file** (`operator.json` analog): port + pid written at boot to
    the app home, removed on shutdown — the shell polls it; the CLI reads it.
-3. **Graceful shutdown ordering** on SIGTERM: host close → sync stop → PG stop
+4. **Graceful shutdown ordering** on SIGTERM: host close → sync stop → PG stop
    → discovery-file removal — and a force-exit timer so a wedged component
    can't hang the process (the SIGTERM-wedge lesson, WI-2667).
    The FINAL step must be **synchronous** (`unlinkSync`, not `await rm`) —
@@ -46,12 +51,12 @@ Postgres, and writing a discovery file so the shell/CLI can find it.
    signal cleanup races your handler and can kill the process (raw exit 143)
    inside a trailing `await`, leaving the discovery file behind (the
    greenfield-snippets lesson, WI-2866).
-4. **Embedded PG lifecycle**: boot/stop bound to the sidecar; migrations on
+5. **Embedded PG lifecycle**: boot/stop bound to the sidecar; migrations on
    boot; connection resolution via `@papercusp/embedded-pg-discovery`
    (env → discovery JSON → fallback). Use **portable initdb flags**
    (`--locale=C.UTF-8 --encoding=UTF8`) — host-locale initdb breaks on
    non-English machines (the WI-2649 lesson).
-5. **Env-gated optional planes**: booting with no config changes nothing — an
+6. **Env-gated optional planes**: booting with no config changes nothing — an
    unset operator URL must mean "hive plane off", never a crash.
 
 ## SHOULD
@@ -78,7 +83,8 @@ differently in places; the checks don't care.
 ## Composition walk (suggested order)
 
 1. Answer `app-identity`; scaffold `src-tauri` from the reference `main.rs`
-   shape + `tauri.conf`.
+   shape + `tauri.conf`, copy the standard Tauri icon set as the initial asset,
+   list it explicitly under `bundle.icon`, and commit the generated `Cargo.lock`.
 2. Sidecar: Hono host + embedded PG + discovery file + graceful shutdown
    (MUSTs 2–5).
 3. SPA per `ui-shape`; wire `/api`.

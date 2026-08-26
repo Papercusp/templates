@@ -1,8 +1,13 @@
 # checks/ — the acceptance suite (landed: plan app-templates-2026-07-04 P-007)
 
-## `boot-e2e` (`boot-e2e.test.ts`) — the composed app actually boots
+## `boot-e2e` (`boot-e2e.test.ts`) — native inputs exist and the composed app actually boots
 
-Pins the chassis MUSTs end-to-end: sidecar spawns → discovery file
+The optional `nativeDesktop` config section runs a fast static preflight first:
+the Rust manifest + committed lockfile + Tauri config + every explicitly
+configured bundle icon must exist and be non-empty. This catches the otherwise
+late `tauri::generate_context!` missing-icon panic before Cargo compilation.
+
+The `boot` section pins the runtime chassis MUSTs end-to-end: sidecar spawns → discovery file
 (`operator.json` analog) written → health returns 200 → SIGTERM → clean exit
 within the grace window (the WI-2667 force-exit lesson) → discovery file
 removed.
@@ -33,4 +38,4 @@ TEMPLATE_CHECKS_CONFIG=/path/to/checks-config.json npx vitest run checks/
 ```
 
 Worked example config:
-`../../papercusp-agentic-desktop-app/reference/worked-example.checks-config.json`.
+`../../papercusp-app/reference/worked-example.checks-config.json`.

@@ -23,6 +23,16 @@ components:
     version: "0.0.1"
 contracts: []
 decisionPoints:
+  # Declared HERE, not on an app root: tenancy is a web-chassis concern, so it
+  # appears exactly when this chassis is in the closure (composition tags every
+  # decision point with the template that owns it — no conditionals needed).
+  - id: tenancy
+    prompt: >-
+      Single-user local install (papercusp-style, embedded PG per install)
+      or multi-user server deployment (one PG, real auth, sessions)? The web
+      chassis serves both, but auth-strategy, data-layer connection
+      resolution, and the hosting target all fork on this answer — decide it
+      FIRST.
   - id: hosting-target
     prompt: >-
       Where does the app run — a local per-user install (papercusp-style), a
@@ -50,7 +60,7 @@ composesWith:
   - papercusp-ui
   - papercusp-data-sync
   - papercusp-search
-  - papercusp-webapp
+  - papercusp-app
 docs:
   - agent-insights/templates-system-design
   - agent-insights/templates-template-yaml

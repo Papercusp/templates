@@ -31,7 +31,7 @@
  * clobber the live discovery file.
  */
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -61,6 +61,14 @@ interface BootSection {
 }
 const section = config?.boot as BootSection | undefined;
 
+interface NativeDesktopSection {
+  cargoManifest: string;
+  cargoLock: string;
+  tauriConfig: string;
+  icons: string[];
+}
+const nativeDesktop = config?.nativeDesktop as NativeDesktopSection | undefined;
+
 interface Discovery {
   port: number;
   host?: string;
@@ -86,6 +94,35 @@ async function healthStatus(disc: Discovery, healthPath: string): Promise<number
     return null;
   }
 }
+
+describe.skipIf(!nativeDesktop)("native-desktop-preflight", () => {
+  it("tracks the Rust manifest + lockfile and every icon configured for the Tauri bundle", () => {
+    const required = [
+      nativeDesktop!.cargoManifest,
+      nativeDesktop!.cargoLock,
+      nativeDesktop!.tauriConfig,
+      ...nativeDesktop!.icons,
+    ];
+    for (const relativePath of required) {
+      const path = inApp(relativePath);
+      expect(existsSync(path), `missing native desktop input: ${relativePath}`).toBe(true);
+      expect(statSync(path).size, `empty native desktop input: ${relativePath}`).toBeGreaterThan(0);
+    }
+
+    const tauriConfigPath = inApp(nativeDesktop!.tauriConfig);
+    const tauriConfig = JSON.parse(readFileSync(tauriConfigPath, "utf8")) as {
+      bundle?: { active?: boolean; icon?: string[] };
+    };
+    expect(tauriConfig.bundle?.active, "Tauri bundling must be explicitly active").toBe(true);
+    expect(tauriConfig.bundle?.icon, "bundle.icon must explicitly list every shipped icon").toBeInstanceOf(Array);
+
+    const configuredIcons = (tauriConfig.bundle!.icon ?? [])
+      .map((path) => resolve(dirname(tauriConfigPath), path))
+      .sort();
+    const checkedIcons = nativeDesktop!.icons.map((path) => inApp(path)).sort();
+    expect(configuredIcons).toEqual(checkedIcons);
+  });
+});
 
 describe.skipIf(!section)("boot-e2e", () => {
   const healthPath = section?.healthPath ?? "/api/health";

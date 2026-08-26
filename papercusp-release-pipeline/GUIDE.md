@@ -53,7 +53,7 @@ seam convention, a release step — do NOT guess:
 
 ## SHOULD
 
-- Ship the pipeline from day one (the papercusp-desktop-app GUIDE says the same from the
+- Ship the pipeline from day one (the papercusp-app GUIDE says the same from the
   other side): a desktop app without signing/updater wiring is a prototype.
 - Drive Linux targets locally and Mac/Windows through the kit's SSH-frame VM
   drivers; keep VM credentials in the config, out of the scripts.

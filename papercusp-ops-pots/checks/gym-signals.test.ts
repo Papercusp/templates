@@ -1,5 +1,5 @@
 /**
- * gym-signals — the hive's guardrail signals are present and wired.
+ * gym-signals — the stable app agent's guardrail signals are present and wired.
  * (papercusp-ops-pots template check; plan app-templates-2026-07-04 P-007.)
  *
  * PORTABLE + APP-PARAMETERIZED: copied verbatim into a composed app, driven by
@@ -9,15 +9,15 @@
  *
  * Config section:
  *   gym: {
- *     blueprint: string           // the HIVE blueprint.yaml, app-root-relative
+ *     blueprint: string           // stable app-agent blueprint, app-root-relative
  *     requiredSignals: string[]   // the app's ids for the four signal classes:
  *                                 //   no-<danger>-reach, <workUnit>-has-evidence,
  *                                 //   <constraint>-honored, schema-clean-output
  *   }
  *
- * Asserts the hive blueprint declares a gym block with a collectTrace mode and
- * a signals list covering every required id — the un-gameable guardrails the
- * ops hive is scored + self-improved against. (consumer #1's exemplar set:
+ * Asserts the app-agent blueprint declares a gym block with a collectTrace mode
+ * and a signals list covering every required id — the un-gameable guardrails
+ * the agent is scored + self-improved against. (consumer #1's exemplar set:
  * no-checkout-reach, candidate-has-evidence, price-ceiling-honored,
  * schema-clean-output.)
  */
@@ -51,7 +51,7 @@ describe.skipIf(!section)("gym-signals", () => {
     expect(section!.requiredSignals.length).toBeGreaterThan(0);
   });
 
-  it("the hive blueprint declares a gym block with a collectTrace mode", () => {
+  it("the stable app-agent blueprint declares a gym block with a collectTrace mode", () => {
     const gym = doc().gym;
     expect(gym, `${section!.blueprint}: no gym: block`).toBeTruthy();
     expect(typeof gym!.collectTrace, `${section!.blueprint}: gym.collectTrace missing`).toBe("string");

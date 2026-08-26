@@ -1,121 +1,144 @@
 # papercusp-ops-pots — composition GUIDE
 
-**You are the building agent.** This aspect composes the **judgment plane**
-into an app: a domain hive + an `-ops` hive over it, joined to the
-deterministic app at **exactly one seam**. It was reverse-engineered from two
-real apps built this way — the proven two-plane ops shape. Read
-`template.yaml` for what exists; this file is how to think about composing it.
-You compose **freely and non-deterministically**; "done" is defined by
-`checks/` going green (union rule: your app must pass EVERY composed
-template's checks).
+**You are the building agent.** This aspect composes Papercusp's agentic work
+plane into an app. The app owns a plan template and a stable agent identity;
+Papercusp turns each external or scheduled run into visible work items before
+the agent does anything. The deterministic app and the agentic plane meet at
+**exactly one typed seam**. Read `template.yaml` for the declared pieces and
+MUSTs. Composition stays judgment-led; "done" means every check in the
+composed closure is green.
 
 Worked examples to keep open while you build: the starter blueprints +
 contract template in THIS template (`blueprints/`, `contracts/`) and the
 worked checks-config `reference/README.md` points at.
 
-## MUST — consult the live papercusp docs when this GUIDE is not enough
+## MUST — consult the live Papercusp docs when this GUIDE is not enough
 
-You are building ON a live papercusp install (we dogfood papercusp in
-papercusp). If anything in this GUIDE is insufficient — a component's API, a
-seam convention, a release step — do NOT guess:
+You are building on a live Papercusp install. If a component API, plan binding,
+agent-name lifecycle, seam convention, or release step is unclear, do not
+guess:
 
-- read the papercusp documentation served on your install at **`/internal/docs`**
+- read the Papercusp documentation served on your install at **`/internal/docs`**
   (start with the `agent-insights` section; this template's `template.yaml`
   `docs:` list names its canonical pages), and
-- inspect the **operator app** itself — it is a running reference instance of
-  every pattern these templates encode.
+- inspect the **operator app**, including its built-in Gmail agentic binding,
+  as a running reference for app-scoped plan runs and stable-agent dispatch.
 
-## The construction (orientation)
+## The construction
 
-Two planes. The **deterministic plane** (ordinary code: ingest, storage,
-drivers, ledgers) stays code and is NEVER in a blueprint's reach. The
-**judgment plane** (this aspect) is papercusp hives: a per-item member
-pipeline placed by an `-ops` hive Queen (width = parallel items, depth = 1 per
-member). They meet at ONE seam: `work_items` of your declared kind go UP; your
-typed contract comes DOWN through a single parse gate into an app table.
+The deterministic plane owns triggers, storage, drivers, ledgers, and app
+tables. The agentic plane owns judgment work expressed as an app-owned plan
+template:
 
-## MUST (Tier B — the seam discipline; non-negotiable)
+```text
+external event or schedule
+  → app-owned plan run
+  → canonical plan-item promotion (inputs + provenance + blocked-by DAG)
+  → assign actionable work items to one stable agent name
+  → required wake of the live session that adopted that name
+  → work-item completion releases and dispatches newly actionable successors
+  → typed output crosses one parse gate into an app table
+```
 
-1. **Compose `@papercusp/pot-app-seam` for every crossing** — first-run hive
-   bootstrap (`ensureAppHives`), the domain work-items transport
-   (`buildDomainWorkItemsSeam`), the ingest loop (`startIngestLoop`). Do not
-   hand-roll fetch calls against `/api/harness/*` — the seam component IS the
-   blessed primitive (that's what buys observability, Queen dispatch, and
-   confinement). Supply chain: the seam is **vendored INSIDE this template**, so
-   link it relative to your new app —
-   `"@papercusp/pot-app-seam": "file:./pot-app-seam"` — and it resolves after a
-   plain `npm install`. That is the one path that works everywhere: materializing
-   copies the whole `<ref>/` dir into your app, so the vendored copy rides along
-   on every platform, including cross-built macOS bundles, which ship no source
-   tree (plan decisions D-001, D-005).
-   ⚠ Do NOT link it from `libs/generic` or from a clone of the public templates
-   mirror. `libs/generic` is a dev-checkout/source-archive path that an install
-   may not have at all; the mirror is pre-rename and 404s on `pot-app-seam/`,
-   still serving the old `hive-app-seam/` (measured 2026-08-10, WI-37775). Run
-   `npm run mirror:check` in the monorepo before assuming the mirror is current;
-   templates README § Supply chain.
-2. **Own contracts package, ONE parse gate** — specialize
+The queue is durable. The wake is delivery, not storage. A missing live agent
+therefore fails loudly and retryably while the promoted work remains visible.
+
+## MUST (Tier B — non-negotiable)
+
+1. **Use the canonical plan/work-item plane for every agentic run.** Author one
+   app-owned plan template with explicit `blocked-by` edges and input schema.
+   External bindings and schedules launch that template; they do not insert
+   work items directly, call `work_items:create`, or grow an app-local scheduler.
+   Canonical promotion preserves the run id, immutable inputs/provenance,
+   source plan-item identity, replay idempotency, and DAG edges.
+2. **Declare the execution target.** Every agentic external binding or schedule
+   carries the same two-field contract:
+
+   ```yaml
+   execution:
+     appHarnessSlug: "{{APP_HARNESS_SLUG}}"
+     agentName: "{{APP_AGENT_NAME}}"
+   ```
+
+   For an external `launch-plan` binding this lives at `action.execution`; for
+   a recurrence it lives at `schedule.execution` in `plans:set-schedule`.
+   `appHarnessSlug` owns the plan run and queue; `agentName` is the durable
+   assignee stored on work items.
+3. **Keep the stable agent live and adopted.** Launch the app agent from
+   `blueprints/app-agent/`, then have its live session call
+   `plan_items:adopt_name { name: "{{APP_AGENT_NAME}}" }`. Dispatch assigns only
+   the actionable promoted frontier and sends a required wake to the newest
+   live session adopting that name. Blocked descendants stay unassigned and
+   unwoken until canonical prerequisite completion releases them. A dead,
+   absent, or unwakeable target is a structured retryable failure—not success.
+4. **Compose `@papercusp/pot-app-seam` for every crossing.** Use
+   `ensureAppHives`, `buildDomainWorkItemsSeam`, and `startIngestLoop`; do not
+   hand-roll calls against `/api/harness/*`. The seam is vendored inside this
+   template, so link `"@papercusp/pot-app-seam": "file:./pot-app-seam"`.
+   Never link it from `libs/generic` or an assumed checkout path: materializing
+   copies only the selected template directory, and some installs ship no
+   source tree.
+5. **Own one contracts package and one parse gate.** Specialize
    `contracts/candidate-set.ts` into e.g. `@yourapp/contracts`: `.strict()`
    zod schemas both directions; the join key round-trips unchanged; an empty
    result requires notes; money is integer cents; the parse gate is the ONLY
    path from agent output to an app table; a reject emits
    `<workUnit>.rejected` UP as an event — never a silent drop.
-3. **Confinement is inviolable and enforced at install** — every hive role is
+6. **Keep confinement inviolable.** The stable agent is
    read + propose-only against the app's dangerous surface; pinned via role
-   capability envelopes (the proven `ops-guard` pattern) across EVERY role.
+   capability envelopes (the proven `ops-guard` pattern).
    Your app's **`blueprints/README.md` is the canonical statement of the
    rule** (materialize it from `blueprints/README.md` here) — every doc points
    at it, nothing restates it.
-4. **Nothing else crosses.** No second transport, no side-channel table
+7. **Nothing else crosses.** No second transport, no side-channel table
    writes, no direct DB access from a role.
 
-## SHOULD (the proven shape — deviate only with a reason you can state)
+## SHOULD
 
-- **Queen/bee dispatch, not an orchestrator loop**: the `-ops` hive extends
-  `work`; the Queen places ONE member harness per open item; `knobs.width` is
-  the ONE scaling knob. `dispatch.concurrency: 1` in the member — depth over
-  fan-out. Consider `ensembleN` only for high-variance judgment (forecasting:
-  yes; fetch-and-verify sourcing: no).
-- **Judge acceptance** for repo-less members: a rubric with ~3 weighted
+- Treat the plan DAG as the execution topology. Parallelism is the number of
+  independently actionable items, not a placement-width knob or nested fan-out
+  hidden inside a role.
+- Keep one stable app-agent name per execution target. A replacement session
+  may adopt the same name after restart; durable assignment remains the name,
+  while wake delivery resolves the current live session.
+- **Judge acceptance** for judgment-heavy items: a rubric with ~3 weighted
   dimensions scoring match fidelity, evidence liveness, and value accuracy
   against declared constraints (see both starter blueprints).
 - **Gym signals in four classes** (rename per domain): `no-<danger>-reach`,
   `<workUnit>-has-evidence`, `<constraint>-honored`, `schema-clean-output`.
   `collectTrace: work-item-output` (repo-less = no git diff).
-- **A reactive ingest-sentinel** on `<workUnit>.rejected` — a refused payload
-  means an item silently has no output until someone acts.
-- **A finalize learning pass**: when the real-world outcome lands, score it
-  against the proposal and update member trust weights (the worked shape's
-  `sourcing-reviewer` role).
-- **Backlog triage on a cadence**: stuck-wip release, escalation surfacing,
-  duplicate closing.
+- Model rejected-ingest repair, outcome review, and backlog hygiene as explicit
+  plan items or scheduled plans on the same substrate—not a second executor.
 
 ## Decision points (declared judgment — answer each, disclose your answers)
 
 | id | The question |
 |---|---|
-| `seam-work-item-kind` | What work_item kind crosses the seam? (worked instances: `purchase-research`, `bet-analysis`) |
+| `seam-work-item-kind` | What work-item kind and id prefix cross the seam? |
+| `plan-template` | Which app-owned plan template defines inputs and the blocked-by DAG; what binding or schedule launches it? |
+| `execution-target` | Which app harness owns the queue, and which stable agent name adopts assignments and wakes? |
 | `contract-shape` | What does the down-leg contract carry? Specialize the starter, keep its invariants. |
 | `domain-lexicon` | Domain nouns/verbs for hives, roles, work (replaces every `{{…}}` in the starters). |
-| `domain-roles` | Which roles beyond the proven trio (reviewer / sentinel / triage), with what envelopes? |
+| `domain-roles` | What prompt and capability envelope does the stable app agent need? |
 | `app-tables` | Which app tables does ingested output land in; what read model over them? |
 
 ## FREE (genuinely yours)
 
-Role prompts' wording, extra reactive rules, rubric dimensions + weights,
-width default, memory conventions, additional cadence roles — anything not
-MUST above. The failure mode to guard is *illegible* improvisation: whatever
-you choose, your decision-point answers make it reviewable.
+Agent prompt wording, the plan's domain-specific phases, rubric dimensions and
+weights, memory conventions, and optional scheduled review plans are yours.
+The failure mode to guard is *illegible* improvisation: record every
+decision-point answer so another engineer can review the resulting work plane.
 
 ## Composition walk (suggested order)
 
-1. Walk the decision points; write the answers down (they go in your ship
-   disclosure).
-2. Specialize `contracts/candidate-set.ts` → your contracts package + its
-   tests (round-trip every schema; reject fixtures for each MUST invariant).
-3. Materialize `blueprints/` (README + ops-pot + member), replacing every
-   `{{…}}` token — grep for `{{` to prove none survive.
-4. Wire the app side with `@papercusp/pot-app-seam` (bootstrap at sidecar
-   boot behind an env gate; enqueue on your trigger; ingest loop through the
-   parse gate; rejects → events).
-5. Run this template's `checks/` (+ every composed template's) until green.
+1. Answer the decision points and record the choices.
+2. Author the app-owned plan template: input schema, phases/items, real
+   `blocked-by` edges, and acceptance conditions.
+3. Configure the external binding and/or schedule with the same
+   `{ appHarnessSlug, agentName }` execution target.
+4. Specialize `contracts/candidate-set.ts` and test valid plus rejected payloads.
+5. Materialize `blueprints/README.md` and `blueprints/app-agent/blueprint.yaml`,
+   replacing every `{{…}}` token; grep for `{{` to prove none remain.
+6. Wire the app side through `@papercusp/pot-app-seam`, including reject events.
+7. Launch/adopt the stable app agent, then run this template's checks and the
+   full composed checks union.

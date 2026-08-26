@@ -69,12 +69,74 @@ export interface TemplateComponentRef {
   version: string;
 }
 
+/**
+ * One answer to a SELECTING decision point, and the templates that join the
+ * composition when it is chosen (plan unified-app-template-2026-08-23 D-001).
+ */
+export interface TemplateDecisionOption {
+  /** kebab-case answer token, unique within the decision point (`web`). */
+  value: string;
+  /** One line on what choosing this answer means; GUIDE.md expands on it. */
+  summary?: string;
+  /**
+   * The templates that join the composition for this answer — version-pinned
+   * exactly like `requires`. MAY be empty, and an empty option is load-bearing:
+   * it is the explicit "none" answer, and its PRESENCE is what makes the axis
+   * optional (see `composeTemplates`).
+   */
+  templates: TemplateRequireRef[];
+}
+
+/**
+ * The selector half of a decision point that does not merely ASK but CHOOSES
+ * (D-001). `requires` cannot express "web chassis OR desktop chassis": it is a
+ * static hard pin, walked unconditionally by `resolveRequiresClosure` and
+ * enforced by `composeTemplates`, and both run with NO answers in hand. So the
+ * ONE root that serves both targets names the alternatives HERE, on the
+ * decision point that asks the question, and `composeTemplates` enforces the
+ * choice structurally — no answers needed, no conditional edges.
+ */
+export interface TemplateDecisionSelect {
+  /**
+   * `one` (default) — exactly one answer. `one-or-more` — answers combine,
+   * which is what makes a dual-target (`web` + `desktop`) app expressible.
+   */
+  arity?: "one" | "one-or-more";
+  /** The answers. Fewer than two is not a choice. */
+  options: TemplateDecisionOption[];
+}
+
 /** A declared decision point — where agent judgment is explicitly invited. */
 export interface TemplateDecisionPoint {
   /** kebab-case id, unique within the template (`seam-work-item-kind`). */
   id: string;
   /** The question the building agent must answer; GUIDE.md expands on it. */
   prompt: string;
+  /**
+   * OPTIONAL: makes this decision point SELECTING — its answer picks templates
+   * into the composition (D-001). Absent (the common case) it is a pure
+   * judgment prompt that composes nothing.
+   */
+  selects?: TemplateDecisionSelect;
+}
+
+/** The decision points that SELECT templates, in declaration order (D-001). */
+export function selectingDecisionPoints(
+  manifest: TemplateManifest,
+): (TemplateDecisionPoint & { selects: TemplateDecisionSelect })[] {
+  return manifest.decisionPoints.filter(
+    (d): d is TemplateDecisionPoint & { selects: TemplateDecisionSelect } => d.selects !== undefined,
+  );
+}
+
+/**
+ * Whether a selecting axis is OPTIONAL — i.e. it ships an explicit empty
+ * ("none") option, so a composition satisfying no option is legal. The single
+ * place that rule is stated; `composeTemplates` and `resolveSelection` both
+ * read it here rather than re-deriving `templates.length === 0`.
+ */
+export function isOptionalSelect(select: TemplateDecisionSelect): boolean {
+  return select.options.some((o) => o.templates.length === 0);
 }
 
 /** The `enforcedBy` sentinel for a MUST no check enforces (visible, lintable debt). */
@@ -173,6 +235,82 @@ function isStringArray(v: unknown): v is string[] {
   return Array.isArray(v) && v.every((x) => typeof x === "string");
 }
 
+const SELECT_ARITIES: readonly string[] = ["one", "one-or-more"];
+
+/**
+ * Validate one decision point's `selects` block (D-001), appending EVERY
+ * problem to `errors`. Split out because it is the deepest nesting in the
+ * schema and inlining it would bury the decisionPoints leg.
+ */
+function validateDecisionSelect(
+  raw: unknown,
+  path: string,
+  manifestId: unknown,
+  errors: string[],
+): void {
+  if (!isRecord(raw)) {
+    errors.push(`${path}: must be an object { options, arity? } when present`);
+    return;
+  }
+  if (raw.arity !== undefined && (typeof raw.arity !== "string" || !SELECT_ARITIES.includes(raw.arity))) {
+    errors.push(`${path}.arity: must be one of ${SELECT_ARITIES.join("|")} when present (default 'one')`);
+  }
+  if (!Array.isArray(raw.options)) {
+    errors.push(`${path}.options: required array of { value, templates }`);
+    return;
+  }
+  if (raw.options.length < 2) {
+    errors.push(`${path}.options: needs at least 2 options — a single answer is not a choice`);
+  }
+
+  const seenValues = new Set<string>();
+  let emptyOptions = 0;
+  raw.options.forEach((o, j) => {
+    const optPath = `${path}.options[${j}]`;
+    if (!isRecord(o)) {
+      errors.push(`${optPath}: must be an object { value, templates }`);
+      return;
+    }
+    if (typeof o.value !== "string" || !KEBAB.test(o.value)) {
+      errors.push(`${optPath}.value: required kebab-case string`);
+    } else {
+      if (seenValues.has(o.value)) errors.push(`${optPath}: duplicate option value '${o.value}'`);
+      seenValues.add(o.value);
+    }
+    if (o.summary !== undefined && typeof o.summary !== "string") {
+      errors.push(`${optPath}.summary: must be a string when present`);
+    }
+    if (!Array.isArray(o.templates)) {
+      errors.push(`${optPath}.templates: required array of { id, version } (may be empty — the explicit "none" answer)`);
+      return;
+    }
+    if (o.templates.length === 0) emptyOptions += 1;
+    const seenRefs = new Set<string>();
+    o.templates.forEach((r, k) => {
+      const refPath = `${optPath}.templates[${k}]`;
+      if (!isRecord(r)) {
+        errors.push(`${refPath}: must be an object { id, version }`);
+        return;
+      }
+      if (typeof r.id !== "string" || !KEBAB.test(r.id)) errors.push(`${refPath}.id: required kebab-case string`);
+      if (typeof r.version !== "string" || !SEMVER.test(r.version)) {
+        errors.push(`${refPath}.version: required exact semver pin (x.y.z)`);
+      }
+      if (typeof r.id === "string") {
+        if (r.id === manifestId) errors.push(`${refPath}: a template cannot select itself ('${r.id}')`);
+        if (seenRefs.has(r.id)) errors.push(`${refPath}: duplicate template ref '${r.id}' in one option`);
+        seenRefs.add(r.id);
+      }
+    });
+  });
+
+  // ONE empty option means "this axis is optional". TWO would make optionality
+  // ambiguous (which "none" did the builder pick?) and is always a mistake.
+  if (emptyOptions > 1) {
+    errors.push(`${path}.options: ${emptyOptions} options declare no templates — at most one may be the explicit "none" answer`);
+  }
+}
+
 /** Validate an untrusted (already YAML-parsed) value as a TemplateManifest. Returns EVERY problem. */
 export function validateTemplateManifest(raw: unknown): { ok: boolean; errors: string[] } {
   const errors: string[] = [];
@@ -237,6 +375,7 @@ export function validateTemplateManifest(raw: unknown): { ok: boolean; errors: s
         if (seen.has(d.id)) errors.push(`decisionPoints[${i}]: duplicate decision point '${d.id}'`);
         seen.add(d.id);
       }
+      if (d.selects !== undefined) validateDecisionSelect(d.selects, `decisionPoints[${i}].selects`, raw.id, errors);
     });
   }
 

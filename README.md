@@ -26,13 +26,10 @@ construction** — the design of record is
 
 | Template                                                          | Scope  | Category | What                                                                                                                                                                              |
 | ----------------------------------------------------------------- | ------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`papercusp-desktop-app`](papercusp-desktop-app/)                 | app    | app      | a WHOLE desktop app, no agents — hard-requires the shell + data-layer + ui closure; start here for a plain app                                                                    |
-| [`papercusp-webapp`](papercusp-webapp/)                           | app    | app      | a WHOLE web app, no agents — the browser twin of `papercusp-desktop-app`: hard-requires the web-host + data-layer + ui closure (P-030; extracted from the first papercusp webapp) |
-| [`papercusp-agentic-desktop-app`](papercusp-agentic-desktop-app/) | app    | app      | the app WITH agents: `papercusp-ops-pots` layered onto the `papercusp-desktop-app` BASE (P-022 — an app template may require another as its base)                                 |
-| [`papercusp-agentic-webapp`](papercusp-agentic-webapp/)           | app    | app      | the WEB app WITH agents — the browser twin of `papercusp-agentic-desktop-app`: `papercusp-ops-pots` layered onto the `papercusp-webapp` BASE                                      |
+| [`papercusp-app`](papercusp-app/)                                 | app    | app      | THE whole-app root for desktop and web. Hard-requires the data-layer + ui closure; a `target` decision point selects the chassis (`desktop`, `web`, or both) and an `agents` one adds the judgment plane. Start here.                        |
 | [`papercusp-android-app`](papercusp-android-app/)                 | app    | app      | a WHOLE Android app — a thin root that hard-requires the shared mobile base + Android shell at exact `0.1.0` pins                                                                 |
 | [`papercusp-iphone-app`](papercusp-iphone-app/)                   | app    | app      | a WHOLE iPhone app — a thin root that hard-requires the shared mobile base + iPhone shell at exact `0.1.0` pins                                                                   |
-| [`papercusp-ops-pots`](papercusp-ops-pots/)                       | aspect | agentic  | the judgment plane: domain hive + -ops hive + the ONE work_items⇄contract seam                                                                                                    |
+| [`papercusp-ops-pots`](papercusp-ops-pots/)                       | aspect | agentic  | app-owned plan → canonical work-item DAG → stable-agent assignment/wake + the ONE typed app seam                                                                                   |
 | [`papercusp-tauri-desktop-shell`](papercusp-tauri-desktop-shell/) | aspect | shell    | the deterministic chassis: Tauri shell → Node/Hono sidecar → embedded Postgres + release kit                                                                                      |
 | [`papercusp-web-host`](papercusp-web-host/)                       | aspect | shell    | the web chassis: Next.js standalone host (tracing root + workspace transpile), operator.json discovery, auth seam, Dockerfile builder (P-029)                                     |
 | [`papercusp-mobile-base`](papercusp-mobile-base/)                 | aspect | shell    | the cross-platform Rust/UniFFI, design-token, configuration, source-hygiene, and portable-verification contract shared by both mobile roots                                       |
@@ -49,11 +46,19 @@ An app built from N templates must pass the **union of their checks**
 template may `require` another app-scope template as its BASE; every
 composition has exactly ONE ROOT app (the one no other app requires).
 
-The six official whole-app roots are `papercusp-desktop-app`,
-`papercusp-webapp`, `papercusp-agentic-desktop-app`, `papercusp-agentic-webapp`,
-`papercusp-android-app`, and `papercusp-iphone-app`. Start from exactly one of
-them; aspect templates are pulled through its pinned closure or selected
-deliberately where the GUIDE allows composition.
+The three official whole-app roots are `papercusp-app`, `papercusp-android-app`,
+and `papercusp-iphone-app`. Start from exactly one of them; aspect templates are
+pulled through its pinned closure or selected deliberately where the GUIDE
+allows composition.
+
+`papercusp-app` replaced four earlier roots — `papercusp-desktop-app`,
+`papercusp-webapp`, `papercusp-agentic-desktop-app`, `papercusp-agentic-webapp`
+— which were named compositions of the same aspects, not different apps
+(plan `unified-app-template-2026-08-23`). What they encoded as a choice of
+TEMPLATE is now a choice of ANSWER: `target` picks the chassis and `agents`
+picks whether a judgment plane joins. The retired refs still resolve — they are
+listed as `aliases` in `papercusp-app/listing.json`, so existing cupboard
+listings and in-flight materializes keep working.
 
 ## Running the checks (landed: P-007)
 
@@ -69,7 +74,7 @@ TEMPLATE_CHECKS_CONFIG=<config> npm test -w @papercusp/templates   # the full un
 ```
 
 Worked example config:
-[`papercusp-agentic-desktop-app/reference/worked-example.checks-config.json`](papercusp-agentic-desktop-app/reference/worked-example.checks-config.json).
+[`papercusp-app/reference/worked-example.checks-config.json`](papercusp-app/reference/worked-example.checks-config.json).
 Per-check contracts: each template's `checks/README.md`.
 
 ## The template gym (mobile closure: P-017)
@@ -217,7 +222,7 @@ official v1 mechanism that closes them:
 - **Worked exemplars are papercusp-internal** — the templates cite proven
   shapes, not repos to clone. The PORTABLE truth every builder can rely on
   is each template's `GUIDE.md` + `checks/` + the checked-in worked configs
-  (e.g. `papercusp-agentic-desktop-app/reference/worked-example.checks-config.json`).
+  (e.g. `papercusp-app/reference/worked-example.checks-config.json`).
 
 ## Cupboard install
 

@@ -44,8 +44,8 @@ export interface ChecksSeamSection {
   validOutput: Record<string, unknown>;
   /** A payload.out fixture the gate must REJECT (throw). */
   invalidOutput: Record<string, unknown>;
-  /** Member blueprint.yaml — cross-checked: workItem.kind === workItemKind. */
-  memberBlueprint?: string;
+  /** Stable app-agent blueprint.yaml — cross-checked: workItem.kind === workItemKind. */
+  agentBlueprint?: string;
   /** The app's own full enqueue→ingest integration leg (must exit 0). */
   roundTripCommand?: string[];
   roundTripCwd?: string;
@@ -75,9 +75,21 @@ export interface ChecksBootSection {
   shutdownGraceMs?: number;
 }
 
-/** `gym-signals` — the hive's guardrail signals are declared and wired. */
+/** Fast static inputs required before a Tauri desktop build can compile. */
+export interface ChecksNativeDesktopSection {
+  /** App-root-relative Rust package manifest. */
+  cargoManifest: string;
+  /** App-root-relative committed lockfile for reproducible application builds. */
+  cargoLock: string;
+  /** App-root-relative Tauri v2 config. */
+  tauriConfig: string;
+  /** App-root-relative icon files; must exactly match `bundle.icon`. */
+  icons: string[];
+}
+
+/** `gym-signals` — the stable app agent's guardrail signals are declared and wired. */
 export interface ChecksGymSection {
-  /** The HIVE blueprint.yaml, app-root-relative. */
+  /** The stable app-agent blueprint.yaml, app-root-relative. */
   blueprint: string;
   /** The app's ids for the four signal classes. */
   requiredSignals: string[];
@@ -297,6 +309,7 @@ export interface TemplateChecksConfig {
   confinement?: ChecksConfinementSection;
   seam?: ChecksSeamSection;
   boot?: ChecksBootSection;
+  nativeDesktop?: ChecksNativeDesktopSection;
   gym?: ChecksGymSection;
   composition?: ChecksCompositionSection;
   components?: ChecksComponentsSection;
@@ -408,6 +421,24 @@ export function validateChecksConfig(value: unknown): string[] {
         errors.push("boot.discoveryFile: required non-empty string");
       if (value.boot.mode === "spawn" && !isStringArray(value.boot.command))
         errors.push("boot.command: required (list of strings) in spawn mode");
+    }
+  }
+
+  if (value.nativeDesktop !== undefined) {
+    if (!isRecord(value.nativeDesktop))
+      errors.push("nativeDesktop: must be an object");
+    else {
+      for (const field of ["cargoManifest", "cargoLock", "tauriConfig"] as const) {
+        if (!isNonEmptyString(value.nativeDesktop[field]))
+          errors.push(`nativeDesktop.${field}: required non-empty string`);
+      }
+      requireStringArray(
+        errors,
+        "nativeDesktop",
+        "icons",
+        value.nativeDesktop.icons,
+        true,
+      );
     }
   }
 

@@ -1,5 +1,5 @@
 /**
- * confinement-guard — no hive role holds a cart/checkout/vault/approvals-write
+ * confinement-guard — no app-agent role holds a cart/checkout/vault/approvals-write
  * analog capability. (papercusp-ops-pots template check; plan
  * app-templates-2026-07-04 P-007.)
  *
@@ -66,7 +66,7 @@ describe.skipIf(!section)("confinement-guard", () => {
     expect(section!.dangerousCapabilities.length).toBeGreaterThan(0);
   });
 
-  it("no hive role holds a dangerous capability (or tool)", () => {
+  it("no app-agent role holds a dangerous capability (or tool)", () => {
     const violations: string[] = [];
     for (const bpRel of section!.blueprints) {
       const bpPath = inApp(bpRel);

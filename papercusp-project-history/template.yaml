@@ -27,9 +27,7 @@ decisionPoints:
       Which build/test command regenerates the artifact, and where does --check fail
       stale committed output?
 composesWith:
-  - papercusp-webapp
-  - papercusp-desktop-app
-  - papercusp-agentic-desktop-app
+  - papercusp-app
   - papercusp-ui
 docs:
   - build-system/project-history
