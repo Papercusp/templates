@@ -72,7 +72,7 @@ therefore fails loudly and retryably while the promoted work remains visible.
    unwoken until canonical prerequisite completion releases them. A dead,
    absent, or unwakeable target is a structured retryable failure—not success.
 4. **Compose `@papercusp/pot-app-seam` for every crossing.** Use
-   `ensureAppHives`, `buildDomainWorkItemsSeam`, and `startIngestLoop`; do not
+   `bootstrapPots`, `launchPlanRuns`, and `startIngestLoop`; do not
    hand-roll calls against `/api/harness/*`. The seam is vendored inside this
    template, so link `"@papercusp/pot-app-seam": "file:./pot-app-seam"`.
    Never link it from `libs/generic` or an assumed checkout path: materializing

@@ -39,17 +39,35 @@ export interface BootstrapPotsResult {
   readonly pots: readonly BootstrapPotResult[];
 }
 
-export interface WorkItemDraft<TPayload extends JsonObject = JsonObject> {
-  readonly kind: string;
-  readonly title: string;
-  readonly payload: TPayload;
+export interface AppExecutionTarget {
+  readonly appHarnessSlug: string;
+  readonly agentName: string;
+}
+
+export interface PlanRunDraft<TInput extends JsonObject = JsonObject> {
+  /** Installed app-owned plan template. The host instantiates this template. */
+  readonly templateSlug: string;
+  readonly input: TInput;
+  /** Immutable source/event identity retained on the canonical plan run. */
+  readonly provenance: JsonObject;
+  readonly execution: AppExecutionTarget;
+  /** Stable replay key. Hosts must return the existing run for a replay. */
   readonly dedupeKey?: string;
 }
 
-export interface EnqueuedWorkItem {
-  readonly id: string;
-  readonly kind: string;
+export interface LaunchedPlanRun {
+  readonly runId: string;
+  readonly planSlug: string;
+  readonly workItemIds: readonly string[];
+  readonly assignedAgentName: string;
   readonly dedupeKey?: string;
+  /** A run is not launched successfully unless its actionable frontier was dispatched. */
+  readonly dispatch: {
+    readonly status: 'delivered' | 'retryable-failure';
+    readonly assignedWorkItemIds: readonly string[];
+    readonly wakeAcknowledged: boolean;
+    readonly reason?: string;
+  };
 }
 
 export interface IngestEvent {
@@ -79,12 +97,16 @@ export interface PotAppSeamHost {
   readBootstrapMarker(marker: string): Promise<string | null> | string | null;
   writeBootstrapMarker(marker: string, fingerprint: string): Promise<void> | void;
   ensurePot(spec: PotSpec): Promise<BootstrapPotResult> | BootstrapPotResult;
-  enqueueWorkItem(draft: WorkItemDraft): Promise<EnqueuedWorkItem> | EnqueuedWorkItem;
+  /**
+   * Instantiate through the canonical plan-run/promote/dispatch path. Implementations
+   * must never translate this call into a bare work_items:create.
+   */
+  launchPlanRun(draft: PlanRunDraft): Promise<LaunchedPlanRun> | LaunchedPlanRun;
 }
 
 export interface PotAppSeam {
   bootstrapPots(input: BootstrapPotsInput): Promise<BootstrapPotsResult>;
-  enqueueWorkItems(items: readonly WorkItemDraft[]): Promise<readonly EnqueuedWorkItem[]>;
+  launchPlanRuns(runs: readonly PlanRunDraft[]): Promise<readonly LaunchedPlanRun[]>;
   startIngestLoop<TParsed>(input: StartIngestLoopInput<TParsed>): IngestSubscription;
 }
 
@@ -135,13 +157,25 @@ export function createPotAppSeam(host: PotAppSeamHost): PotAppSeam {
       return { marker, fingerprint, skipped: false, pots };
     },
 
-    async enqueueWorkItems(items) {
-      if (items.length === 0) return [];
-      const out: EnqueuedWorkItem[] = [];
-      for (const item of items) {
-        assertNonEmpty(item.kind, 'work item kind');
-        assertNonEmpty(item.title, 'work item title');
-        out.push(await host.enqueueWorkItem(item));
+    async launchPlanRuns(runs) {
+      if (runs.length === 0) return [];
+      const out: LaunchedPlanRun[] = [];
+      for (const run of runs) {
+        assertNonEmpty(run.templateSlug, 'plan template slug');
+        assertNonEmpty(run.execution.appHarnessSlug, 'execution.appHarnessSlug');
+        assertNonEmpty(run.execution.agentName, 'execution.agentName');
+        const launched = await host.launchPlanRun(run);
+        if (launched.assignedAgentName !== run.execution.agentName) {
+          throw new Error(
+            `plan run ${launched.runId} assigned ${launched.assignedAgentName}, expected ${run.execution.agentName}`,
+          );
+        }
+        if (launched.dispatch.status !== 'delivered' || !launched.dispatch.wakeAcknowledged) {
+          throw new Error(
+            `plan run ${launched.runId} dispatch failed retryably: ${launched.dispatch.reason ?? 'target did not acknowledge wake'}`,
+          );
+        }
+        out.push(launched);
       }
       return out;
     },

@@ -1,0 +1,276 @@
+name: Papercusp workspace-host content
+description: >-
+  Offline-local first-party prompts, harness blueprints, app templates, and
+  rubrics for a Papercusp workspace host. Installed once through the existing
+  Cupboard bundle path before the service starts.
+
+# Topological prefix: every other official blueprint extends one of these.
+blueprints:
+  - id: base
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: base
+  - id: single-agent
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: single-agent
+  - id: coding
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: coding
+  - id: coding-factory
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: coding-factory
+  - id: audit
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: audit
+  - id: calibration
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: calibration
+  - id: change-ledger
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: change-ledger
+  - id: coding-solo
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: coding-solo
+  - id: content-fix
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: content-fix
+  - id: cup
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: cup
+  - id: deferral-interest
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: deferral-interest
+  - id: deliberate
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: deliberate
+  - id: deploy
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: deploy
+  - id: dist-blackboard
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: dist-blackboard
+  - id: dist-broadcast
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: dist-broadcast
+  - id: dist-peer-review
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: dist-peer-review
+  - id: dist-repo-huddle
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: dist-repo-huddle
+  - id: doc-steward
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: doc-steward
+  - id: ensemble-solve
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: ensemble-solve
+  - id: external-bench
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: external-bench
+  - id: fleet-ekg
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: fleet-ekg
+  - id: gaia-agent
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: gaia-agent
+  - id: graduation
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: graduation
+  - id: gym
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: gym
+  - id: hier-lead-worker
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: hier-lead-worker
+  - id: implement
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: implement
+  - id: iq-battery
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: iq-battery
+  - id: memory-live-recall-canary
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: memory-live-recall-canary
+  - id: memory-precision
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: memory-precision
+  - id: merge-resolution
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: merge-resolution
+  - id: migration
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: migration
+  - id: negative-space
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: negative-space
+  - id: neologism
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: neologism
+  - id: operator.audience-engineer
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: operator.audience-engineer
+  - id: operator.audience-novice
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: operator.audience-novice
+  - id: pair
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: pair
+  - id: papercup
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: papercup
+  - id: papercup.audience-engineer
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: papercup.audience-engineer
+  - id: papercup.audience-novice
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: papercup.audience-novice
+  - id: papercusp-engineer
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: papercusp-engineer
+  - id: pot-eval
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: pot-eval
+  - id: prompt-ablation
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: prompt-ablation
+  - id: red-queen
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: red-queen
+  - id: regret
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: regret
+  - id: release-fix
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: release-fix
+  - id: research
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: research
+  - id: research-steward
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: research-steward
+  - id: review
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: review
+  - id: scan
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: scan
+  - id: scout
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: scout
+  - id: su-collaborator
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su-collaborator
+  - id: su.fleet-leader
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.fleet-leader
+  - id: su.fleet-member
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.fleet-member
+  - id: su.mode-audit
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.mode-audit
+  - id: su.mode-auto
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.mode-auto
+  - id: su.mode-drain
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.mode-drain
+  - id: su.mode-ideate
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.mode-ideate
+  - id: transfer
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: transfer
+  - id: vote
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: vote
+  - id: work
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: work
+
+templates:
+  - id: papercusp-android-app
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-android-app
+  - id: papercusp-android-shell
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-android-shell
+  - id: papercusp-app
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-app
+  - id: papercusp-data-layer
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-data-layer
+  - id: papercusp-data-sync
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-data-sync
+  - id: papercusp-iphone-app
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-iphone-app
+  - id: papercusp-iphone-shell
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-iphone-shell
+  - id: papercusp-mobile-base
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-mobile-base
+  - id: papercusp-ops-pots
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-ops-pots
+  - id: papercusp-project-history
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-project-history
+  - id: papercusp-release-pipeline
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-release-pipeline
+  - id: papercusp-search
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-search
+  - id: papercusp-tauri-desktop-shell
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-tauri-desktop-shell
+  - id: papercusp-ui
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-ui
+  - id: papercusp-web-host
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: papercusp-web-host
+
+rubrics:
+  - id: experiment-component-quality
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: experiment-component-quality
+  - id: experiment-hive-quality
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: experiment-hive-quality
+  - id: experiment-instance-quality
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: experiment-instance-quality
+  - id: experiment-replay-quality
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: experiment-replay-quality
+  - id: fleet-execution-health
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: fleet-execution-health
+  - id: plan-class-bugfix
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: plan-class-bugfix
+  - id: plan-class-feature-ship
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: plan-class-feature-ship
+  - id: plan-class-investigation
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: plan-class-investigation
+  - id: plan-class-migration
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: plan-class-migration
+  - id: pot-coordination-health
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: pot-coordination-health
+  - id: spec-quality
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: spec-quality
+  - id: spec-test-adequacy
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: spec-test-adequacy
+  - id: su-agent-behavior
+    githubUrl: https://github.com/Papercusp/templates
+    listingRef: su-agent-behavior

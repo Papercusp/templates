@@ -64,10 +64,20 @@ checks:
     summary: >-
       every pinned component package is a declared dependency of the composed
       app (config section: components)
+  - id: theme-tokens
+    run: checks/theme-tokens.test.ts
+    summary: >-
+      the app consumes the generated shared theme tokens.css (3-state
+      light/dark/system model, D-011) and its app CSS carries no raw hex —
+      every color routes through the semantic vars (config section:
+      themeTokens)
 musts:
   - id: headless-primitives
     rule: "Primitives stay headless and are styled from the app design system — never forked to hardcode brand values"
     enforcedBy: prose-only
+  - id: theme-via-tokens
+    rule: "App CSS draws every color from the shared token package's semantic vars (tokens/tokens.base.json → generated tokens.css) — no raw hex; per-app accents/extras are a thin override layer on top, and dark mode arrives from the tokens, never from per-app hex"
+    enforcedBy: theme-tokens
   - id: grid-subpackages
     rule: "Depend on the grid sub-packages directly — @papercusp/papergrid is the catalog handle, not the import"
     enforcedBy: prose-only

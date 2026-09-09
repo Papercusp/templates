@@ -99,11 +99,13 @@ export const COMPONENT_CATALOG: ComponentManifest[] = [
     tier: "A",
     kind: "pattern",
     provides: ["embedded-postgres", "db-lifecycle", "connection-discovery"],
-    composesWith: ["hono-host", "pot-app-seam"],
+    // The discovery half IS an extracted, shared package, so it is carried as a
+    // resolvable catalog edge rather than as prose in source.package — this is a
+    // `pattern` (two app-local copies of the SERVER half), so it has no npm
+    // package of its own to name (EI-21113414214889358).
+    composesWith: ["hono-host", "pot-app-seam", "embedded-pg-discovery"],
     source: {
       path: "both internal reference apps: libs/embedded-postgres-server (an app-local package each)",
-      package:
-        "@papercusp/embedded-pg-discovery (the discovery half, already shared)",
     },
     tests:
       "each app's PG-backed integration suites (testcontainers global setup) exercise it end-to-end",

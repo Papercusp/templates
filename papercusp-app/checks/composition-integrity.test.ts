@@ -191,7 +191,7 @@ describe.skipIf(!root || !have(INVARIANT_IDS) || !have(CHASSIS_IDS))("papercusp-
    * P-005: the dual-target tax, PINNED.
    *
    * GUIDE.md, template.yaml and the `dual-target-is-opt-in` MUST all quote
-   * "5 declarations vs 4". That is a number DESCRIBING code (the manifests'
+   * "6 declarations vs 5". That is a number DESCRIBING code (the manifests'
    * checks arrays), so it drifts the moment any closure member gains a check —
    * and prose cannot notice. This is the pin: it fails, naming both counts, so
    * whoever adds the check also updates the three places that quote the tax.
@@ -200,7 +200,7 @@ describe.skipIf(!root || !have(INVARIANT_IDS) || !have(CHASSIS_IDS))("papercusp-
    * The single declaration `both` adds is a build-and-boot check, the most
    * expensive kind, so wall clock grows by more than 4→5 suggests.
    */
-  it("P-005: `both` costs exactly ONE more check declaration than a single target (5 vs 4)", () => {
+  it("P-005: `both` costs exactly ONE more check declaration than a single target (6 vs 5)", () => {
     const unionFor = (target: string | string[]) => {
       const r = resolveSelection(root!, { target, agents: "none" }, manifests);
       expect(r.ok, r.errors.join("; ")).toBe(true);
@@ -213,9 +213,9 @@ describe.skipIf(!root || !have(INVARIANT_IDS) || !have(CHASSIS_IDS))("papercusp-
     const web = unionFor("web");
     const both = unionFor(["desktop", "web"]);
 
-    expect(desktop.length, `desktop-only union drifted: ${desktop.join(", ")}`).toBe(4);
-    expect(web.length, `web-only union drifted: ${web.join(", ")}`).toBe(4);
-    expect(both.length, `dual-target union drifted: ${both.join(", ")}`).toBe(5);
+    expect(desktop.length, `desktop-only union drifted: ${desktop.join(", ")}`).toBe(5);
+    expect(web.length, `web-only union drifted: ${web.join(", ")}`).toBe(5);
+    expect(both.length, `dual-target union drifted: ${both.join(", ")}`).toBe(6);
 
     // NOT a doubling: the three non-chassis checks are shared and paid once.
     const shared = desktop.filter((k) => web.includes(k));
@@ -223,6 +223,7 @@ describe.skipIf(!root || !have(INVARIANT_IDS) || !have(CHASSIS_IDS))("papercusp-
       "papercusp-app:composition-integrity",
       "papercusp-data-layer:components-integrated",
       "papercusp-ui:components-integrated",
+      "papercusp-ui:theme-tokens",
     ]);
     // Each chassis contributes exactly one — that one is the whole tax.
     expect(both.length - desktop.length).toBe(1);

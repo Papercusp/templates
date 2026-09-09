@@ -556,12 +556,23 @@ export const PAPERCUSP_UI_TEMPLATE: TemplateManifest = {
       summary:
         "every pinned component package is a declared dependency of the composed app (config section: components)",
     },
+    {
+      id: "theme-tokens",
+      run: "checks/theme-tokens.test.ts",
+      summary:
+        "the app consumes the generated shared theme tokens.css (3-state light/dark/system model, D-011) and its app CSS carries no raw hex — every color routes through the semantic vars (config section: themeTokens)",
+    },
   ],
   musts: [
     {
       id: "headless-primitives",
       rule: "Primitives stay headless and are styled from the app design system — never forked to hardcode brand values",
       enforcedBy: "prose-only",
+    },
+    {
+      id: "theme-via-tokens",
+      rule: "App CSS draws every color from the shared token package's semantic vars (tokens/tokens.base.json → generated tokens.css) — no raw hex; per-app accents/extras are a thin override layer on top, and dark mode arrives from the tokens, never from per-app hex",
+      enforcedBy: "theme-tokens",
     },
     {
       id: "grid-subpackages",
@@ -1005,7 +1016,7 @@ export const PAPERCUSP_APP_TEMPLATE: TemplateManifest = {
     },
     {
       id: "dual-target-is-opt-in",
-      rule: "target: both is chosen deliberately and never by default — it adds the second chassis's boot-e2e check to the union the app must pass on every build (MEASURED P-005: 5 declarations vs 4; the non-chassis three are shared), and that cost is stated in the ship disclosure",
+      rule: "target: both is chosen deliberately and never by default — it adds the second chassis's boot-e2e check to the union the app must pass on every build (MEASURED P-005: 6 declarations vs 5; the non-chassis four are shared), and that cost is stated in the ship disclosure",
       enforcedBy: "prose-only",
     },
     {

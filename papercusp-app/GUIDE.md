@@ -68,11 +68,12 @@ that shape the composition — above all `target`, which picks the chassis.
    closure's checks, not a subset you found convenient.
 4. **`dual-target-is-opt-in`** — `target: both` is chosen deliberately and
    stated in the ship disclosure. **Measured (P-005), so you can stop guessing
-   at the tax:** the union is **5 check declarations for `both` against 4 for
+   at the tax:** the union is **6 check declarations for `both` against 5 for
    either target alone**. Each chassis contributes exactly ONE check — its
    `boot-e2e` — while `papercusp-app:composition-integrity`,
-   `papercusp-data-layer:components-integrated` and
-   `papercusp-ui:components-integrated` are shared and paid once either way.
+   `papercusp-data-layer:components-integrated`,
+   `papercusp-ui:components-integrated` and `papercusp-ui:theme-tokens` are
+   shared and paid once either way.
    So dual-target is **+1 declaration, not a doubling**.
 
    Read that number for what it is: a count of check *declarations*, not

@@ -71,8 +71,31 @@ export interface ChecksBootSection {
   command?: string[];
   cwd?: string;
   env?: Record<string, string>;
+  /**
+   * Wall-clock budget for `buildCommand`; default 1800000 (30min). A real
+   * production build is minutes long and its tail is load-dependent, so this
+   * has to be sized from the app's MEASURED build time with margin, not from a
+   * round number. The `boot-e2e` vitest timeout is derived from this rather
+   * than hand-maintained beside it — see that check's budget preamble.
+   */
+  buildTimeoutMs?: number;
   readyTimeoutMs?: number;
   shutdownGraceMs?: number;
+  /**
+   * Spawn mode only, optional. App-root-relative (or "~/") path to the
+   * embedded PG data directory the spawned sidecar boots against. When
+   * present, checked BEFORE spawning for a live `postmaster.pid` lock —
+   * i.e. a DIFFERENT already-running deployment (a portal, a prior instance)
+   * holding the same data dir. A collision here means the spawn is doomed
+   * (Postgres refuses a second postmaster against a locked data dir), so the
+   * check fails fast naming the collision and pointing at attach mode
+   * instead of spawning and burning the full `readyTimeoutMs` waiting on a
+   * health check that can never succeed (EI-22125738148136740). Omit when
+   * the app's data dir is guaranteed isolated (e.g. a fresh per-run temp
+   * dir) — the discovery-file staleness check above already covers a
+   * relaunch of the SAME app.
+   */
+  pgDataDir?: string;
 }
 
 /** Fast static inputs required before a Tauri desktop build can compile. */
@@ -113,6 +136,18 @@ export interface ChecksComponentsSection {
   packages: string[];
   /** Package.json paths to search, app-root-relative. Default: ["package.json"]. */
   manifests?: string[];
+}
+
+/**
+ * `theme-tokens` (D-011) — the app consumes the papercusp-ui shared theme
+ * token package: a generated tokens.css carrying the 3-state
+ * light/dark/system model, and NO raw hex colors in app CSS outside it.
+ */
+export interface ChecksThemeTokensSection {
+  /** App-root-relative path to the GENERATED tokens.css (e.g. "app/tokens.css"). */
+  tokensCss: string;
+  /** App CSS files that must be raw-hex-free (tokens.css itself is exempt). */
+  appCss: string[];
 }
 
 /** One portable command in the shared mobile-base acceptance contract. */
@@ -313,6 +348,7 @@ export interface TemplateChecksConfig {
   gym?: ChecksGymSection;
   composition?: ChecksCompositionSection;
   components?: ChecksComponentsSection;
+  themeTokens?: ChecksThemeTokensSection;
   mobileBase?: ChecksMobileBaseSection;
   androidShell?: ChecksAndroidShellSection;
   iphoneShell?: ChecksIphoneShellSection;
@@ -421,6 +457,11 @@ export function validateChecksConfig(value: unknown): string[] {
         errors.push("boot.discoveryFile: required non-empty string");
       if (value.boot.mode === "spawn" && !isStringArray(value.boot.command))
         errors.push("boot.command: required (list of strings) in spawn mode");
+      if (
+        value.boot.pgDataDir !== undefined &&
+        !isNonEmptyString(value.boot.pgDataDir)
+      )
+        errors.push("boot.pgDataDir: must be a non-empty string when present");
     }
   }
 
@@ -505,6 +546,22 @@ export function validateChecksConfig(value: unknown): string[] {
           value.components.manifests,
           true,
         );
+    }
+  }
+
+  if (value.themeTokens !== undefined) {
+    if (!isRecord(value.themeTokens))
+      errors.push("themeTokens: must be an object");
+    else {
+      if (!isNonEmptyString(value.themeTokens.tokensCss))
+        errors.push("themeTokens.tokensCss: required non-empty string");
+      requireStringArray(
+        errors,
+        "themeTokens",
+        "appCss",
+        value.themeTokens.appCss,
+        true,
+      );
     }
   }
 

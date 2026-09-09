@@ -25,3 +25,24 @@ Section: `components`
 
 Green means: every listed package is a declared dependency of at least one of
 the app's manifests — the composition is wired for real, not on paper.
+
+## theme-tokens
+
+Section: `themeTokens`
+
+```jsonc
+{
+  "themeTokens": {
+    // App-root-relative path to the GENERATED tokens.css copied from this
+    // template's tokens/ dir (see GUIDE.md § Theme tokens).
+    "tokensCss": "app/tokens.css",
+    // App CSS files that must contain NO raw hex — every color routes
+    // through the semantic vars. tokens.css itself is exempt (it defines them).
+    "appCss": ["app/globals.css"]
+  }
+}
+```
+
+Green means: the app carries the 3-state light/dark/system token sheet
+(explicit `data-theme` beats the system preference) and no app CSS hardcodes
+a color a dark flip would miss — raw hex is the dark-mode blocker (D-011).
