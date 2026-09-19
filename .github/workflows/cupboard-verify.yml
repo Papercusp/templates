@@ -1,0 +1,22 @@
+name: cupboard-verify
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  cupboard-verify:
+    name: cupboard-verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out mirror
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify Cupboard content
+        run: node .github/cupboard-verify.mjs
