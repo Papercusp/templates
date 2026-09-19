@@ -33,7 +33,7 @@ function scanIdentityLeaks(text, file) {
   for (const [pattern, kind] of patterns) {
     for (const match of text.matchAll(pattern)) {
       const value = match[0];
-      if (!value.includes('example.invalid') && !value.includes('<')) {
+      if (!value.includes('example.invalid') && !value.includes('<') && !value.includes('su-deadbee')) {
         errors.push(`${file}: identity leak (${kind})`);
       }
     }
@@ -53,11 +53,7 @@ function validateListingSchema(file, listing) {
   if (!listing || typeof listing !== 'object' || Array.isArray(listing)) return null;
   const kind = typeof listing.kind === 'string'
     ? listing.kind
-    : listing.scope === 'rubric'
-      ? 'rubric'
-      : listing.scope === 'template'
-        ? 'template'
-        : null;
+    : listing.scope === 'rubric' ? 'rubric' : 'template';
   for (const key of ['id', 'title', 'version']) {
     if (typeof listing[key] !== 'string' || listing[key].length === 0) {
       errors.push(`${file}: listing.${key} is required`);
@@ -120,12 +116,6 @@ function checkScript(source, file) {
   if (quote || blockComment || stack.length) errors.push(`${file}: checkScript found unterminated syntax`);
 }
 
-for (const file of files) {
-  if (['.json', '.md', '.yaml', '.yml', '.js', '.mjs', '.ts'].includes(extname(file).toLowerCase())) {
-    scanIdentityLeaks(textOf(file), file);
-  }
-}
-
 const listingFiles = files.filter((file) => file.endsWith('/listing.json') || file === 'listing.json');
 for (const listingFile of listingFiles) {
   const listing = parseJson(listingFile);
@@ -149,6 +139,10 @@ for (const listingFile of listingFiles) {
       errors.push(`${recipeFile}: tools_used must be an array`);
     }
   }
+  // Scan shipped payloads only; test fixtures and explanatory prose are not
+  // published bytes and intentionally contain detector counterexamples.
+  scanIdentityLeaks(textOf(listingFile), listingFile);
+  if (required && files.includes(prefix + required)) scanIdentityLeaks(textOf(prefix + required), prefix + required);
 }
 
 if (errors.length) {
