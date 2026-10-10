@@ -5,7 +5,7 @@
   "description": "Reusable plan-level quality standard applied to one exact current specSetHash. Plans are rows; these criteria grade whether their clause set is safe to promote before implementation begins.",
   "methodRef": null,
   "ratingScale": ["pass", "fail", "unknown", "waived", "not-applicable"],
-  "version": "1.0.0",
+  "version": "1.1.0",
   "source": "first-party",
   "criteria": [
     {
@@ -24,10 +24,10 @@
     },
     {
       "key": "atomic-observable-behavior",
-      "title": "Clauses state one observable outcome",
-      "model": "Each active clause is atomic and observable, not a bundle of separately testable outcomes.",
-      "method": "Apply the canonical spec-clause compiler's atomicity checks to every active behavior.",
-      "driftMarkers": "Multiple sentences; semicolon bundles; two observable verbs joined by and/or."
+      "title": "Item clauses state one observable outcome",
+      "model": "Each active, independently authored item behavior clause states one atomic and observable outcome. SourceBar-pinned clauses are copies of canonical acceptance BARs and are outside this item-contract rating.",
+      "method": "Apply the canonical spec-clause compiler's atomicity checks to every active independent item behavior clause. Report evaluated item clauses and excluded sourceBar projections with their dispositions. At acceptance-rubric proposal or amendment time, apply the same compiler check to each added or meaning-changed BAR projection; unchanged legacy BARs remain recorded without re-certification.",
+      "driftMarkers": "An item clause bundles separately testable outcomes; evaluator evidence omits evaluated or excluded population counts; a new or meaning-changed canonical acceptance BAR projects bundled outcomes."
     },
     {
       "key": "falsifiability",

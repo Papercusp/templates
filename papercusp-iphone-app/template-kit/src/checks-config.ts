@@ -44,8 +44,23 @@ export interface ChecksSeamSection {
   validOutput: Record<string, unknown>;
   /** A payload.out fixture the gate must REJECT (throw). */
   invalidOutput: Record<string, unknown>;
-  /** Stable app-agent blueprint.yaml — cross-checked: workItem.kind === workItemKind. */
-  agentBlueprint?: string;
+  /** Stable app-agent blueprint.yaml — cross-checked against work kind; must declare NO operations. */
+  agentBlueprint: string;
+  /**
+   * The app's ROOT blueprint, where `blueprint:submit` resolves operations
+   * (app-agent-tasks-durable-execution-2026-10-06#D-003). Default `.papercusp/blueprint.yaml`.
+   */
+  rootBlueprint?: string;
+  /** The standard reusable task declaration (declared in the ROOT blueprint) that targets the app-owned plan template. */
+  operation: {
+    id: string;
+    version: string;
+    planTemplate: {
+      ref: string;
+      revision: string;
+      contentHash: string;
+    };
+  };
   /** The app's own full enqueue→ingest integration leg (must exit 0). */
   roundTripCommand?: string[];
   roundTripCwd?: string;
@@ -63,6 +78,8 @@ export interface ChecksBootSection {
   mode: "spawn" | "attach";
   /** The operator.json analog ("~/…" ok). */
   discoveryFile: string;
+  /** Optional env var whose configured value supplies the base home for "~/" boot paths. */
+  discoveryHomeEnv?: string;
   /** Default "/api/health". */
   healthPath?: string;
   /** Optional "app builds" leg, spawn mode only. */
@@ -429,6 +446,7 @@ export function validateChecksConfig(value: unknown): string[] {
         "contractModule",
         "parseInputExport",
         "parseOutputExport",
+        "agentBlueprint",
       ] as const) {
         if (!isNonEmptyString(value.seam[f]))
           errors.push(`seam.${f}: required non-empty string`);
@@ -436,6 +454,30 @@ export function validateChecksConfig(value: unknown): string[] {
       for (const f of ["validInput", "validOutput", "invalidOutput"] as const) {
         if (!isRecord(value.seam[f]))
           errors.push(`seam.${f}: required object fixture`);
+      }
+      if (value.seam.rootBlueprint !== undefined && !isNonEmptyString(value.seam.rootBlueprint))
+        errors.push("seam.rootBlueprint: must be a non-empty string when present");
+      if (!isRecord(value.seam.operation))
+        errors.push("seam.operation: required object");
+      else {
+        for (const f of ["id", "version"] as const) {
+          if (!isNonEmptyString(value.seam.operation[f]))
+            errors.push(`seam.operation.${f}: required non-empty string`);
+        }
+        if (!isRecord(value.seam.operation.planTemplate))
+          errors.push("seam.operation.planTemplate: required object");
+        else {
+          for (const f of ["ref", "revision", "contentHash"] as const) {
+            if (!isNonEmptyString(value.seam.operation.planTemplate[f]))
+              errors.push(`seam.operation.planTemplate.${f}: required non-empty string`);
+          }
+          if (
+            isNonEmptyString(value.seam.operation.planTemplate.contentHash) &&
+            !/^[0-9a-f]{64}$/.test(value.seam.operation.planTemplate.contentHash)
+          ) {
+            errors.push("seam.operation.planTemplate.contentHash: must be sha256 hex");
+          }
+        }
       }
       if (value.seam.roundTripCommand !== undefined)
         requireStringArray(
@@ -455,6 +497,13 @@ export function validateChecksConfig(value: unknown): string[] {
         errors.push("boot.mode: must be 'spawn' or 'attach'");
       if (!isNonEmptyString(value.boot.discoveryFile))
         errors.push("boot.discoveryFile: required non-empty string");
+      if (
+        value.boot.discoveryHomeEnv !== undefined &&
+        !isNonEmptyString(value.boot.discoveryHomeEnv)
+      )
+        errors.push(
+          "boot.discoveryHomeEnv: must be a non-empty string when present",
+        );
       if (value.boot.mode === "spawn" && !isStringArray(value.boot.command))
         errors.push("boot.command: required (list of strings) in spawn mode");
       if (

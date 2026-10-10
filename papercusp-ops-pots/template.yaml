@@ -7,11 +7,12 @@ version: "0.1.0"
 scope: aspect
 category: agentic
 summary: >-
-  The agentic work plane: app-owned plan templates promote through Papercusp's
-  canonical plan-to-work-item path, preserve their blocked-by DAG, assign only
-  the actionable frontier to a configured stable app agent, and durably wake
-  its live adopting session. Work crosses into the deterministic app at exactly
-  ONE typed seam; confinement is enforced at install and the app's
+  The agentic work plane: typed blueprint operations target app-owned plan
+  templates, which promote through Papercusp's canonical plan-to-work-item
+  path, preserve their blocked-by DAG, assign only the actionable frontier to
+  a configured stable app agent, and durably wake its live adopting session.
+  Validated operation results cross into the deterministic app at exactly ONE
+  typed seam; confinement is enforced at install and the app's
   blueprints/README.md states the rule.
 components:
   - id: pot-app-seam
@@ -31,6 +32,11 @@ decisionPoints:
     prompt: >-
       Which app-owned plan template defines the run inputs and blocked-by DAG
       for this work, and which external binding or schedule starts it?
+  - id: operation-contract
+    prompt: >-
+      What stable operation id/version, pinned plan-template revision/hash,
+      typed input schema, typed result schema, and request-key source expose
+      that plan as one reusable task?
   - id: execution-target
     prompt: >-
       Which app harness owns the plan runs/work queue, and which stable agent
@@ -72,10 +78,19 @@ checks:
   - id: gym-signals
     run: checks/gym-signals.test.ts
     summary: the stable app agent's guardrail gym signals are present and wired
+  - id: operation-first-triggers
+    run: checks/operation-first-triggers.test.ts
+    summary: >-
+      no app trigger creates agent work directly (direct-create binding kind or
+      work-item create tool target); every agent-execution operation's worker
+      role is declared in the app's root .papercusp/blueprint.yaml
 musts:
   - id: canonical-plan-work-plane
-    rule: "Every external or scheduled agentic run uses an app-owned plan template and canonical plan-item promotion; never raw work-item inserts, direct work_items:create, or a parallel scheduler"
-    enforcedBy: prose-only
+    rule: "Every reusable external or scheduled agentic run invokes a declared blueprint operation (declared in the app's ROOT .papercusp/blueprint.yaml) that targets an app-owned plan template and canonical plan-item promotion; never raw work-item inserts, direct work_items:create, a copied DAG, or a parallel scheduler"
+    enforcedBy: operation-first-triggers
+  - id: operation-first-task-binding
+    rule: "Every new reusable task binding names a typed, versioned operation and stable request key; only blueprint:result state=ready may carry output across the app parse gate, while legacy launch-plan bindings stay operational until individually parity-tested"
+    enforcedBy: seam-round-trip
   - id: stable-agent-direct-dispatch
     rule: "Every agentic binding/schedule carries execution { appHarnessSlug, agentName }; promotion assigns and durably wakes that stable agent for the actionable frontier only, while blocked descendants remain unassigned until canonical prerequisite completion"
     enforcedBy: prose-only
@@ -83,7 +98,7 @@ musts:
     rule: "A dead, absent, or unwakeable adopting session is a structured retryable failure with queue state preserved — never false execution success or a silent stall"
     enforcedBy: prose-only
   - id: seam-only-crossing
-    rule: "Every judgment-plane crossing composes @papercusp/pot-app-seam (bootstrap, work-items transport, ingest loop) — never hand-rolled calls against /api/harness/*"
+    rule: "Every judgment-plane crossing composes @papercusp/pot-app-seam (bootstrap, operation submit/status/result, compatibility plan launch, ingest loop) — never hand-rolled calls against /api/harness/*"
     enforcedBy: seam-round-trip
   - id: one-parse-gate
     rule: "An app-owned contracts package with strict schemas both directions; the parse gate is the ONLY path from agent output to an app table and rejects emit events, never silent drops"

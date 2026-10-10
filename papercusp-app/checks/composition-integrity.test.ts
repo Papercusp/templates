@@ -191,16 +191,16 @@ describe.skipIf(!root || !have(INVARIANT_IDS) || !have(CHASSIS_IDS))("papercusp-
    * P-005: the dual-target tax, PINNED.
    *
    * GUIDE.md, template.yaml and the `dual-target-is-opt-in` MUST all quote
-   * "6 declarations vs 5". That is a number DESCRIBING code (the manifests'
+   * "7 declarations vs 6". That is a number DESCRIBING code (the manifests'
    * checks arrays), so it drifts the moment any closure member gains a check —
    * and prose cannot notice. This is the pin: it fails, naming both counts, so
    * whoever adds the check also updates the three places that quote the tax.
    *
    * Read the assertion for what it measures: check DECLARATIONS, not seconds.
    * The single declaration `both` adds is a build-and-boot check, the most
-   * expensive kind, so wall clock grows by more than 4→5 suggests.
+   * expensive kind, so wall clock grows by more than 5→6 suggests.
    */
-  it("P-005: `both` costs exactly ONE more check declaration than a single target (6 vs 5)", () => {
+  it("P-005: `both` costs exactly ONE more check declaration than a single target (7 vs 6)", () => {
     const unionFor = (target: string | string[]) => {
       const r = resolveSelection(root!, { target, agents: "none" }, manifests);
       expect(r.ok, r.errors.join("; ")).toBe(true);
@@ -213,14 +213,15 @@ describe.skipIf(!root || !have(INVARIANT_IDS) || !have(CHASSIS_IDS))("papercusp-
     const web = unionFor("web");
     const both = unionFor(["desktop", "web"]);
 
-    expect(desktop.length, `desktop-only union drifted: ${desktop.join(", ")}`).toBe(5);
-    expect(web.length, `web-only union drifted: ${web.join(", ")}`).toBe(5);
-    expect(both.length, `dual-target union drifted: ${both.join(", ")}`).toBe(6);
+    expect(desktop.length, `desktop-only union drifted: ${desktop.join(", ")}`).toBe(6);
+    expect(web.length, `web-only union drifted: ${web.join(", ")}`).toBe(6);
+    expect(both.length, `dual-target union drifted: ${both.join(", ")}`).toBe(7);
 
-    // NOT a doubling: the three non-chassis checks are shared and paid once.
+    // NOT a doubling: the five non-chassis checks are shared and paid once.
     const shared = desktop.filter((k) => web.includes(k));
     expect(shared).toEqual([
       "papercusp-app:composition-integrity",
+      "papercusp-app:package-test-targets",
       "papercusp-data-layer:components-integrated",
       "papercusp-ui:components-integrated",
       "papercusp-ui:theme-tokens",

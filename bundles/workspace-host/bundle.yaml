@@ -9,6 +9,9 @@ blueprints:
   - id: base
     githubUrl: https://github.com/Papercusp/blueprints
     listingRef: base
+  - id: blueprint-operation-worker
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: blueprint-operation-worker
   - id: single-agent
     githubUrl: https://github.com/Papercusp/blueprints
     listingRef: single-agent
@@ -159,6 +162,15 @@ blueprints:
   - id: su-collaborator
     githubUrl: https://github.com/Papercusp/blueprints
     listingRef: su-collaborator
+  - id: su.practice
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.practice
+  - id: su
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su
+  - id: su.specialist-planner
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.specialist-planner
   - id: su.fleet-leader
     githubUrl: https://github.com/Papercusp/blueprints
     listingRef: su.fleet-leader
@@ -174,9 +186,18 @@ blueprints:
   - id: su.mode-drain
     githubUrl: https://github.com/Papercusp/blueprints
     listingRef: su.mode-drain
+  - id: su.mode-goal
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.mode-goal
+  - id: su.mode-grade
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.mode-grade
   - id: su.mode-ideate
     githubUrl: https://github.com/Papercusp/blueprints
     listingRef: su.mode-ideate
+  - id: su.mode-test
+    githubUrl: https://github.com/Papercusp/blueprints
+    listingRef: su.mode-test
   - id: transfer
     githubUrl: https://github.com/Papercusp/blueprints
     listingRef: transfer

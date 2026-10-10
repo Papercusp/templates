@@ -56,6 +56,12 @@ roles:
       - coord:send
       - "{{SAFE_DOMAIN_TOOL}}"
 
+# No `operations:` here. The app's agent tasks are blueprint operations declared
+# in the app's ROOT `.papercusp/blueprint.yaml` (materialized from
+# reference/app-root.blueprint.yaml), the only place `blueprint:submit` resolves
+# them (app-agent-tasks-durable-execution-2026-10-06#D-003). The seam-round-trip
+# check fails if an operation reappears in this pots-plane blueprint.
+
 gym:
   collectTrace: work-item-output
   signals:
@@ -68,8 +74,9 @@ knobs:
   harnessKind: "{{APP_HARNESS_SLUG}}"
   requiresRepo: false
 
-# No triggers: external bindings and plan schedules carry
-# execution { appHarnessSlug, agentName } and direct-dispatch this live adopter.
+# No blueprint triggers: external bindings and plan schedules invoke the
+# declared operation. The referenced plan template retains
+# schedule.execution { appHarnessSlug, agentName } and direct-dispatches this adopter.
 dependencies:
   tools:
     - plan_items:adopt_name

@@ -12,6 +12,7 @@
  *   boot: {
  *     mode: "spawn" | "attach"
  *     discoveryFile: string       // the operator.json analog ("~/…" ok)
+ *     discoveryHomeEnv?: string   // env var selecting the base home for "~/" boot paths
  *     healthPath?: string         // default "/api/health"
  *     buildCommand?: string[]     // optional "app builds" leg (spawn mode)
  *     command?: string[]          // REQUIRED in spawn mode: boots the sidecar
@@ -46,7 +47,7 @@ import { dirname, isAbsolute, join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 // ── config preamble (identical across the portable checks) ──────────────────
-const untilde = (p: string): string => (p.startsWith("~/") ? join(homedir(), p.slice(2)) : p);
+const untilde = (p: string, home = homedir()): string => (p.startsWith("~/") ? join(home, p.slice(2)) : p);
 const configPath = process.env.TEMPLATE_CHECKS_CONFIG;
 const config: Record<string, any> | null = configPath
   ? JSON.parse(readFileSync(resolve(untilde(configPath)), "utf8"))
@@ -60,6 +61,7 @@ const inApp = (p: string): string => (isAbsolute(untilde(p)) ? untilde(p) : join
 interface BootSection {
   mode: "spawn" | "attach";
   discoveryFile: string;
+  discoveryHomeEnv?: string;
   healthPath?: string;
   buildCommand?: string[];
   command?: string[];
@@ -117,14 +119,122 @@ function readDiscovery(path: string): Discovery | null {
   }
 }
 
-async function healthStatus(disc: Discovery, healthPath: string): Promise<number | null> {
+function bootPath(path: string): string {
+  const envName = section?.discoveryHomeEnv;
+  if (!envName) return untilde(path);
+  // A config-provided empty override deliberately falls back to the normal
+  // home; otherwise attach mode inherits the test process environment.
+  const configuredHome = section?.env?.[envName];
+  const home = configuredHome !== undefined ? configuredHome : process.env[envName];
+  return untilde(path, home || homedir());
+}
+
+async function healthStatus(disc: Discovery, healthPath: string, signal?: AbortSignal): Promise<number | null> {
   try {
-    const res = await fetch(`http://${disc.host ?? "127.0.0.1"}:${disc.port}${healthPath}`);
+    const res = await fetch(`http://${disc.host ?? "127.0.0.1"}:${disc.port}${healthPath}`, signal ? { signal } : undefined);
     return res.status;
   } catch {
     return null;
   }
 }
+
+const MAX_CHILD_OUTPUT_CHARS = 12_000;
+const CHILD_OUTPUT_TRUNCATION_MARKER = "\n[earlier child output truncated]\n";
+
+function appendChildOutput(current: string, chunk: unknown): string {
+  const combined = current + String(chunk);
+  if (combined.length <= MAX_CHILD_OUTPUT_CHARS) return combined;
+  return CHILD_OUTPUT_TRUNCATION_MARKER + combined.slice(-(MAX_CHILD_OUTPUT_CHARS - CHILD_OUTPUT_TRUNCATION_MARKER.length));
+}
+
+type BootReadinessResult =
+  | { kind: "ready" }
+  | { kind: "timeout" }
+  | { kind: "exit"; code: number | null; signal: NodeJS.Signals | null }
+  | { kind: "error"; error: Error };
+
+async function waitForBootReadiness(
+  child: ChildProcess,
+  checkReady: (signal: AbortSignal) => Promise<boolean>,
+  timeoutMs: number,
+  intervalMs = 500,
+): Promise<BootReadinessResult> {
+  const controller = new AbortController();
+  let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+  const childFailure = new Promise<Extract<BootReadinessResult, { kind: "exit" | "error" }>>((resolve) => {
+    child.once("error", (error) => {
+      controller.abort();
+      resolve({ kind: "error", error });
+    });
+    child.once("exit", (code, signal) => {
+      controller.abort();
+      resolve({ kind: "exit", code, signal });
+    });
+  });
+  const readiness = async (): Promise<BootReadinessResult> => {
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline && !controller.signal.aborted) {
+      if (await checkReady(controller.signal)) return { kind: "ready" };
+      await sleep(Math.min(intervalMs, Math.max(0, deadline - Date.now())));
+    }
+    return { kind: "timeout" };
+  };
+  const timeout = new Promise<BootReadinessResult>((resolve) => {
+    timeoutHandle = setTimeout(() => resolve({ kind: "timeout" }), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([readiness(), childFailure, timeout]);
+  } finally {
+    controller.abort();
+    if (timeoutHandle) clearTimeout(timeoutHandle);
+  }
+}
+
+describe("boot readiness lifecycle", () => {
+  it("surfaces an immediate child exit before the readiness timeout and keeps its output", async () => {
+    const child = spawn(process.execPath, ["-e", "process.stderr.write('EADDRINUSE immediate-exit'); process.exit(23);"], {
+      stdio: ["ignore", "ignore", "pipe"],
+    });
+    const childClosed = new Promise<void>((resolve) => child.once("close", () => resolve()));
+    let output = "";
+    child.stderr!.on("data", (chunk) => (output = appendChildOutput(output, chunk)));
+    const startedAt = Date.now();
+    const result = await waitForBootReadiness(
+      child,
+      async (signal) =>
+        new Promise<boolean>((resolve) => {
+          signal.addEventListener("abort", () => resolve(false), { once: true });
+        }),
+      15_000,
+      5_000,
+    );
+
+    expect(result.kind).toBe("exit");
+    if (result.kind === "exit") expect(result.code).toBe(23);
+    expect(Date.now() - startedAt).toBeLessThan(5_000);
+    await childClosed;
+    expect(output).toContain("EADDRINUSE immediate-exit");
+  });
+
+  it("surfaces child spawn errors before the readiness timeout", async () => {
+    const child = spawn(`${process.execPath}.papercusp-missing`, []);
+    const startedAt = Date.now();
+    const result = await waitForBootReadiness(child, async () => false, 15_000);
+
+    expect(result.kind).toBe("error");
+    if (result.kind === "error") expect((result.error as NodeJS.ErrnoException).code).toBe("ENOENT");
+    expect(Date.now() - startedAt).toBeLessThan(5_000);
+  });
+
+  it("bounds child diagnostics and retains the newest output", () => {
+    const output = appendChildOutput("x".repeat(MAX_CHILD_OUTPUT_CHARS), "EADDRINUSE");
+
+    expect(output).toHaveLength(MAX_CHILD_OUTPUT_CHARS);
+    expect(output).toContain("earlier child output truncated");
+    expect(output).toContain("EADDRINUSE");
+  });
+});
 
 /**
  * Read `<dataDir>/postmaster.pid` and report whether it names a still-LIVE
@@ -186,7 +296,7 @@ describe.skipIf(!nativeDesktop)("native-desktop-preflight", () => {
 
 describe.skipIf(!section)("boot-e2e", () => {
   const healthPath = section?.healthPath ?? "/api/health";
-  const discoveryFile = () => untilde(section!.discoveryFile);
+  const discoveryFile = () => bootPath(section!.discoveryFile);
 
   it.skipIf(section?.mode !== "attach")("attach: discovery file present, pid alive, health 200", async () => {
     const disc = readDiscovery(discoveryFile());
@@ -214,10 +324,11 @@ describe.skipIf(!section)("boot-e2e", () => {
       // readyTimeoutMs (up to 4min) before failing with a generic, misleading
       // "sidecar never became healthy" message (EI-22125738148136740).
       if (section!.pgDataDir) {
-        const lockingPid = pgDataDirLockedBy(section!.pgDataDir);
+        const pgDataDir = bootPath(section!.pgDataDir);
+        const lockingPid = pgDataDirLockedBy(pgDataDir);
         expect(
           lockingPid,
-          `embedded PG data dir ${untilde(section!.pgDataDir)} is already locked by a LIVE ` +
+          `embedded PG data dir ${pgDataDir} is already locked by a LIVE ` +
             `process (pid ${lockingPid}) — a different instance/deployment is running on this ` +
             `machine and holds it. Spawning a second instance against the same data dir cannot ` +
             `succeed. Use boot.mode:"attach" against that instance, or point boot.pgDataDir / the ` +
@@ -259,23 +370,24 @@ describe.skipIf(!section)("boot-e2e", () => {
         env: { ...process.env, ...section!.env },
         stdio: ["ignore", "pipe", "pipe"],
       });
-      child.stdout!.on("data", (d) => (out += String(d)));
-      child.stderr!.on("data", (d) => (out += String(d)));
+      child.stdout!.on("data", (d) => (out = appendChildOutput(out, d)));
+      child.stderr!.on("data", (d) => (out = appendChildOutput(out, d)));
       const exited = new Promise<number | null>((r) => child.once("exit", (code) => r(code)));
 
       try {
         // Ready = discovery file readable AND health 200 at the discovered port.
-        const deadline = Date.now() + readyTimeoutMs;
-        let ready = false;
-        while (Date.now() < deadline) {
+        const result = await waitForBootReadiness(child, async (signal) => {
           const disc = readDiscovery(discoveryFile());
-          if (disc && (await healthStatus(disc, healthPath)) === 200) {
-            ready = true;
-            break;
-          }
-          await sleep(500);
-        }
-        expect(ready, `sidecar never became healthy within ${readyTimeoutMs}ms\n--- output ---\n${out}`).toBe(true);
+          return Boolean(disc && (await healthStatus(disc, healthPath, signal)) === 200);
+        }, readyTimeoutMs);
+        const ready = result.kind === "ready";
+        const failure =
+          result.kind === "exit"
+            ? `sidecar exited before becoming healthy (code ${result.code}, signal ${result.signal})`
+            : result.kind === "error"
+              ? `sidecar could not be spawned before becoming healthy: ${result.error.message}`
+              : `sidecar never became healthy within ${readyTimeoutMs}ms`;
+        expect(ready, `${failure}\n--- output ---\n${out}`).toBe(true);
 
         // Graceful shutdown: SIGTERM → exit within grace → discovery file gone.
         child.kill("SIGTERM");
@@ -284,8 +396,8 @@ describe.skipIf(!section)("boot-e2e", () => {
         expect(code, `sidecar did not exit within ${grace}ms of SIGTERM (wedge — see the WI-2667 force-exit-timer MUST)\n--- output ---\n${out}`).not.toBe("timeout");
         expect(existsSync(discoveryFile()), "discovery file not removed on shutdown").toBe(false);
       } finally {
-        if (child.exitCode === null && !child.killed) child.kill("SIGKILL");
-        else if (child.exitCode === null) {
+        if (child.pid && child.exitCode === null && !child.killed) child.kill("SIGKILL");
+        else if (child.pid && child.exitCode === null) {
           await sleep(1000);
           if (child.exitCode === null) child.kill("SIGKILL");
         }

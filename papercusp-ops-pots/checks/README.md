@@ -10,8 +10,9 @@ union rule — `@papercusp/template-kit` `composeTemplates`).
 | check | file | pins |
 |---|---|---|
 | `confinement-guard` | `confinement-guard.test.ts` | no app-agent role's `capabilities:`/`tools:` matches a dangerous pattern (cart/checkout/vault/approvals-write analogs) |
-| `seam-round-trip` | `seam-round-trip.test.ts` | the contract package exposes both wire gates; valid in/out payloads parse; the join key echoes unchanged; a malformed payload.out is REJECTED; the stable app-agent blueprint declares the same seam kind; optionally delegates the live enqueue→ingest leg to the app's own integration suite |
+| `seam-round-trip` | `seam-round-trip.test.ts` | the contract package exposes both wire gates; valid in/out payloads parse; the join key echoes unchanged; a malformed payload.out is REJECTED; the stable app-agent blueprint declares the same seam kind and NO operations; the app's root `.papercusp/blueprint.yaml` (`seam.rootBlueprint`) declares the typed, pinned plan-target operation; delegates the live operation→result→ingest leg to the app's own integration suite |
 | `gym-signals` | `gym-signals.test.ts` | the stable app-agent blueprint declares `gym.collectTrace` + every required guardrail signal id |
+| `operation-first-triggers` | `operation-first-triggers.test.ts` | no trigger in the app's source creates agent work directly (direct-create binding kind, or the work-item create tool as a trigger target); every agent-execution operation's worker role is declared in the root blueprint (D-003); built-in positive/negative detector controls always run |
 
 ## How they run
 
@@ -22,6 +23,11 @@ canonical field docs). Paths resolve relative to `app.root`, which resolves
 relative to the config file's dir. **Without the env var every suite SKIPS**
 — copying the files never breaks an unwired repo; wiring the config is part
 of composing the app.
+
+`seam.operation` pins the reusable operation id/version and the exact
+plan-template ref/revision/content hash. The portable check rejects an
+untyped or direct-plan-only substitute before the app can call it a reusable
+workflow binding.
 
 Worked example: the worked config at
 `../../papercusp-app/reference/worked-example.checks-config.json`.

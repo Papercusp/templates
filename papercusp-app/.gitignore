@@ -11,3 +11,6 @@ coverage-*/
 *.log
 logs/
 .DS_Store
+# The desktop sidecar build copies a ~124MB node runtime here; never commit it.
+# Left untracked it also marks every test run in this repo worktreeDirty.
+/dist-sidecar/bin/

@@ -22,6 +22,15 @@
     "parseOutputExport": "parseCandidateSet",
     "joinKey": "itemId",
     "agentBlueprint": "blueprints/purchase-agent/blueprint.yaml",
+    "operation": {
+      "id": "research-purchase",
+      "version": "1",
+      "planTemplate": {
+        "ref": "purchase-research",
+        "revision": "7",
+        "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
     "validInput": {
       "itemId": 42,
       "item": "Cash Drawer",
