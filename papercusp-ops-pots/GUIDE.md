@@ -1,10 +1,11 @@
 # papercusp-ops-pots — composition GUIDE
 
 **You are the building agent.** This aspect composes Papercusp's agentic work
-plane into an app. The app owns a plan template and a stable agent identity;
-Papercusp turns each external or scheduled run into visible work items before
-the agent does anything. The deterministic app and the agentic plane meet at
-**exactly one typed seam**. Read `template.yaml` for the declared pieces and
+plane into an app. The app owns a typed blueprint operation, its target plan
+template, and a stable agent identity. Papercusp turns each external,
+scheduled, or direct operation submission into visible work items before the
+agent does anything. The deterministic app and the agentic plane meet at
+**exactly one typed result seam**. Read `template.yaml` for the declared pieces and
 MUSTs. Composition stays judgment-led; "done" means every check in the
 composed closure is green.
 
@@ -31,12 +32,14 @@ tables. The agentic plane owns judgment work expressed as an app-owned plan
 template:
 
 ```text
-external event or schedule
-  → app-owned plan run
+external event, schedule, or direct app request
+  → blueprint:submit(operation id + typed input + stable request key)
+  → pinned app-owned plan run
   → canonical plan-item promotion (inputs + provenance + blocked-by DAG)
   → assign actionable work items to one stable agent name
   → required wake of the live session that adopted that name
   → work-item completion releases and dispatches newly actionable successors
+  → blueprint:result state=ready carries validated output
   → typed output crosses one parse gate into an app table
 ```
 
@@ -45,14 +48,21 @@ therefore fails loudly and retryably while the promoted work remains visible.
 
 ## MUST (Tier B — non-negotiable)
 
-1. **Use the canonical plan/work-item plane for every agentic run.** Author one
+1. **Declare one reusable blueprint operation.** In the app's ROOT
+   `.papercusp/blueprint.yaml` (materialize `reference/app-root.blueprint.yaml`),
+   add an `operations[]` entry with a stable id/version, typed object input,
+   typed accepted result, and an exact `plan-template` ref/revision/contentHash.
+   The operation points at the plan; it never copies the plan's DAG. Apps call
+   `blueprint:submit`, retain the returned handle, read `blueprint:status`, and
+   accept payload only from `blueprint:result { state: "ready" }`.
+2. **Use the canonical plan/work-item plane for every agentic run.** Author one
    app-owned plan template with explicit `blocked-by` edges and input schema.
-   External bindings and schedules launch that template; they do not insert
-   work items directly, call `work_items:create`, or grow an app-local scheduler.
-   Canonical promotion preserves the run id, immutable inputs/provenance,
-   source plan-item identity, replay idempotency, and DAG edges.
-2. **Declare the execution target.** Every agentic external binding or schedule
-   carries the same two-field contract:
+   Operation admission launches that template; it does not insert work items
+   directly, call `work_items:create`, or grow an app-local scheduler. Canonical
+   promotion preserves the run id, immutable inputs/provenance, source
+   plan-item identity, replay idempotency, and DAG edges.
+3. **Declare the execution target on the plan template.** The plan schedule
+   retains the same two-field contract:
 
    ```yaml
    execution:
@@ -60,37 +70,46 @@ therefore fails loudly and retryably while the promoted work remains visible.
      agentName: "{{APP_AGENT_NAME}}"
    ```
 
-   For an external `launch-plan` binding this lives at `action.execution`; for
-   a recurrence it lives at `schedule.execution` in `plans:set-schedule`.
-   `appHarnessSlug` owns the plan run and queue; `agentName` is the durable
-   assignee stored on work items.
-3. **Keep the stable agent live and adopted.** Launch the app agent from
+   New external bindings carry
+   `action { type: "blueprint-operation", operationHarnessSlug, operationId }`;
+   new recurrences use `plans:set-schedule { operation: { harnessSlug,
+   operationId, input } }`. Operation admission reuses the target template's
+   `schedule.execution`. `appHarnessSlug` owns the plan run and queue;
+   `agentName` is the durable assignee stored on work items.
+4. **Keep the stable agent live and adopted.** Launch the app agent from
    `blueprints/app-agent/`, then have its live session call
    `plan_items:adopt_name { name: "{{APP_AGENT_NAME}}" }`. Dispatch assigns only
    the actionable promoted frontier and sends a required wake to the newest
    live session adopting that name. Blocked descendants stay unassigned and
    unwoken until canonical prerequisite completion releases them. A dead,
    absent, or unwakeable target is a structured retryable failure—not success.
-4. **Compose `@papercusp/pot-app-seam` for every crossing.** Use
-   `bootstrapPots`, `launchPlanRuns`, and `startIngestLoop`; do not
+5. **Compose `@papercusp/pot-app-seam` for every crossing.** Use
+   `bootstrapPots`, `submitOperations`, `operationStatus`, `operationResult`,
+   and `startIngestLoop`; do not
    hand-roll calls against `/api/harness/*`. The seam is vendored inside this
    template, so link `"@papercusp/pot-app-seam": "file:./pot-app-seam"`.
    Never link it from `libs/generic` or an assumed checkout path: materializing
    copies only the selected template directory, and some installs ship no
    source tree.
-5. **Own one contracts package and one parse gate.** Specialize
+   `launchPlanRuns` remains as a compatibility surface while an existing
+   binding migrates. `operationDraftFromPlanRun` refuses a legacy draft without
+   `dedupeKey`, because that key becomes the operation request key and losing it
+   would fork replay identity. It also copies the immutable plan-run provenance
+   into the reserved operation input field `provenance`; declare that field in
+   the operation schema and do not reuse it for domain input.
+6. **Own one contracts package and one parse gate.** Specialize
    `contracts/candidate-set.ts` into e.g. `@yourapp/contracts`: `.strict()`
    zod schemas both directions; the join key round-trips unchanged; an empty
    result requires notes; money is integer cents; the parse gate is the ONLY
    path from agent output to an app table; a reject emits
    `<workUnit>.rejected` UP as an event — never a silent drop.
-6. **Keep confinement inviolable.** The stable agent is
+7. **Keep confinement inviolable.** The stable agent is
    read + propose-only against the app's dangerous surface; pinned via role
    capability envelopes (the proven `ops-guard` pattern).
    Your app's **`blueprints/README.md` is the canonical statement of the
    rule** (materialize it from `blueprints/README.md` here) — every doc points
    at it, nothing restates it.
-7. **Nothing else crosses.** No second transport, no side-channel table
+8. **Nothing else crosses.** No second transport, no side-channel table
    writes, no direct DB access from a role.
 
 ## SHOULD
@@ -116,6 +135,7 @@ therefore fails loudly and retryably while the promoted work remains visible.
 |---|---|
 | `seam-work-item-kind` | What work-item kind and id prefix cross the seam? |
 | `plan-template` | Which app-owned plan template defines inputs and the blocked-by DAG; what binding or schedule launches it? |
+| `operation-contract` | Stable operation id/version; pinned template revision/hash; typed input/result; source of the stable request key. |
 | `execution-target` | Which app harness owns the queue, and which stable agent name adopts assignments and wakes? |
 | `contract-shape` | What does the down-leg contract carry? Specialize the starter, keep its invariants. |
 | `domain-lexicon` | Domain nouns/verbs for hives, roles, work (replaces every `{{…}}` in the starters). |
@@ -134,11 +154,18 @@ decision-point answer so another engineer can review the resulting work plane.
 1. Answer the decision points and record the choices.
 2. Author the app-owned plan template: input schema, phases/items, real
    `blocked-by` edges, and acceptance conditions.
-3. Configure the external binding and/or schedule with the same
-   `{ appHarnessSlug, agentName }` execution target.
-4. Specialize `contracts/candidate-set.ts` and test valid plus rejected payloads.
-5. Materialize `blueprints/README.md` and `blueprints/app-agent/blueprint.yaml`,
-   replacing every `{{…}}` token; grep for `{{` to prove none remain.
-6. Wire the app side through `@papercusp/pot-app-seam`, including reject events.
-7. Launch/adopt the stable app agent, then run this template's checks and the
+3. Fill the ROOT blueprint's (`.papercusp/blueprint.yaml`, from
+   `reference/app-root.blueprint.yaml`) operation id/version, exact
+   plan-template revision/hash, and typed input/result schemas. An operation
+   with `execution: { kind: agent, role }` declares that worker role in the
+   same file. The app-agent blueprint under `blueprints/` declares none.
+4. Configure new external bindings/recurrences to invoke that operation; keep
+   any legacy launch-plan row intact until its parity fixture passes.
+5. Specialize `contracts/candidate-set.ts` and test valid plus rejected payloads.
+6. Materialize `blueprints/README.md`, `blueprints/app-agent/blueprint.yaml`
+   and `.papercusp/blueprint.yaml`, replacing every `{{…}}` token; grep for
+   `{{` to prove none remain.
+7. Wire the app side through `@papercusp/pot-app-seam`, including non-ready
+   result handling and reject events.
+8. Launch/adopt the stable app agent, then run this template's checks and the
    full composed checks union.

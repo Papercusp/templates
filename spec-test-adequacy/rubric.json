@@ -5,7 +5,7 @@
   "description": "Reusable proof-quality columns applied to every current test-requiring spec clause. The clause is the row; these criteria are the columns. Evaluations pin an exact spec revision and evidence bundle rather than grading a plan-wide pile of tests.",
   "methodRef": null,
   "ratingScale": ["pass", "fail", "unknown", "waived", "not-applicable"],
-  "version": "1.0.0",
+  "version": "1.2.0",
   "source": "first-party",
   "criteria": [
     {
@@ -18,8 +18,8 @@
     {
       "key": "fixture-calibration",
       "title": "Fixtures represent the intended boundary",
-      "model": "Where a fixture is required or used, its calibration to the clause's real boundary is demonstrated and fingerprinted; fixture-free proof is explicitly not applicable.",
-      "method": "Inspect fixture bindings/fingerprints and their adequacy.fixtureCalibrated attestation; reject synthetic or stale fixtures that cannot reproduce the relevant state.",
+      "model": "Where a fixture is required or used by bound proof, its calibration to the clause's real boundary is demonstrated and fingerprinted. For executable proof, a missing fixture fingerprint alone never establishes fixture absence; only adequacy.fixtureFree=true on that exact bound proof permits fixture-free not-applicable. If the clause has no fixture requirement or declared use, no fixture binding exists, and no executable binding awaits fixture classification, this criterion is not applicable as a scope judgment—not as proof that an unmeasured fixture is absent.",
+      "method": "Inspect clause fixture requirements and declarations plus exact fixture bindings/fingerprints and adequacy.fixtureCalibrated. For executable bindings, accept fixture-free only from adequacy.fixtureFree=true on that exact bound proof; an executable binding with neither a fixture fingerprint nor explicit fixture-free attestation is unknown. When no fixture is required or declared used, no fixture binding exists, and no executable binding awaits fixture classification, report not-applicable as out of scope, not as evidence that a missing fingerprint proves fixture absence. Reject synthetic or stale fixtures that cannot reproduce the relevant state.",
       "driftMarkers": "A fixture that cannot trigger the behavior; production-only state replaced by an uncalibrated mock; changed fixture bytes under an old fingerprint."
     },
     {
@@ -32,8 +32,8 @@
     {
       "key": "correct-layer",
       "title": "Required layers reach the real path",
-      "model": "Every layer named by the clause is represented by bound proof and the exercised path reaches the implementation boundary the clause describes.",
-      "method": "Compare requiredTestLayers with adequacy.testLayer on bindings and require adequacy.pathReachable for each required layer.",
+      "model": "Every layer named by the clause is represented by a passing test run whose server-measured runtime layer and exact passing case match the binding, and whose exercised path reaches the implementation boundary the clause describes.",
+      "method": "Compare requiredTestLayers with test_runs.execution_details.testLayer. Require the same test binding's run status=pass, passed>0, failed=0, collectionFailed=false, exact passedCaseTitles membership for its declared adequacy.testCases, a matching adequacy.testLayer claim when present, and adequacy.pathReachable=true.",
       "driftMarkers": "A unit double offered for an integration contract; the intended handler or transport never reached; one required layer silently absent."
     },
     {
@@ -46,8 +46,8 @@
     {
       "key": "execution-integrity",
       "title": "The proof was collected, executed, and passed",
-      "model": "Applicable tests/checks were collected, were not skipped, executed against the claimed environment, and produced a successful current outcome.",
-      "method": "Require non-skipped collection and execution metadata plus a passing/killed outcome; a testRun reference without a verdict is unknown, never pass.",
+      "model": "Applicable tests/checks were collected, were not skipped, executed against the claimed environment, and produced a successful current outcome proven by canonical test_runs status and execution_details. Binder-authored adequacy booleans cannot produce a pass.",
+      "method": "Require a testRunId with valid test_runs.execution_details. Use its status and counts as the execution verdict: ordinary proof needs status=pass, passed>0, failed=0, skipped=0, collectionFailed=false; mutation proof needs a measured failed mutant run with a structured mutation failure. Missing or unrecognized run evidence is unknown, never pass.",
       "driftMarkers": "Zero collected tests; skipped/quarantined proof; compile-only evidence; a stale ledger row mistaken for a fresh run."
     },
     {
@@ -63,6 +63,13 @@
       "model": "The reusable plan-class policy supplies the floor. Feature work normally requires targeted L3 intent proof; bugfixes, migrations, mutation-required clauses, and high-risk authorization/concurrency/lifecycle/data-integrity behavior require targeted L4 hardening unless an explicit current waiver exists.",
       "method": "Resolve the plan class and behavior class, then inspect coverage rung flags or successful targeted mutation/counterexample proof. For L4 waivers require justification, approvalRef, and a non-expired expiresAt when present.",
       "driftMarkers": "Depth >= N used instead of the independent meets_lN flag; a broad mutation run with no link to this clause; an unapproved or expired waiver."
+    },
+    {
+      "key": "disclosed-gap",
+      "title": "No author-disclosed hole travels with a passing proof",
+      "model": "A disclosure recorded on a binding is an admission that the bound evidence does not fully establish the clause, so it can never coexist with a machine PASS. Any non-empty disclosed gap fails and the disclosed text is named in the blocking reason; a clause whose active bindings record no disclosure is not applicable.",
+      "method": "Read adequacy.disclosedGap on every active binding for the clause. Fail when any is non-empty, naming the disclosed text in the would-block reason rather than leaving it unread on the row; report not-applicable only when no active binding carries a disclosure.",
+      "driftMarkers": "A known hole recorded on the binding while the verdict still reads pass; a disclosure demoted to prose in an evidence blob that no evaluator field reads; a gap treated as mitigated by re-binding without closing it."
     }
   ]
 }

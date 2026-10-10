@@ -2,6 +2,7 @@
  * Android host acceptance with atomic machine-readable evidence.
  * Config: TEMPLATE_CHECKS_CONFIG.androidShell.assertions.
  */
+import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -34,6 +35,25 @@ const outerTimeout =
       (entry) => entry.timeoutMs ?? DEFAULT_TIMEOUT_MS,
     ),
   ) + OUTER_GRACE_MS;
+
+const mobileRepo = resolve(__dirname, "../../../../papercup-rust-mobile");
+
+describe("R-6 Android CI reachability detector", () => {
+  it("keeps managed skip-ci commits on the complete automatic verification route", () => {
+    const guard = spawnSync("make", ["test-android-ci"], {
+      cwd: mobileRepo,
+      encoding: "utf8",
+    });
+    expect(
+      guard.status,
+      [guard.error?.message, guard.stdout, guard.stderr]
+        .filter(Boolean)
+        .join("\n"),
+    ).toBe(0);
+    expect(guard.stdout).toContain("Android CI reachability contract: passed");
+    expect(guard.stdout).toMatch(/mutation controls: \d+ rejected/u);
+  }, 15_000);
+});
 
 describe.skipIf(!section)("android-shell-assertions", () => {
   it("keeps the outer Vitest budget beyond every child command", () => {

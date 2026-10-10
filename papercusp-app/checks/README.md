@@ -38,3 +38,10 @@ Config section (all optional):
 Omit `templateYamls` and the check walks every sibling template dir. Supply it
 and the listed set is treated as a legitimate chosen SUBSET of the registry —
 `composesWith` is descriptive affinity and may name templates outside it.
+
+## `checks/package-script-targets.test.ts`
+
+Checks the app root `package.json`: every explicit `.test.*` or `.spec.*` file
+path named by a test, E2E, or check script must exist relative to the app root.
+Vitest globs remain valid patterns. The fixture assertion keeps the detector
+honest by proving a missing named file is reported.
